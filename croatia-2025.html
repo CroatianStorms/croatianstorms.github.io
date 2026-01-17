@@ -5,16 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Storm chase 13.07.2023.</title>
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; max-width: 900px; margin: 0 auto; }
+    body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 10px; max-width: 900px; margin: 0 auto; }
     h1 { color: #2c3e50; }
-    img { max-width: 100%; height: auto; border-radius: 8px; margin: 15px 0; }
-    .gallery { display: flex; flex-wrap: wrap; gap: 15px; }
-    .back-link { display: inline-block; margin: 20px 0; font-size: 1.1em; }
+    img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+    .gallery { display: flex; flex-wrap: wrap; gap: 10px; }
+    .back-link { display: inline-block; margin: 10px 0; font-size: 1.1em; }
   </style>
 </head>
 <body>
-  <a href="index.html" class="back-link">← Back to the Map</a>
   <h1>Storm chase 13.07.2023.</h1>
+  <div style="margin: 10px 0;">
+  <a href="index.html" style="
+    display: inline-block;
+    padding: 10px 20px;
+    background: #1e3a8a;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  ">
+    ← Back to Chase Map
+  </a>
+</div>
   <p><em>Zagreb → Popovec → Čazma</em></p>
 
 <!-- Leaflet CSS + JS (add to <head> if not already present) -->
@@ -120,7 +133,21 @@ miniRoute.on('routesfound', function(e) {
     <!-- add more -->
   </ul>
 
-  <a href="index.html" class="back-link">← Back to the Map</a>
+  <div style="text-align: center; margin: 40px 0;">
+  <a href="index.html" style="
+    display: inline-block;
+    padding: 12px 24px;
+    background: #1e3a8a;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+  ">
+    ← Return to Interactive Map
+  </a>
+</div>
 
 </body>
 </html>
