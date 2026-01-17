@@ -3,23 +3,25 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My OpenStreetMap</title>
+  <title>My OpenStreetMap with Hover Tooltips</title>
   
-  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5n/N0ZDw4=" 
         crossorigin=""/>
-  
-  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
           crossorigin=""></script>
 
   <style>
-    html, body, #map {
-      height: 100%;
-      margin: 0;
-      padding: 0;
+    html, body, #map { height: 100%; margin: 0; padding: 0; }
+    /* Optional: nicer tooltip look */
+    .custom-tooltip {
+      background: rgba(0,0,0,0.75);
+      color: white;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 13px;
+      border: none;
     }
   </style>
 </head>
@@ -27,20 +29,53 @@
   <div id="map"></div>
 
   <script>
-    // Create map, center on Europe (change coordinates as you like)
-    var map = L.map('map').setView([45.1, 16.2], 8);  // ≈ whole Croatia, zoom level 8
+    var map = L.map('map').setView([45.1, 15.2], 7);
 
-    // Add OpenStreetMap tiles (free & standard)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
 
-    // Optional: add a marker (example)
-    L.marker([45.8150, 15.9819])          // Zagreb center
-     .addTo(map)
-     .bindPopup('Zagreb, Croatia!')
-     .openPopup();
+    // ────────────────────────────────────────────────
+    // Example: several markers with hover titles
+    // ────────────────────────────────────────────────
+
+    // Zagreb
+    L.marker([45.8150, 15.9819])
+      .bindTooltip("Zagreb - Capital City", {
+        permanent: false,       // false = show only on hover
+        direction: "top",       // or "right", "bottom", "left", "center", "auto"
+        className: "custom-tooltip", // optional styling
+        opacity: 0.9
+      })
+      .addTo(map);
+
+    // Split
+    L.marker([43.5081, 16.4402])
+      .bindTooltip("Split - Coastal City", {
+        permanent: false,
+        direction: "right"
+      })
+      .addTo(map);
+
+    // Dubrovnik
+    L.marker([42.6507, 18.0944])
+      .bindTooltip("Dubrovnik - Pearl of Adriatic", {
+        permanent: false,
+        direction: "left"
+      })
+      .addTo(map);
+
+    // Optional: permanent label (always visible, no hover needed)
+    // L.marker([45.3271, 14.4424])  // Rijeka
+    //   .bindTooltip("Rijeka (always visible)", { permanent: true, direction: "bottom" })
+    //   .addTo(map);
+
+    // Bonus: if you want BOTH hover tooltip + click popup
+    var marker = L.marker([44.8683, 15.5856]); // Gospić example
+    marker.bindTooltip("Gospić (hover me)", { permanent: false });
+    marker.bindPopup("<b>Gospić</b><br>Click for more info!");
+    marker.addTo(map);
   </script>
 </body>
 </html>
