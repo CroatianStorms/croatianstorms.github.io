@@ -96,14 +96,15 @@ var stormMarker = L.marker(stormLocation, {
         lineOptions: {
           styles: [{color: '#0066cc', weight: 6, opacity: 0.8}]
         }
-      }).addTo(map);
-
-      // Zoom nicely to show both the route and marker
+              // Zoom nicely to show both the route and marker
       map.fitBounds(currentRoute.getBounds(), {
-    padding: [150, 150],     // ← increase this for more zoom-out
-    maxZoom: 12              // ← prevents zooming in too close
+      padding: [150, 150],     // ← increase this for more zoom-out
+      maxZoom: 12              // ← prevents zooming in too close
         });
+      }).addTo(map);
       });
+
+
 
     stormMarker.on('popupclose', function() {
       if (currentRoute) {
