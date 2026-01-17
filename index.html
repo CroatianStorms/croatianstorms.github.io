@@ -37,45 +37,17 @@
     }).addTo(map);
 
     // ────────────────────────────────────────────────
-    // Example: several markers with hover titles
-    // ────────────────────────────────────────────────
+  // Example markers that open trip pages in new tab
+  // ────────────────────────────────────────────────
 
-    // Zagreb
-    L.marker([45.8150, 15.9819])
-      .bindTooltip("Zagreb - Capital City", {
-        permanent: false,       // false = show only on hover
-        direction: "top",       // or "right", "bottom", "left", "center", "auto"
-        className: "custom-tooltip", // optional styling
-        opacity: 0.9
-      })
-      .addTo(map);
-
-    // Split
-    L.marker([43.5081, 16.4402])
-      .bindTooltip("Split - Coastal City", {
-        permanent: false,
-        direction: "right"
-      })
-      .addTo(map);
-
-    // Dubrovnik
-    L.marker([42.6507, 18.0944])
-      .bindTooltip("Dubrovnik - Pearl of Adriatic", {
-        permanent: false,
-        direction: "left"
-      })
-      .addTo(map);
-
-    // Optional: permanent label (always visible, no hover needed)
-    // L.marker([45.3271, 14.4424])  // Rijeka
-    //   .bindTooltip("Rijeka (always visible)", { permanent: true, direction: "bottom" })
-    //   .addTo(map);
-
-    // Bonus: if you want BOTH hover tooltip + click popup
-    var marker = L.marker([44.8683, 15.5856]); // Gospić example
-    marker.bindTooltip("Gospić (hover me)", { permanent: false });
-    marker.bindPopup("<b>Gospić</b><br>Click for more info!");
-    marker.addTo(map);
+  // Zagreb trip example
+  L.marker([45.8150, 15.9819])
+    .bindTooltip("Zagreb Adventure 2025 (click to read)", { permanent: false, direction: 'top' })
+    .on('click', function() {
+      window.open('croatia-2025.html', '_blank');   // opens in new tab
+      // OR: window.location.href = 'croatia-2025.html';  // replaces current page
+    })
+    .addTo(map);
   </script>
 </body>
 </html>
