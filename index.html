@@ -38,15 +38,43 @@
     // ────────────────────────────────────────────────
   // Example markers that open trip pages in new tab
   // ────────────────────────────────────────────────
-
   // Zagreb trip example
-  L.marker([45.8150, 15.9819])
-    .bindTooltip("Zagreb Adventure 2025 (click to read)", { permanent: false, direction: 'top' })
-    .on('click', function() {
-      window.open('croatia-2025.html', '_blank');   // opens in new tab
+L.marker([45.8150, 15.9819])
+  .bindTooltip("Zagreb Adventure 2025 (click for preview)", {
+    permanent: false,
+    direction: 'top'
+  })
+  .bindPopup(
+    '<div style="text-align:center; min-width:180px;">' +
+      '<h4 style="margin:8px 0 4px;">Zagreb Adventure 2025</h4>' +
+      '<img src="images/zagreb-thumb.jpg" alt="Zagreb preview" ' +
+           'style="max-width:100%; height:auto; border-radius:4px; margin-bottom:8px;">' +
+      '<p style="margin:4px 0; font-size:13px;">Explore the capital: markets, museums & nightlife</p>' +
+      '<a href="croatia-2025.html" target="_blank" ' +
+         'style="display:inline-block; padding:6px 12px; background:#0066cc; color:white; ' +
+                'text-decoration:none; border-radius:4px; font-weight:bold;">' +
+         'Read full story →' +
+      '</a>' +
+    '</div>',
+    {
+      maxWidth: 220,          // keeps it small & mobile-friendly
+      className: 'custom-popup'  // optional: for extra styling
+    }
+  )
+  //.on('click', function() {
+    // Optional: still open the full page directly if you want (but popup is better UX)
+    // window.open('croatia-2025.html', '_blank');
+  })
+  .addTo(map);
+    
+  // Zagreb trip example
+  //L.marker([45.8150, 15.9819])
+    //.bindTooltip("Zagreb Adventure 2025 (click to read)", { permanent: false, direction: 'top' })
+    //.on('click', function() {
+      //window.open('croatia-2025.html', '_blank');   // opens in new tab
       // OR: window.location.href = 'croatia-2025.html';  // replaces current page
-    })
-    .addTo(map);
+    //})
+    //.addTo(map);
   </script>
 </body>
 </html>
