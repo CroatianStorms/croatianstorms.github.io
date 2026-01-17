@@ -98,25 +98,17 @@ var stormMarker = L.marker(stormLocation, {
         }
       }).addTo(map);
       
-      // Wait for route to be ready
+      // Wait for the route to be fully calculated
         currentRoute.on('routesfound', function(e) {
-          var routeBounds = L.latLngBounds(e.routes[0].coordinates);
+          var routeLine = e.routes[0].coordinates;  // or just use the control's internal line
       
-          // Calculate the zoom needed to fit the route (with padding)
-          var neededZoom = map.getBoundsZoom(routeBounds, false, [250, 250]);  // false = fit inside, padding as before
+          // Now safe to get real bounds
+          var bounds = L.latLngBounds(e.routes[0].coordinates);
       
-          var currentZoom = map.getZoom();
-      
-          if (neededZoom > currentZoom) {
-            // Only zoom in if needed (closer zoom = higher number)
-            map.setView(routeBounds.getCenter(), neededZoom, { animate: true });
-            // Or if you prefer fitBounds style with animation:
-            // map.fitBounds(routeBounds, { padding: [150, 150], animate: true });
-          } else {
-            // Optional: Just center on the route without changing zoom
-            //map.panTo(routeBounds.getCenter(), { animate: true });
-            // Or do nothing → user stays at current zoom
-          }
+          map.fitBounds(bounds, {
+            padding: [150, 150],     // ← your desired zoom-out level (adjust higher if needed, e.g. [200, 200])
+            maxZoom: 12              // ← prevents too close zoom on short routes
+          });
         });
       });
 
