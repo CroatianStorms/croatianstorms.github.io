@@ -99,8 +99,11 @@ var stormMarker = L.marker(stormLocation, {
       }).addTo(map);
 
       // Zoom nicely to show both the route and marker
-      map.fitBounds(currentRoute.getBounds(), { padding: [150, 150] });
-    });
+      map.fitBounds(currentRoute.getBounds(), {
+    padding: [150, 150],     // ← increase this for more zoom-out
+    maxZoom: 12              // ← prevents zooming in too close
+        });
+      });
 
     stormMarker.on('popupclose', function() {
       if (currentRoute) {
