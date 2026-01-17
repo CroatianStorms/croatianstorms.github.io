@@ -98,13 +98,19 @@ var stormMarker = L.marker(stormLocation, {
         }
       }).addTo(map);
       
-      // Zoom nicely to show both the route and marker
-      map.fitBounds(currentRoute.getBounds(), {
-      padding: [150, 150],     // ← increase this for more zoom-out
-      maxZoom: 12              // ← prevents zooming in too close
+    // Wait for the route to be fully calculated
+      currentRoute.on('routesfound', function(e) {
+        var routeLine = e.routes[0].coordinates;  // or just use the control's internal line
+    
+        // Now safe to get real bounds
+        var bounds = L.latLngBounds(e.routes[0].coordinates);
+    
+        map.fitBounds(bounds, {
+          padding: [150, 150],     // ← your desired zoom-out level (adjust higher if needed, e.g. [200, 200])
+          maxZoom: 12              // ← prevents too close zoom on short routes
         });
       });
-
+    });
 
 
     stormMarker.on('popupclose', function() {
