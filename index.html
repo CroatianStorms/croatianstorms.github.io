@@ -106,8 +106,8 @@ var stormMarker = L.marker(stormLocation, {
         var bounds = L.latLngBounds(e.routes[0].coordinates);
     
         map.fitBounds(bounds, {
-          padding: [150, 150],     // ← your desired zoom-out level (adjust higher if needed, e.g. [200, 200])
-          maxZoom: 12              // ← prevents too close zoom on short routes
+          padding: [200, 200],     // ← your desired zoom-out level (adjust higher if needed, e.g. [200, 200])
+          maxZoom: 11              // ← prevents too close zoom on short routes
         });
       });
     });
