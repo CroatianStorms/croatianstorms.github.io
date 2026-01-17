@@ -17,65 +17,91 @@
   <h1>Storm chase 13.07.2023.</h1>
   <p><em>Zagreb → Popovec → Čazma</em></p>
 
-<!-- Mini-map container -->
-<div id="mini-map" style="height: 250px; width: 350px; border: 2px solid #ccc; border-radius: 8px; margin: 20px auto; box-shadow: 0 2px 8px rgba(0,0,0,0.15);"></div>
-
-<!-- Leaflet CSS + JS (if not already included in the page) -->
+<!-- Leaflet CSS + JS (add to <head> if not already present) -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
-<!-- Leaflet Routing Machine (same as main map) -->
+<!-- Leaflet Routing Machine -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
 <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
+<!-- Mini-map (place this where you want it in the body, e.g. after <h1> or in a section) -->
+<div id="mini-map" style="
+  height: 250px; 
+  width: 400px; 
+  float: left;                /* ← left aligned */
+  margin: 0 25px 20px 0;      /* space on right & bottom for text wrap */
+  border: 2px solid #ddd; 
+  border-radius: 8px; 
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  overflow: hidden;
+"></div>
 
 <script>
 // Mini-map setup
 var miniMap = L.map('mini-map', {
-  zoomControl: false,          // no zoom buttons
-  attributionControl: false,   // hide attribution (small map)
-  dragging: false,             // no dragging
-  scrollWheelZoom: false,      // no scroll zoom
+  zoomControl: false,
+  attributionControl: false,
+  dragging: false,
+  scrollWheelZoom: false,
   doubleClickZoom: false,
   boxZoom: false,
   tap: false,
   touchZoom: false,
   keyboard: false
-}).setView([45.1, 15.2], 7);   // starting view
+});
 
-// Add the same OSM tiles
+// Base layer (same as main map)
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19
 }).addTo(miniMap);
 
-// Starting point (Zagreb)
+// Custom icon – exactly the same as index.html
+var customIcon = L.icon({
+  iconUrl: 'images/location.png',
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
+  tooltipAnchor: [0, -20]
+});
+
+// Starting point: Zagreb
 var zagreb = [45.8150, 15.9819];
+L.marker(zagreb, { icon: customIcon }).addTo(miniMap);
 
-// Storm location (same as your marker)
+// End point: Storm location
 var stormLocation = [45.8532, 16.1388];
+L.marker(stormLocation, { icon: customIcon }).addTo(miniMap);
 
-// Draw the route
+// Draw the route (same style as main map)
 var miniRoute = L.Routing.control({
   waypoints: [
     L.latLng(zagreb),
     L.latLng(stormLocation)
   ],
-  createMarker: function() { return null; }, // no extra markers
+  createMarker: function(i, wp) { 
+    // Use custom icon for both waypoints instead of default
+    return L.marker(wp.latLng, { icon: customIcon });
+  },
   addWaypoints: false,
   routeWhileDragging: false,
-  show: false,                    // no sidebar
+  show: false,
   lineOptions: {
     styles: [{color: '#0066cc', weight: 5, opacity: 0.9}]
   }
 }).addTo(miniMap);
 
-// Auto-fit the mini-map to the route once ready
+// Auto-fit to route once loaded
 miniRoute.on('routesfound', function(e) {
   var routeBounds = L.latLngBounds(e.routes[0].coordinates);
   miniMap.fitBounds(routeBounds, {
-    padding: [30, 30]            // smaller padding for mini-map
+    padding: [40, 40]   // good margin for small map
   });
 });
 </script>
+
+<!-- Optional: Clear float so following text doesn't get messed up -->
+<div style="clear: both;"></div>
 
   <h2>Highlights</h2>
   <p>We spent amazing days exploring Dalmatia coast. Crystal clear sea, great food, historic towns...</p>
