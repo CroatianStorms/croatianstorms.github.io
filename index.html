@@ -9,7 +9,10 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
           crossorigin=""></script>
-
+  <!-- Leaflet Routing Machine (added) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+  <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+  
   <style>
     html, body, #map { height: 100%; margin: 0; padding: 0; }
     /* Optional: nicer tooltip look */
@@ -35,11 +38,17 @@
     }).addTo(map);
     map.invalidateSize();
 
-    // ────────────────────────────────────────────────
-  // Example markers that open trip pages in new tab
-  // ────────────────────────────────────────────────
-  // Zagreb trip example
-L.marker([45.8532, 16.1388], {
+// Variable to store the route (so we can remove it later)
+    var currentRoute = null;
+
+    // Zagreb (starting point of your chase - you can change this later)
+    var zagreb = [45.8150, 15.9819];
+
+    // The storm location (your marker)
+    var stormLocation = [45.8532, 16.1388];
+    
+  // Marker location example
+var stormMarker = L.marker(stormLocation, {
   icon: L.icon({
     iconUrl: 'images/location.png',          // path to your icon image in repo
     iconSize: [32, 32],                   // size in pixels [width, height] - adjust to fit your image
@@ -69,20 +78,38 @@ L.marker([45.8532, 16.1388], {
       className: 'custom-popup'  // optional: for extra styling
     }
   )
-  .on('click', function() {
-    // Optional: still open the full page directly if you want (but popup is better UX)
-    // window.open('croatia-2025.html', '_blank');
-  })
   .addTo(map);
     
-  // Zagreb trip example
-  //L.marker([45.8532, 16.1388])
-    //.bindTooltip("Storm chase 13.07.2023.", { permanent: false, direction: 'top' })
-    //.on('click', function() {
-      //window.open('croatia-2025.html', '_blank');   // opens in new tab
-      // OR: window.location.href = 'croatia-2025.html';  // replaces current page
-    //})
-    //.addTo(map);
+  // ---- NEW: Show route when popup opens, hide when it closes ----
+    stormMarker.on('popupopen', function() {
+      if (currentRoute) currentRoute.spliceWaypoints(0, 2); // clear old route if any
+
+      currentRoute = L.Routing.control({
+        waypoints: [
+          L.latLng(zagreb),
+          L.latLng(stormLocation)
+        ],
+        createMarker: function() { return null; }, // hide extra markers
+        addWaypoints: false,
+        routeWhileDragging: false,
+        show: false,                    // hide the instruction panel
+        lineOptions: {
+          styles: [{color: '#0066cc', weight: 6, opacity: 0.8}]
+        }
+      }).addTo(map);
+
+      // Zoom nicely to show both the route and marker
+      map.fitBounds(currentRoute.getBounds(), { padding: [50, 50] });
+    });
+
+    stormMarker.on('popupclose', function() {
+      if (currentRoute) {
+        map.removeControl(currentRoute);
+        currentRoute = null;
+      }
+      // Optional: return to original view
+      map.setView([45.1, 15.2], 7);
+    });
   </script>
 </body>
 </html>
