@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Croatia Vacation 2025 - My Blog</title>
+  <title>Storm chase 13.07.2023.</title>
   <style>
     body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; max-width: 900px; margin: 0 auto; }
     h1 { color: #2c3e50; }
@@ -13,11 +13,69 @@
   </style>
 </head>
 <body>
-
-  <h1>Croatia Vacation 2025</h1>
-  <p><em>July 10–20, 2025 | Split, Dubrovnik, islands</em></p>
-
   <a href="index.html" class="back-link">← Back to the Map</a>
+  <h1>Storm chase 13.07.2023.</h1>
+  <p><em>Zagreb --> Popovec --> Čazma</em></p>
+
+<!-- Mini-map container -->
+<div id="mini-map" style="height: 250px; width: 350px; border: 2px solid #ccc; border-radius: 8px; margin: 20px auto; box-shadow: 0 2px 8px rgba(0,0,0,0.15);"></div>
+
+<!-- Leaflet CSS + JS (if not already included in the page) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+<!-- Leaflet Routing Machine (same as main map) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
+<script>
+// Mini-map setup
+var miniMap = L.map('mini-map', {
+  zoomControl: false,          // no zoom buttons
+  attributionControl: false,   // hide attribution (small map)
+  dragging: false,             // no dragging
+  scrollWheelZoom: false,      // no scroll zoom
+  doubleClickZoom: false,
+  boxZoom: false,
+  tap: false,
+  touchZoom: false,
+  keyboard: false
+}).setView([45.1, 15.2], 7);   // starting view
+
+// Add the same OSM tiles
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19
+}).addTo(miniMap);
+
+// Starting point (Zagreb)
+var zagreb = [45.8150, 15.9819];
+
+// Storm location (same as your marker)
+var stormLocation = [45.8532, 16.1388];
+
+// Draw the route
+var miniRoute = L.Routing.control({
+  waypoints: [
+    L.latLng(zagreb),
+    L.latLng(stormLocation)
+  ],
+  createMarker: function() { return null; }, // no extra markers
+  addWaypoints: false,
+  routeWhileDragging: false,
+  show: false,                    // no sidebar
+  lineOptions: {
+    styles: [{color: '#0066cc', weight: 5, opacity: 0.9}]
+  }
+}).addTo(miniMap);
+
+// Auto-fit the mini-map to the route once ready
+miniRoute.on('routesfound', function(e) {
+  var routeBounds = L.latLngBounds(e.routes[0].coordinates);
+  miniMap.fitBounds(routeBounds, {
+    padding: [30, 30]            // smaller padding for mini-map
+  });
+});
+</script>
 
   <h2>Highlights</h2>
   <p>We spent amazing days exploring Dalmatia coast. Crystal clear sea, great food, historic towns...</p>
