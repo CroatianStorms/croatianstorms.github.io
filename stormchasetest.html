@@ -9,6 +9,9 @@
     h1 { color: #2c3e50; }
     img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
     .gallery { display: flex; flex-wrap: wrap; gap: 10px; }
+    #mini-map {
+  background: #f8f8f8; /* fallback color while loading */
+}
   </style>
 </head>
 <body>
@@ -41,20 +44,20 @@
 
   <!-- Mini-map container -->
   <div id="mini-map" style="
-    height: 250px; 
-    width: 380px; 
-    float: left;
-    margin: 0 25px 20px 0;
-    border: 2px solid #ddd; 
-    border-radius: 8px; 
-    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-    overflow: hidden;
-  "></div>
+  height: 700px;              /* big & impressive */
+  width: 100%;
+  margin: 30px 0 40px 0;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  overflow: hidden;
+"></div>
 
   <script>
     // Mini-map setup
     var miniMap = L.map('mini-map', {
-  zoomControl: false
+  zoomControl: false,
+  attributionControl: true
 });
 
     // Base layer (same as main map)
@@ -96,7 +99,7 @@
       },
       addWaypoints: false,
       routeWhileDragging: false,
-      show: true,
+      show: false,
       lineOptions: {
         styles: [{color: '#0066cc', weight: 6, opacity: 0.8}]
       }
