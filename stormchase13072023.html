@@ -107,6 +107,7 @@ var miniRoute = L.Routing.control({
 
 // Auto-fit to route once loaded
 miniRoute.on('routesfound', function(e) {
+  var routeLine = e.routes[0].coordinates;
   var routeBounds = L.latLngBounds(e.routes[0].coordinates);
   miniMap.fitBounds(routeBounds, {
     padding: [40, 40]   // good margin for small map
