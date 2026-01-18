@@ -83,6 +83,8 @@ var miniRoute = null;
 var zagreb = [45.7994, 15.9786];
 //waypoint to highway
 var zagrebistok = [45.8008, 16.0546];
+//A4
+var A4 = [45.8857, 16.2330];
 //komin
 var komin = [46.0018, 16.2822];
 // End point: Storm location
@@ -97,6 +99,7 @@ miniRoute = L.Routing.control({
   waypoints: [
     L.latLng(zagreb),
     L.latLng(zagrebistok),
+    L.latLng(A4),
     L.latLng(komin),
     L.latLng(stormLocation)
   ],
