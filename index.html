@@ -40,13 +40,12 @@
 
 // Variable to store the route (so we can remove it later)
     var currentRoute = null;
-
     // Zagreb (starting point of your chase - you can change this later)
-    var zagreb = [45.8022, 16.0487];
-
+    var zagreb = [45.7994, 15.9786];
     //waypoint to highway
-    var zagrebistok = [45.8031, 16.1174];
-
+    var zagrebistok = [45.8008, 16.0546];
+    //Komin
+    var komin = [46.0018, 16.2822];
     // The storm location (your marker)
     var stormLocation = [45.8532, 16.1388];
     
@@ -91,6 +90,7 @@ var stormMarker = L.marker(stormLocation, {
         waypoints: [
           L.latLng(zagreb),
           L.latLng(zagrebistok),
+          L.latLng(komin),
           L.latLng(stormLocation)
         ],
         createMarker: function() { return null; }, // hide extra markers
