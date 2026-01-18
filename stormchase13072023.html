@@ -75,8 +75,6 @@ var miniRoute = null;
 var zagreb = [45.7994, 15.9786];
 //waypoint to highway
 var zagrebistok = [45.8008, 16.0546];
-//A4
-var autocesta = [45.8857, 16.2330];
 //komin
 var komin = [46.0018, 16.2822];
 // End point: Storm location
@@ -87,13 +85,12 @@ miniRoute = L.Routing.control({
   waypoints: [
     L.latLng(zagreb),       // start
     L.latLng(zagrebistok),  // via 1 – Zagreb east on-ramp
-    L.latLng(autocesta),    // via 2 – further on A4
     L.latLng(komin),        // via 3
     L.latLng(stormLocation) // end
   ],
   createMarker: function(i, wp) { 
     // Only show markers for start, komin, and end (hide intermediates)
-    if (i === 0 || i === 3 || i === 4) {  // indices: 0=start, 3=komin, 4=end
+    if (i === 0 || i === 2 || i === 3) {  // indices: 0=start, 2=komin, 3=end
       return L.marker(wp.latLng, { icon: customIcon });
     }
     return null;
@@ -112,7 +109,7 @@ miniRoute = L.Routing.control({
     }
   }),
   lineOptions: {
-    styles: [{color: '#0066cc', weight: 4, opacity: 0.9}]
+    styles: [{color: '#0066cc', weight: 5, opacity: 0.9}]
   }
 }).addTo(miniMap);
   
