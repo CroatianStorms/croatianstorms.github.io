@@ -40,7 +40,7 @@
 
 <!-- Mini-map (place this where you want it in the body, e.g. after <h1> or in a section) -->
 <div id="mini-map" style="
-  height: 380px; 
+  height: 250px; 
   width: 380px; 
   float: left;                /* ← left aligned */
   margin: 0 25px 20px 0;      /* space on right & bottom for text wrap */
@@ -60,6 +60,7 @@ var miniMap = L.map('mini-map', {
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19
 }).addTo(miniMap);
+miniMap.invalidateSize();
 
 // Custom icon – exactly the same as index.html
 var customIcon = L.icon({
@@ -118,7 +119,8 @@ miniRoute.on('routesfound', function(e) {
   var routeLine = e.routes[0].coordinates;
   var routeBounds = L.latLngBounds(e.routes[0].coordinates);
   miniMap.fitBounds(routeBounds, {
-    padding: [40, 40]   // good margin for small map
+    padding: [40, 40],      // good margin for small map
+    maxZoom: 11         
   });
 });
 </script>
