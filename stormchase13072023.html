@@ -37,12 +37,11 @@
 <!-- Leaflet Routing Machine -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
 <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/leaflet-polylineoffset@1.1.1/leaflet.polylineoffset.min.js"></script>
-  
+
 <!-- Mini-map (place this where you want it in the body, e.g. after <h1> or in a section) -->
 <div id="mini-map" style="
   height: 250px; 
-  width: 400px; 
+  width: 380px; 
   float: left;                /* ← left aligned */
   margin: 0 25px 20px 0;      /* space on right & bottom for text wrap */
   border: 2px solid #ddd; 
@@ -112,20 +111,14 @@ miniRoute = L.Routing.control({
       overview: 'full'
     }
   }),
+  lineOptions: {
+    styles: [{color: '#0066cc', weight: 4, opacity: 0.9}]
+  }
 }).addTo(miniMap);
   
 // Auto-fit to route once loaded
 miniRoute.on('routesfound', function(e) {
   var routeLine = e.routes[0].coordinates;
-
-  // Create the visible route line with south offset (negative = south in Leaflet screen coords)
-  var offsetLine = L.polyline(coords, {
-    color: '#0066cc',
-    weight: 5,
-    opacity: 0.9,
-    offset: -2               // ← start with -2 (south); try -1 to -4 depending on how much north offset you see
-  }).addTo(miniMap);
-  
   var routeBounds = L.latLngBounds(e.routes[0].coordinates);
   miniMap.fitBounds(routeBounds, {
     padding: [40, 40]   // good margin for small map
