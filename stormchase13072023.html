@@ -96,10 +96,7 @@ var miniRoute = L.Routing.control({
     L.latLng(komin),
     L.latLng(stormLocation)
   ],
-  createMarker: function(i, wp) { 
-    // Use custom icon for both waypoints instead of default
-    return L.marker(wp.latLng, { icon: customIcon });
-  },
+  createMarker: function() { return null; }, // hide extra markers
   addWaypoints: false,
   routeWhileDragging: false,
   show: false,
