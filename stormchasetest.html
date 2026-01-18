@@ -53,17 +53,7 @@
 
   <script>
     // Mini-map setup
-    var miniMap = L.map('mini-map', {
-      zoomControl: false,
-      attributionControl: false,
-      dragging: false,
-      scrollWheelZoom: false,
-      doubleClickZoom: false,
-      boxZoom: false,
-      tap: false,
-      touchZoom: false,
-      keyboard: false
-    });
+    var miniMap = L.map('mini-map').setView([45.1, 16.0], 11);
 
     // Base layer (same as main map)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
