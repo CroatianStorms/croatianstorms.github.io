@@ -90,10 +90,6 @@ var komin = [46.0018, 16.2822];
 // End point: Storm location
 var stormLocation = [45.8532, 16.1388];
 
-L.marker(zagreb, { icon: customIcon }).addTo(miniMap);
-L.marker(komin, { icon: customIcon }).addTo(miniMap);
-L.marker(stormLocation, { icon: customIcon }).addTo(miniMap);
-
 // Draw the route (same style as main map)
 miniRoute = L.Routing.control({
   waypoints: [
@@ -111,7 +107,11 @@ miniRoute = L.Routing.control({
     styles: [{color: '#0066cc', weight: 5, opacity: 0.9}]
   }
 }).addTo(miniMap);
-
+  
+L.marker(zagreb, { icon: customIcon }).addTo(miniMap);
+L.marker(komin, { icon: customIcon }).addTo(miniMap);
+L.marker(stormLocation, { icon: customIcon }).addTo(miniMap);
+  
 // Auto-fit to route once loaded
 miniRoute.on('routesfound', function(e) {
   var routeLine = e.routes[0].coordinates;
