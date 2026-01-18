@@ -111,14 +111,20 @@ miniRoute = L.Routing.control({
       overview: 'full'
     }
   }),
-  lineOptions: {
-    styles: [{color: '#0066cc', weight: 4, opacity: 0.9}]
-  }
 }).addTo(miniMap);
   
 // Auto-fit to route once loaded
 miniRoute.on('routesfound', function(e) {
   var routeLine = e.routes[0].coordinates;
+
+  // Create the visible route line with south offset (negative = south in Leaflet screen coords)
+  var offsetLine = L.polyline(coords, {
+    color: '#0066cc',
+    weight: 5,
+    opacity: 0.9,
+    offset: -2               // ← start with -2 (south); try -1 to -4 depending on how much north offset you see
+  }).addTo(miniMap);
+  
   var routeBounds = L.latLngBounds(e.routes[0].coordinates);
   miniMap.fitBounds(routeBounds, {
     padding: [40, 40]   // good margin for small map
