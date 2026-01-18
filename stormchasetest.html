@@ -53,7 +53,9 @@
 
   <script>
     // Mini-map setup
-    var miniMap = L.map('mini-map').setView([45.1, 16.0], 11);
+    var miniMap = L.map('mini-map', {
+  zoomControl: false
+});
 
     // Base layer (same as main map)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -102,11 +104,7 @@
 
     // Auto-fit when route is ready
     miniRoute.on('routesfound', function(e) {
-      var routeBounds = L.latLngBounds(e.routes[0].coordinates);
-      miniMap.fitBounds(routeBounds, {
-        padding: [40, 40],
-        maxZoom: 11
-      });
+          var routeLine = e.routes[0].coordinates;
     });
   </script>
 
