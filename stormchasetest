@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Storm chase 13.07.2023.</title>
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 10px; max-width: 900px; margin: 0 auto; }
+    h1 { color: #2c3e50; }
+    img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+    .gallery { display: flex; flex-wrap: wrap; gap: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Storm chase 13.07.2023.</h1>
+  
+  <div style="margin: 10px 0 20px;">
+    <a href="index.html" style="
+      display: inline-block;
+      padding: 10px 20px;
+      background: #1e3a8a;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    ">
+      ← Back to Chase Map
+    </a>
+  </div>
+
+  <p><em>Zagreb → Popovec → Čazma</em></p>
+
+  <!-- Leaflet CSS + JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+  <!-- Leaflet Routing Machine -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+  <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
+  <!-- Mini-map container -->
+  <div id="mini-map" style="
+    height: 250px; 
+    width: 380px; 
+    float: left;
+    margin: 0 25px 20px 0;
+    border: 2px solid #ddd; 
+    border-radius: 8px; 
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    overflow: hidden;
+  "></div>
+
+  <script>
+    // Mini-map setup
+    var miniMap = L.map('mini-map', {
+      zoomControl: false,
+      attributionControl: false,
+      dragging: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      boxZoom: false,
+      tap: false,
+      touchZoom: false,
+      keyboard: false
+    });
+
+    // Base layer (same as main map)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(miniMap);
+
+    miniMap.invalidateSize();
+
+    // Custom icon – same as index.html
+    var customIcon = L.icon({
+      iconUrl: 'images/location.png',
+      iconSize: [32, 32],
+      iconAnchor: [16, 32],
+      popupAnchor: [0, -32],
+      tooltipAnchor: [0, -20]
+    });
+
+    // Coordinates (same as index.html)
+    var zagreb = [45.7994, 15.9786];
+    var zagrebistok = [45.8008, 16.0546];
+    var komin = [46.0018, 16.2822];
+    var stormLocation = [45.8532, 16.1388];
+
+    // Route control – defaults only (no custom router block)
+    var miniRoute = L.Routing.control({
+      waypoints: [
+        L.latLng(zagreb),
+        L.latLng(zagrebistok),
+        L.latLng(komin),
+        L.latLng(stormLocation)
+      ],
+      createMarker: function(i, wp) {
+        // Show markers only for start, komin, and end
+        if (i === 0 || i === 2 || i === 3) {
+          return L.marker(wp.latLng, { icon: customIcon });
+        }
+        return null;
+      },
+      addWaypoints: false,
+      routeWhileDragging: false,
+      show: false,
+      lineOptions: {
+        styles: [{color: '#0066cc', weight: 6, opacity: 0.8}]
+      }
+    }).addTo(miniMap);
+
+    // Auto-fit when route is ready
+    miniRoute.on('routesfound', function(e) {
+      var routeBounds = L.latLngBounds(e.routes[0].coordinates);
+      miniMap.fitBounds(routeBounds, {
+        padding: [40, 40],
+        maxZoom: 11
+      });
+    });
+  </script>
+
+  <!-- Clear float -->
+  <div style="clear: both;"></div>
+
+  <h2>Highlights</h2>
+  <p>We spent amazing days exploring Dalmatia coast. Crystal clear sea, great food, historic towns...</p>
+
+  <h2>Photos</h2>
+  <div class="gallery">
+    <img src="images/IMG_22232.jpg" alt="Storm near Zagreb">
+    <img src="images/dubrovnik-walls.jpg" alt="Dubrovnik city walls">
+    <img src="images/hvar-sunset.jpg" alt="Sunset on Hvar">
+  </div>
+
+  <h2>Daily notes</h2>
+  <ul>
+    <li>Day 1: Arrival to Split, waterfront promenade...</li>
+    <li>Day 3: Ferry to Hvar, lavender fields...</li>
+    <!-- add more -->
+  </ul>
+
+  <div style="text-align: center; margin: 40px 0;">
+    <a href="index.html" style="
+      display: inline-block;
+      padding: 12px 24px;
+      background: #1e3a8a;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    ">
+      ← Return to Interactive Map
+    </a>
+  </div>
+
+</body>
+</html>
