@@ -93,6 +93,13 @@ var stormMarker = L.marker(stormLocation, {
           L.latLng(komin),
           L.latLng(stormLocation)
         ],
+        router: L.Routing.graphHopper('', {  // empty string = free public demo
+    urlParameters: {
+      vehicle: 'car',
+      weighting: 'fastest',
+      locale: 'hr'  // Croatian if you want
+    }
+  }),
         createMarker: function() { return null; }, // hide extra markers
         addWaypoints: false,
         routeWhileDragging: false,
