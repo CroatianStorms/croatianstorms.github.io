@@ -35,11 +35,9 @@
     background: rgba(0, 0, 0, 0.25);  /* semi-dark overlay – 0.4–0.6 works best */
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    padding-bottom: 10px;
+    justify-content: flex-end;       /* ← changed to push content to bottom */
     align-items: flex-start;         /* left-aligned text like your current setup */
-    padding-left: 14%;                /* indent from left edge – adjust 5%–10% */
-    padding-right: 14%;
+    padding: 0 14% 30px 14%;           /* ← added 60px bottom padding for spacing from edge */
     color: white;
   ">
   <!-- Date with icon -->
