@@ -90,13 +90,6 @@
         L.latLng(komin),
         L.latLng(stormLocation)
       ],
-      router: L.Routing.graphHopper('', {  // empty string = free public demo
-      urlParameters: {
-      vehicle: 'car',
-      weighting: 'fastest',
-      locale: 'hr'  // Croatian if you want
-    }
-  }),
       createMarker: function(i, wp) {
         // Show markers only for start, komin, and end
         if (i === 0 || i === 2 || i === 3) {
