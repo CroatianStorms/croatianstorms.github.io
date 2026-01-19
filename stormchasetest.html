@@ -18,12 +18,16 @@
 <!-- Hero header with background image -->
 <div style="
   position: relative;
-  height: 400px;                    /* adjust height: 350–500px */
+  height: 388px;                    /* adjust height: 350–500px */
+  width: 100vw;                     /* full viewport width */
+  margin-left: calc(-50vw + 50%);   /* centers it perfectly and extends full width */
+  margin-right: calc(-50vw + 50%);
   background-image: url('images/background13072023.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  margin: 0 -10px 40px -10px;       /* full-width effect, adjust if needed */
+  left: 50%;
+  transform: translateX(-50%);
 ">
   <!-- Dark overlay for text readability -->
   <div style="
@@ -33,10 +37,10 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: left;
-    text-align: left;
+    align-items: flex-start;         /* left-aligned text like your current setup */
+    padding-left: 8%;                /* indent from left edge – adjust 5%–10% */
+    padding-right: 8%;
     color: white;
-    padding: 0 20px;
   ">
   <!-- Date with icon -->
   <div style="
