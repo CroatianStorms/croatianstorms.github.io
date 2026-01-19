@@ -28,16 +28,16 @@
   background-position: center;
   background-repeat: no-repeat;
 ">
-  <!-- Dark overlay for text readability -->
+  <!-- Overlay for text readability -->
   <div style="
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.25);  /* semi-dark overlay – 0.4–0.6 works best */
+    background: rgba(0, 0, 0, 0.25);  /* bright overlay >0.4 too dark */
     display: flex;
     flex-direction: column;
     justify-content: flex-end;       /* ← changed to push content to bottom */
     align-items: flex-start;         /* left-aligned text like your current setup */
-    padding: 0 14% 30px 14%;           /* ← added 60px bottom padding for spacing from edge */
+    padding: 0 14% 30px 14%;           /* ← added 30px bottom padding for spacing from edge */
     color: white;
   ">
   <!-- Date with icon -->
@@ -45,7 +45,7 @@
   font-size: 0.9rem;
   color: white;
   font-weight: normal;
-  margin-bottom: 6px;
+  margin-bottom: 3px;
   display: flex;
   align-items: center;
   gap: 10px;
