@@ -50,17 +50,18 @@
       tooltipAnchor: [0, -20]
     });
 
-    // Common starting points (reusable for all chases)
+    // Common starting/routing points (reusable for all chases)
     var zagreb = [45.7994, 15.9786];
     var zagrebistok = [45.8008, 16.0546];
     var komin = [46.0018, 16.2822];
     var popovec = [45.8532, 16.1388];
+    var cazma = [45.7524, 16.6085];
 
     // Scalable array of chases – add more objects here for new chases
     var chases = [
       {
         location: popovec,  // Popovec location
-        tooltip: "Storm chase 13.07.2023.",
+        tooltip: "Storm chase 13.07.2023. (Popovec)",
         popup: '<div style="text-align:center; min-width:180px;">' +
                  '<h4 style="margin:8px 0 4px;">Storm chase 13.07.2023.</h4>' +
                  '<img src="images/zagreb-thumb.jpg" alt="Zagreb preview" ' +
@@ -72,12 +73,12 @@
                     'Read full story →' +
                  '</a>' +
                '</div>',
-        waypoints: [zagreb, zagrebistok, komin, popovec],  // Route for this chase
+        waypoints: [zagreb, zagrebistok, komin, popovec, cazma],  // Route for this chase
         maxWidth: 220
       },
       {
-        location: komin,  // New marker at Komin (example – change as needed)
-        tooltip: "Storm chase 13.07.2023. (Komin point)",
+        location: cazma,  // New marker at Cazma
+        tooltip: "Storm chase 13.07.2023. (Čazma)",
         popup: '<div style="text-align:center; min-width:180px;">' +  // Same popup as requested
                  '<h4 style="margin:8px 0 4px;">Storm chase 13.07.2023.</h4>' +
                  '<img src="images/zagreb-thumb.jpg" alt="Zagreb preview" ' +
@@ -89,7 +90,7 @@
                     'Read full story →' +
                  '</a>' +
                '</div>',
-        waypoints: [zagreb, zagrebistok, komin, popovec],  // Same route as requested
+        waypoints: [zagreb, zagrebistok, komin, popovec, cazma],  // Same route as popovec marker
         maxWidth: 220
       }
       // Add more chases here as needed, e.g.:
