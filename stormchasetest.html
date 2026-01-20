@@ -147,7 +147,7 @@
     var zagreb = [45.7994, 15.9786];
     var zagrebistok = [45.8008, 16.0546];
     var komin = [46.0018, 16.2822];
-    var stormLocation = [45.8532, 16.1388];
+    var popovecLocation = [45.8532, 16.1388];
 
     // Route control – defaults only (no custom router block)
     var miniRoute = L.Routing.control({
@@ -155,7 +155,7 @@
         L.latLng(zagreb),
         L.latLng(zagrebistok),
         L.latLng(komin),
-        L.latLng(stormLocation)
+        L.latLng(popovecLocation)
       ],
       createMarker: function(i, wp) {
         // Show markers only for start, komin, and end
