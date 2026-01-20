@@ -147,7 +147,9 @@
     var zagreb = [45.7994, 15.9786];
     var zagrebistok = [45.8008, 16.0546];
     var komin = [46.0018, 16.2822];
-    var popovecLocation = [45.8532, 16.1388];
+    var popovec = [45.8532, 16.1388];
+    var cazma = [45.7524, 16.6085];
+    var NPivanicgrad = [45.6907, 16.3909];
 
     // Route control – defaults only (no custom router block)
     var miniRoute = L.Routing.control({
@@ -155,11 +157,13 @@
         L.latLng(zagreb),
         L.latLng(zagrebistok),
         L.latLng(komin),
-        L.latLng(popovecLocation)
+        L.latLng(popovec),
+        L.latLng(NPivanicgrad),
+        L.latLng(cazma)
       ],
       createMarker: function(i, wp) {
-        // Show markers only for start, komin, and end
-        if (i === 0 || i === 2 || i === 3) {
+        // Show markers for start, komin, popovec, cazma
+        if (i === 0 || i === 2 || i === 3 || i === 4) {
           return L.marker(wp.latLng, { icon: customIcon });
         }
         return null;
