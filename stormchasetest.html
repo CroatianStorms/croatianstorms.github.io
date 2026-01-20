@@ -15,6 +15,59 @@
   </style>
 </head>
 <body>
+<header style="
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: rgba(30, 58, 138, 0.75);  /* dark blue semi-transparent */
+  backdrop-filter: blur(8px);           /* nice glass effect – supported in modern browsers */
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+">
+  <!-- Left: Custom logo (click → home) -->
+  <a href="index.html" style="display: flex; align-items: center; text-decoration: none;">
+    <!-- Replace with your logo image when ready -->
+    <!--<img src="images/logo.png" alt="CroatianStorm Logo" style="
+      height: 40px;                 /* adjust size */
+      width: auto;
+      border-radius: 4px;
+      margin-right: 12px;
+    ">
+    <!-- Fallback text logo if image not uploaded yet -->
+    <span style="
+      color: white;
+      font-weight: bold;
+      font-size: 1.4rem;
+      letter-spacing: 1px;
+    ">CroatianStorm</span>
+  </a>
+
+  <!-- Right: Menu icons + text -->
+  <nav style="display: flex; align-items: center; gap: 24px;">
+    <a href="index.html" title="Home" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-size: 0.95rem;">
+      <span>Home</span>
+    </a>
+    <a href="#" title="Blog" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-size: 0.95rem;">
+      <span>Blog</span>
+    </a>
+    <a href="#" title="Photography" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-size: 0.95rem;">
+      <span>Photography</span>
+    </a>
+    <a href="#" title="Videos" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-size: 0.95rem;">
+      <span>Videos</span>
+    </a>
+    <a href="#" title="Socials" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-size: 0.95rem;">
+      <span>Socials</span>
+    </a>
+  </nav>
+</header>
 <!-- Hero header with background image -->
 <div style="
   position: relative;
