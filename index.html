@@ -40,17 +40,17 @@
 
 // Variable to store the route (so we can remove it later)
     var currentRoute = null;
-    // Zagreb (starting point of your chase - you can change this later)
+    // Zagreb (starting point of the chase)
     var zagreb = [45.7994, 15.9786];
     //waypoint to highway
     var zagrebistok = [45.8008, 16.0546];
     //Komin
     var komin = [46.0018, 16.2822];
     // The storm location (your marker)
-    var stormLocation = [45.8532, 16.1388];
+    var popovecLocation = [45.8532, 16.1388];
     
   // Marker location example
-var stormMarker = L.marker(stormLocation, {
+var popovecMarker = L.marker(popovecLocation, {
   icon: L.icon({
     iconUrl: 'images/location.png',          // path to your icon image in repo
     iconSize: [32, 32],                   // size in pixels [width, height] - adjust to fit your image
@@ -83,7 +83,7 @@ var stormMarker = L.marker(stormLocation, {
   .addTo(map);
     
   // ---- NEW: Show route when popup opens, hide when it closes ----
-    stormMarker.on('popupopen', function() {
+    popovecMarker.on('popupopen', function() {
       if (currentRoute) currentRoute.spliceWaypoints(0, 2); // clear old route if any
 
       currentRoute = L.Routing.control({
@@ -91,7 +91,7 @@ var stormMarker = L.marker(stormLocation, {
           L.latLng(zagreb),
           L.latLng(zagrebistok),
           L.latLng(komin),
-          L.latLng(stormLocation)
+          L.latLng(popovecLocation)
         ],
         createMarker: function() { return null; }, // hide extra markers
         addWaypoints: false,
@@ -117,7 +117,7 @@ var stormMarker = L.marker(stormLocation, {
       });
 
 
-    stormMarker.on('popupclose', function() {
+    popovecMarker.on('popupclose', function() {
       if (currentRoute) {
         map.removeControl(currentRoute);
         currentRoute = null;
