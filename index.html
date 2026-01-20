@@ -38,93 +38,112 @@
     }).addTo(map);
     map.invalidateSize();
 
-// Variable to store the route (so we can remove it later)
+    // Variable to store the current route (shared for now, but scalable per marker)
     var currentRoute = null;
-    // Zagreb (starting point of the chase)
-    var zagreb = [45.7994, 15.9786];
-    //waypoint to highway
-    var zagrebistok = [45.8008, 16.0546];
-    //Komin
-    var komin = [46.0018, 16.2822];
-    // The storm location (your marker)
-    var popovecLocation = [45.8532, 16.1388];
-    
-  // Marker location example
-var popovecMarker = L.marker(popovecLocation, {
-  icon: L.icon({
-    iconUrl: 'images/location.png',          // path to your icon image in repo
-    iconSize: [32, 32],                   // size in pixels [width, height] - adjust to fit your image
-    iconAnchor: [16, 32],                 // point of the icon that "pins" to the location (center-bottom usually)
-    popupAnchor: [0, -32],                // where popup opens relative to icon (above it)
-    tooltipAnchor: [0, -20]               // where tooltip opens
-  })
-})
-  .bindTooltip("Storm chase 13.07.2023.", {
-    permanent: false,
-    direction: 'top'
-  })
-  .bindPopup(
-    '<div style="text-align:center; min-width:180px;">' +
-      '<h4 style="margin:8px 0 4px;">Storm chase 13.07.2023.</h4>' +
-      '<img src="images/zagreb-thumb.jpg" alt="Zagreb preview" ' +
-           'style="max-width:100%; height:auto; border-radius:4px; margin-bottom:8px;">' +
-      '<p style="margin:4px 0; font-size:13px;">Supercell near Popovec and Čazma</p>' +
-      '<a href="stormchasetest.html" target="_blank" ' +
-         'style="display:inline-block; padding:6px 12px; background:#0066cc; color:white; ' +
-                'text-decoration:none; border-radius:4px; font-weight:bold;">' +
-         'Read full story →' +
-      '</a>' +
-    '</div>',
-    {
-      maxWidth: 220,          // keeps it small & mobile-friendly
-      className: 'custom-popup'  // optional: for extra styling
-    }
-  )
-  .addTo(map);
-    
-  // ---- NEW: Show route when popup opens, hide when it closes ----
-    popovecMarker.on('popupopen', function() {
-      if (currentRoute) currentRoute.spliceWaypoints(0, 2); // clear old route if any
 
-      currentRoute = L.Routing.control({
-        waypoints: [
-          L.latLng(zagreb),
-          L.latLng(zagrebistok),
-          L.latLng(komin),
-          L.latLng(popovecLocation)
-        ],
-        createMarker: function() { return null; }, // hide extra markers
-        addWaypoints: false,
-        routeWhileDragging: false,
-        show: false,                    // hide the instruction panel
-        lineOptions: {
-          styles: [{color: '#0066cc', weight: 6, opacity: 0.8}]
+    // Custom icon for all markers
+    var customIcon = L.icon({
+      iconUrl: 'images/location.png',
+      iconSize: [32, 32],
+      iconAnchor: [16, 32],
+      popupAnchor: [0, -32],
+      tooltipAnchor: [0, -20]
+    });
+
+    // Common starting points (reusable for all chases)
+    var zagreb = [45.7994, 15.9786];
+    var zagrebistok = [45.8008, 16.0546];
+    var komin = [46.0018, 16.2822];
+
+    // Scalable array of chases – add more objects here for new chases
+    var chases = [
+      {
+        location: [45.8532, 16.1388],  // Popovec location
+        tooltip: "Storm chase 13.07.2023.",
+        popup: '<div style="text-align:center; min-width:180px;">' +
+                 '<h4 style="margin:8px 0 4px;">Storm chase 13.07.2023.</h4>' +
+                 '<img src="images/zagreb-thumb.jpg" alt="Zagreb preview" ' +
+                      'style="max-width:100%; height:auto; border-radius:4px; margin-bottom:8px;">' +
+                 '<p style="margin:4px 0; font-size:13px;">Supercell near Popovec and Čazma</p>' +
+                 '<a href="stormchasetest.html" target="_blank" ' +
+                    'style="display:inline-block; padding:6px 12px; background:#0066cc; color:white; ' +
+                           'text-decoration:none; border-radius:4px; font-weight:bold;">' +
+                    'Read full story →' +
+                 '</a>' +
+               '</div>',
+        waypoints: [zagreb, zagrebistok, komin, [45.8532, 16.1388]],  // Route for this chase
+        maxWidth: 220
+      },
+      {
+        location: [46.0018, 16.2822],  // New marker at Komin (example – change as needed)
+        tooltip: "Storm chase 13.07.2023. (Komin point)",
+        popup: '<div style="text-align:center; min-width:180px;">' +  // Same popup as requested
+                 '<h4 style="margin:8px 0 4px;">Storm chase 13.07.2023.</h4>' +
+                 '<img src="images/zagreb-thumb.jpg" alt="Zagreb preview" ' +
+                      'style="max-width:100%; height:auto; border-radius:4px; margin-bottom:8px;">' +
+                 '<p style="margin:4px 0; font-size:13px;">Supercell near Popovec and Čazma</p>' +
+                 '<a href="stormchasetest.html" target="_blank" ' +
+                    'style="display:inline-block; padding:6px 12px; background:#0066cc; color:white; ' +
+                           'text-decoration:none; border-radius:4px; font-weight:bold;">' +
+                    'Read full story →' +
+                 '</a>' +
+               '</div>',
+        waypoints: [zagreb, zagrebistok, komin, [45.8532, 16.1388]],  // Same route as requested
+        maxWidth: 220
+      }
+      // Add more chases here as needed, e.g.:
+      // {
+      //   location: [new lat, new lng],
+      //   tooltip: "New chase title",
+      //   popup: 'Custom popup HTML',
+      //   waypoints: [zagreb, new_via1, new_via2, [new lat, new lng]],
+      //   maxWidth: 220
+      // }
+    ];
+
+    // Loop through chases to create markers dynamically (scalable)
+    chases.forEach(function(chase) {
+      var marker = L.marker(chase.location, { icon: customIcon })
+        .bindTooltip(chase.tooltip, { permanent: false, direction: 'top' })
+        .bindPopup(chase.popup, { maxWidth: chase.maxWidth, className: 'custom-popup' })
+        .addTo(map);
+
+      // Attach route events to this specific marker
+      marker.on('popupopen', function() {
+        if (currentRoute) {
+          map.removeControl(currentRoute);
+          currentRoute = null;
         }
-      }).addTo(map);
-      
-      // Wait for the route to be fully calculated
+
+        currentRoute = L.Routing.control({
+          waypoints: chase.waypoints.map(L.latLng),  // Use this chase's waypoints
+          createMarker: function() { return null; },
+          addWaypoints: false,
+          routeWhileDragging: false,
+          show: false,
+          lineOptions: {
+            styles: [{color: '#0066cc', weight: 6, opacity: 0.8}]
+          }
+        }).addTo(map);
+
         currentRoute.on('routesfound', function(e) {
-          var routeLine = e.routes[0].coordinates;  // or just use the control's internal line
-      
-          // Now safe to get real bounds
           var bounds = L.latLngBounds(e.routes[0].coordinates);
-      
           map.fitBounds(bounds, {
-            padding: [250, 250],     // ← your desired zoom-out level (adjust higher if needed, e.g. [200, 200])
-            maxZoom: 11              // ← prevents too close zoom on short routes
+            padding: [250, 250],
+            maxZoom: 11
           });
         });
       });
 
-
-    popovecMarker.on('popupclose', function() {
-      if (currentRoute) {
-        map.removeControl(currentRoute);
-        currentRoute = null;
-      }
-      // Optional: return to original view
-      map.setView([45.1, 16.0], 7);
+      marker.on('popupclose', function() {
+        if (currentRoute) {
+          map.removeControl(currentRoute);
+          currentRoute = null;
+        }
+        map.setView([45.1, 16.0], 7);
+      });
     });
+
   </script>
 </body>
 </html>
