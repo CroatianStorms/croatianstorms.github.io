@@ -61,6 +61,14 @@
   visibility: visible;
   color: white;
 }
+.menu-item svg {
+  transition: all 0.3s ease;
+}
+
+.menu-item:hover svg {
+  stroke: #ffffff;                /* white on hover */
+  transform: scale(1.1);          /* slight grow */
+}
   </style>
 </head>
 <body>
@@ -101,23 +109,40 @@
   <!-- Right: Menu icons + text -->
   <nav style="display: flex; align-items: center; gap: 32px; padding-right: 40px;">
   <a href="index.html" class="menu-item" title="Home">
-    <span class="icon">🏠</span>
-    <span class="text">HOME</span>
-  </a>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+    <polyline points="9 22 9 12 15 12 15 22"/>
+  </svg>
+  <span class="text">HOME</span>
+</a>
   <a href="#" class="menu-item" title="Blog">
-    <span class="icon">✍️</span>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+</svg>
     <span class="text">BLOG</span>
   </a>
   <a href="#" class="menu-item" title="Photography">
-    <span class="icon">📸</span>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+  <circle cx="12" cy="13" r="4"/>
+</svg>
     <span class="text">PHOTOGRAPHY</span>
   </a>
   <a href="#" class="menu-item" title="Videos">
-    <span class="icon">🎥</span>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="2" y="4" width="20" height="16" rx="2"/>
+  <polygon points="10 8 16 12 10 16 10 8"/>
+</svg>
     <span class="text">VIDEOS</span>
   </a>
   <a href="#" class="menu-item" title="Socials">
-    <span class="icon">🌐</span>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <circle cx="18" cy="5" r="3"/>
+  <circle cx="6" cy="12" r="3"/>
+  <circle cx="18" cy="19" r="3"/>
+  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+</svg>
     <span class="text">SOCIALS</span>
   </a>
 </nav>
