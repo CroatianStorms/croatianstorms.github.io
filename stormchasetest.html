@@ -15,12 +15,17 @@
   background: #2d2d2d; /* fallback color while loading */
 }
   .menu-link {
-  transition: all 0.2s ease;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: all 0.25s ease;
+  color: white !important;
 }
 
 .menu-link:hover {
-  text-decoration: underline;
-  color: #80bfff !important;  /* light blue highlight */
+  background: #1e3a8a;               /* exactly the same blue as your Home button */
+  transform: scale(1.08);            /* slight grow effect – feels nice */
+  color: white !important;           /* keep text white */
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.4);  /* optional soft glow/shadow */
 }
   </style>
 </head>
