@@ -18,6 +18,7 @@
   position: relative;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   justify-content: flex-start;
   min-width: 36px;
   max-width: 36px;               /* start small */
@@ -52,12 +53,11 @@
   border-radius: 6px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.15);
   transform: scale(1.04);
+  justify-content: center;
 }
 
 .menu-item:hover .icon {
-  opacity: 0;                    /* hide icon on hover */
-  margin-right: 0;
-  visibility: hidden;
+  display: none;                  /* ← completely removes icon from layout (better than opacity: 0) */
 }
 
 .menu-item:hover .text {
@@ -65,6 +65,8 @@
   opacity: 1;
   visibility: visible;
   color: white;
+  flex: 1;                        /* helps text take available space */
+  text-align: center;             /* centers text inside the button */
 }
 .menu-item svg {
   transition: all 0.3s ease;
