@@ -15,23 +15,14 @@
   background: #2d2d2d; /* fallback color while loading */
 }
   .menu-link {
-  position: relative;
-  padding-bottom: 4px;
+  transition: all 0.25s ease;
+  text-shadow: 0 0 0 rgba(255,255,255,0);
 }
 
-.menu-link::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 2px;
-  bottom: 0;
-  left: 0;
-  background-color: #4da6ff;  /* light blue */
-  transition: width 0.3s ease;
-}
-
-.menu-link:hover::after {
-  width: 100%;
+.menu-link:hover {
+  text-shadow: 0 0 10px rgba(77, 166, 255, 0.8);  /* blue glow */
+  color: #80bfff !important;
+  filter: brightness(1.2);
 }
   </style>
 </head>
