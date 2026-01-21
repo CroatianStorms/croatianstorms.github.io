@@ -14,18 +14,52 @@
     #mini-map {
   background: #2d2d2d; /* fallback color while loading */
 }
-  .menu-link {
-  padding: 6px 10px;
-  border-radius: 6px;
-  transition: all 0.25s ease;
-  color: white !important;
+  .menu-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;                    /* small icon size in normal state */
+  height: 36px;
+  border-radius: 50%;             /* round in normal state */
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  overflow: hidden;
 }
 
-.menu-link:hover {
-  background: #1e3a8a;               /* exactly the same blue as your Home button */
-  transform: scale(1.08);            /* slight grow effect – feels nice */
-  color: white !important;           /* keep text white */
-  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.4);  /* optional soft glow/shadow */
+.menu-item .icon {
+  font-size: 1.4rem;
+  transition: all 0.3s ease;
+}
+
+.menu-item .text {
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+}
+
+.menu-item:hover {
+  width: auto;                    /* expand on hover */
+  padding: 6px 14px;              /* same padding as your Home button */
+  background: #1e3a8a;            /* exact blue */
+  border-radius: 6px;             /* becomes rectangular button */
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);  /* same subtle shadow */
+  transform: scale(1.05);         /* slight lift/grow */
+}
+
+.menu-item:hover .icon {
+  margin-right: 6px;              /* space between icon and text */
+}
+
+.menu-item:hover .text {
+  opacity: 1;
+  visibility: visible;
+  color: white;
 }
   </style>
 </head>
@@ -65,23 +99,28 @@
   </a>
 
   <!-- Right: Menu icons + text -->
-  <nav style="display: flex; align-items: center; gap: 24px; padding-right: 40px;">
-    <a href="index.html" class="menu-link" title="Home" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 0.75rem;">
-      <span>HOME</span>
-    </a>
-    <a href="#" class="menu-link" title="Blog" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 0.75rem;">
-      <span>BLOG</span>
-    </a>
-    <a href="#" class="menu-link" title="Photography" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 0.75rem;">
-      <span>PHOTOGRAPHY</span>
-    </a>
-    <a href="#" class="menu-link" title="Videos" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 0.75rem;">
-      <span>VIDEOS</span>
-    </a>
-    <a href="#" class="menu-link" title="Socials" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 0.75rem;">
-      <span>SOCIALS</span>
-    </a>
-  </nav>
+  <nav style="display: flex; align-items: center; gap: 32px; padding-right: 40px;">
+  <a href="index.html" class="menu-item" title="Home">
+    <span class="icon">🏠</span>
+    <span class="text">HOME</span>
+  </a>
+  <a href="#" class="menu-item" title="Blog">
+    <span class="icon">✍️</span>
+    <span class="text">BLOG</span>
+  </a>
+  <a href="#" class="menu-item" title="Photography">
+    <span class="icon">📸</span>
+    <span class="text">PHOTOGRAPHY</span>
+  </a>
+  <a href="#" class="menu-item" title="Videos">
+    <span class="icon">🎥</span>
+    <span class="text">VIDEOS</span>
+  </a>
+  <a href="#" class="menu-item" title="Socials">
+    <span class="icon">🌐</span>
+    <span class="text">SOCIALS</span>
+  </a>
+</nav>
 </header>
 <!-- Hero header with background image -->
 <div style="
