@@ -66,17 +66,17 @@
   visibility: visible;
   color: white;
   flex: 1;                        /* helps text take available space */
-  text-align: center;             /* centers text inside the button */
+  text-align: center;
+  padding-left: 0;
+  margin-left: auto;
+  margin-right: auto;
 }
 .menu-item svg {
   transition: all 0.3s ease;
 }
 
 .menu-item:hover svg {
-  opacity: 0;                    /* hide SVG icon on hover */
-  stroke: #ffffff;
-  transform: scale(1.1);
-  visibility: hidden;
+  display: none;                    /* hide SVG icon on hover */
 }
   </style>
 </head>
