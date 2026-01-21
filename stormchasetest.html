@@ -30,26 +30,46 @@
   text-decoration: none;
 }
 
-.menu-item .icon {
-  flex-shrink: 0;
-  margin-right: 0;
-  transition: margin-right 0.35s ease;
+.menu-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;                    /* small icon size in normal state */
+  height: 36px;
+  border-radius: 50%;             /* round in normal state */
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  overflow: hidden;
 }
+
+.menu-item .icon {
+  font-size: 1.4rem;
+  transition: all 0.3s ease;
+}
+
 .menu-item .text {
+  position: absolute;
   opacity: 0;
-  transition: opacity 0.25s ease 0.1s;   /* delayed appearance */
+  visibility: hidden;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition: opacity 0.25s ease 0.1s;
 }
 
 .menu-item:hover {
-  max-width: 180px;              /* large enough for icon + longest text */
-  border-radius: 6px;
-  background: #1e3a8a;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-  transform: scale(1.04);        /* very subtle scale – or remove if still shaky */
+  max-width: 180px;                    /* expand on hover */
+  padding: 6px 14px;              /* same padding as your Home button */
+  background: #1e3a8a;            /* exact blue */
+  border-radius: 6px;             /* becomes rectangular button */
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);  /* same subtle shadow */
+  transform: scale(1.04);         /* slight lift/grow */
 }
 
 .menu-item:hover .icon {
-  margin-right: 8px;
+  margin-right: 6px;              /* space between icon and text */
 }
 
 .menu-item:hover .text {
