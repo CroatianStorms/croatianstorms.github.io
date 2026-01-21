@@ -14,6 +14,14 @@
     #mini-map {
   background: #2d2d2d; /* fallback color while loading */
 }
+  .menu-link {
+  transition: all 0.2s ease;
+}
+
+.menu-link:hover {
+  text-decoration: underline;
+  color: #80bfff !important;  /* light blue highlight */
+}
   </style>
 </head>
 <body>
@@ -53,19 +61,19 @@
 
   <!-- Right: Menu icons + text -->
   <nav style="display: flex; align-items: center; gap: 24px; padding-right: 40px;">
-    <a href="index.html" title="Home" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 0.75rem;">
+    <a href="index.html" class="menu-link" title="Home" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 0.75rem;">
       <span>HOME</span>
     </a>
-    <a href="#" title="Blog" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 0.75rem;">
+    <a href="#" class="menu-link" title="Blog" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 0.75rem;">
       <span>BLOG</span>
     </a>
-    <a href="#" title="Photography" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 0.75rem;">
+    <a href="#" class="menu-link" title="Photography" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 0.75rem;">
       <span>PHOTOGRAPHY</span>
     </a>
-    <a href="#" title="Videos" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 0.75rem;">
+    <a href="#" class="menu-link" title="Videos" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 0.75rem;">
       <span>VIDEOS</span>
     </a>
-    <a href="#" title="Socials" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 0.75rem;">
+    <a href="#" class="menu-link" title="Socials" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px; font-weight: bold; font-size: 0.75rem;">
       <span>SOCIALS</span>
     </a>
   </nav>
