@@ -15,15 +15,23 @@
   background: #2d2d2d; /* fallback color while loading */
 }
   .menu-link {
-  padding: 6px 10px;
-  border-radius: 6px;
-  transition: all 0.25s ease;
+  position: relative;
+  padding-bottom: 4px;
 }
 
-.menu-link:hover {
-  background: rgba(255, 255, 255, 0.15);  /* subtle white overlay */
-  transform: scale(1.08);                 /* slight grow effect */
-  color: #ffffff !important;
+.menu-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: #4da6ff;  /* light blue */
+  transition: width 0.3s ease;
+}
+
+.menu-link:hover::after {
+  width: 100%;
 }
   </style>
 </head>
