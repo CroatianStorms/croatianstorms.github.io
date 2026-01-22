@@ -112,6 +112,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  justify-content: flex-start;
   min-width: 40px;
   max-width: 40px;
   height: 36px;
@@ -121,14 +122,16 @@
   background: transparent;
   color: white;
   text-decoration: none;
+}
+.social-item .text {
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+  white-space: nowrap;
   font-weight: 600;
   font-size: 0.9rem;
+  transition: opacity 0.25s ease 0.1s;
 }
-
-.social-item .icon {
-  transition: all 0.3s ease;
-}
-
 .social-item:hover {
   max-width: 160px;               /* enough for "YouTube", "Instagram" */
   padding: 4px 12px;
@@ -137,11 +140,6 @@
   box-shadow: 0 1px 4px rgba(0,0,0,0.15);
   transform: scale(1.04);
 }
-
-.social-item:hover .icon {
-  display: none;
-}
-
 .social-item:hover .text {
   position: static;
   opacity: 1;
@@ -150,6 +148,14 @@
   text-align: center;
   flex: 1;
 }
+.social-item .icon {
+  transition: all 0.3s ease;
+}
+
+.social-item:hover .icon {
+  display: none;
+}
+
   </style>
 </head>
 <body>
@@ -306,7 +312,7 @@
 <!------------------------------------------------------------SIDEBAR -------------------------------->
   <aside style="
   position: sticky;
-  top: 70px;
+  top: 65px;
   float: right;
   width: 110px;
   margin-left: 30px;
