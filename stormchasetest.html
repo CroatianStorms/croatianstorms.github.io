@@ -132,12 +132,28 @@
   font-size: 0.9rem;
   transition: opacity 0.25s ease 0.1s;
 }
-.social-item:hover {
+
+.social-item[href*="youtube.com"]:hover {
   max-width: 160px;               /* enough for "YouTube", "Instagram" */
   padding: 4px 12px;
-  background: #1e3a8a;
+  background: #ff0000;           /* classic YouTube red */
   border-radius: 6px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  box-shadow: 0 1px 6px rgba(255, 0, 0, 0.4);  /* red glow/shadow */
+  transform: scale(1.04);
+}
+.social-item[href*="instagram.com"]:hover {
+  max-width: 160px;               /* enough for "YouTube", "Instagram" */
+  padding: 4px 12px;
+  background: linear-gradient(
+    45deg,
+    #f09433,
+    #e6683c,
+    #dc2743,
+    #cc2366,
+    #bc1888
+  );
+  border-radius: 6px;
+  box-shadow: 0 1px 6px rgba(188, 24, 136, 0.4);  /* purple-ish shadow */
   transform: scale(1.04);
 }
 .social-item:hover .text {
