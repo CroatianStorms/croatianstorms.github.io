@@ -14,6 +14,7 @@
     #mini-map {
   background: #2d2d2d; /* fallback color while loading */
 }
+/* -----------------------------------------------TOP MENU STYLE -----------------------------------*/
   .menu-item {
   position: relative;
   display: inline-flex;
@@ -63,10 +64,52 @@
 .menu-item:hover svg {
   display: none;                    /* hide SVG icon on hover */
 }
+/* -----------------------------------------------SIDEBAR STYLE -----------------------------------*/
+.sidebar-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;         /* centers text */
+  min-width: 40px;                 /* slightly wider than icon-only version */
+  max-width: 40px;
+  height: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+  transition: max-width 0.35s ease, border-radius 0.35s ease, box-shadow 0.35s ease;
+  background: transparent;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.sidebar-item .text {
+  opacity: 1;                      /* always visible in normal state */
+  visibility: visible;
+  white-space: nowrap;
+  transition: opacity 0.25s ease;
+}
+
+.sidebar-item:hover {
+  max-width: 140px;                /* enough for "2026" + padding */
+  padding: 4px 12px;
+  background: #1e3a8a;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  transform: scale(1.04);
+}
+
+.sidebar-item:hover .text {
+  opacity: 1;
+  visibility: visible;
+  color: white;
+  text-align: center;
+  flex: 1;
+}
   </style>
 </head>
 <body>
-<!-- Top header -->
+<!------------------------------------------------------------------------------ TOP HEADER ------------------------------------>
 <header style="
   position: fixed;
   top: 0;
@@ -141,7 +184,7 @@
 </a>
   </nav>
 </header>
-<!-- Hero header with background image -->
+<!--------------------------------------------------------------------- HERO HEADER with background image ------------------------------------->
 <div style="
   position: relative;
   height: 388px;                    /* adjust height: 350–500px */
@@ -215,7 +258,69 @@
   </div>
   </div>
   </div>
+  
+<!------------------------------------------------------------SIDEBAR -------------------------------->
+<aside style="
+  position: sticky;
+  top: 80px;
+  float: right;
+  width: 220px;
+  margin-left: 30px;
+  padding: 20px 0;
+  background: rgba(40, 40, 40, 0.4);
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.08);
+  z-index: 10;
+">
+  <h3 style="
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: white;
+    margin: 0 0 16px 16px;
+    letter-spacing: 0.5px;
+  ">
+    Chase season
+  </h3>
 
+  <!-- Years list – text only, no icons -->
+  <div style="display: flex; flex-direction: column; gap: 8px; padding: 0 8px;">
+    <a href="season-2026.html" class="sidebar-item" title="2026">
+      <span class="text">2026</span>
+    </a>
+    <a href="season-2025.html" class="sidebar-item" title="2025">
+      <span class="text">2025</span>
+    </a>
+    <a href="season-2024.html" class="sidebar-item" title="2024">
+      <span class="text">2024</span>
+    </a>
+    <a href="season-2023.html" class="sidebar-item" title="2023">
+      <span class="text">2023</span>
+    </a>
+    <a href="season-2022.html" class="sidebar-item" title="2022">
+      <span class="text">2022</span>
+    </a>
+    <a href="season-2021.html" class="sidebar-item" title="2021">
+      <span class="text">2021</span>
+    </a>
+    <a href="season-2020.html" class="sidebar-item" title="2020">
+      <span class="text">2020</span>
+    </a>
+    <a href="season-2019.html" class="sidebar-item" title="2019">
+      <span class="text">2019</span>
+    </a>
+    <a href="season-2018.html" class="sidebar-item" title="2018">
+      <span class="text">2018</span>
+    </a>
+  </div>
+</aside>
+
+<!-- Clear float -->
+<div style="clear: both;"></div>
+  <!------------------------------------------------PAGE STARTS---------------------------------------------------------------------------------------->
+  <div style="margin-right: 260px;">   <!-- Main content wrapping so it doesn't overlap with sidebar - 220px sidebar width + 40px gap -->
   <h2 style="
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   font-size: 1.4rem;
@@ -360,6 +465,7 @@
   ">
   ← Home
   </a>
+  </div>
   </div>
 
 </body>
