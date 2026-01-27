@@ -444,83 +444,80 @@
 "></div>
 
   <script>
-    // Mini-map setup
-    var miniMap = L.map('mini-map', {
-  zoomControl: false,
-  attributionControl: true
-});
+  // Mini-map setup – basic map creation
+  var miniMap = L.map('mini-map', {
+    zoomControl: false,
+    attributionControl: true
+  });
 
-    // Base layer (same as main map)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19
-    }).addTo(miniMap);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+  }).addTo(miniMap);
 
-    // Ensure Leaflet recalculates container size once the map is ready.
-    // This helps avoid a misalignment between raster tiles and vector layers.
-    miniMap.whenReady(function() {
-      // Force an immediate size recalculation
+  // Custom icon – same as index.html
+  var customIcon = L.icon({
+    iconUrl: 'images/location.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
+    tooltipAnchor: [0, -20]
+  });
+
+  // Coordinates
+  var zagreb = [45.7994, 15.9786];
+  var zagrebistok = [45.8008, 16.0546];
+  var komin = [46.0018, 16.2822];
+  var popovec = [45.8532, 16.1388];
+  var cazma = [45.7524, 16.6085];
+  var NPivanicgrad = [45.6907, 16.3909];
+
+  // Wait for full page load (images, fonts, layout) before finalizing map & route
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      // Force size recalculation after layout is stable
       miniMap.invalidateSize(true);
-    });
 
-    // Custom icon – same as index.html
-    var customIcon = L.icon({
-      iconUrl: 'images/location.png',
-      iconSize: [32, 32],
-      iconAnchor: [16, 32],
-      popupAnchor: [0, -32],
-      tooltipAnchor: [0, -20]
-    });
-
-    // Coordinates (same as index.html)
-    var zagreb = [45.7994, 15.9786];
-    var zagrebistok = [45.8008, 16.0546];
-    var komin = [46.0018, 16.2822];
-    var popovec = [45.8532, 16.1388];
-    var cazma = [45.7524, 16.6085];
-    var NPivanicgrad = [45.6907, 16.3909];
-
-    // Route control – defaults only (no custom router block)
-    var miniRoute = L.Routing.control({
-      waypoints: [
-        L.latLng(zagreb),
-        L.latLng(zagrebistok),
-        L.latLng(komin),
-        L.latLng(popovec),
-        L.latLng(NPivanicgrad),
-        L.latLng(cazma)
-      ],
-      createMarker: function(i, wp) {
-        // Show markers for start, komin, popovec, cazma
-        if (i === 0 || i === 2 || i === 3 || i === 5) {
-          return L.marker(wp.latLng, { icon: customIcon });
+      // Now create and add the routing control
+      var miniRoute = L.Routing.control({
+        waypoints: [
+          L.latLng(zagreb),
+          L.latLng(zagrebistok),
+          L.latLng(komin),
+          L.latLng(popovec),
+          L.latLng(NPivanicgrad),
+          L.latLng(cazma)
+        ],
+        createMarker: function(i, wp) {
+          if (i === 0 || i === 2 || i === 3 || i === 5) {
+            return L.marker(wp.latLng, { icon: customIcon });
+          }
+          return null;
+        },
+        addWaypoints: false,
+        routeWhileDragging: false,
+        show: false,
+        lineOptions: {
+          styles: [{color: '#0066cc', weight: 6, opacity: 0.8}]
         }
-        return null;
-      },
-      addWaypoints: false,
-      routeWhileDragging: false,
-      show: false,
-      lineOptions: {
-        styles: [{color: '#0066cc', weight: 6, opacity: 0.8}]
-      }
-    }).addTo(miniMap);
+      }).addTo(miniMap);
 
-    // Auto-fit when route is ready
-    // Force another invalidateSize() and delay fitBounds slightly to ensure tiles + vector layers are aligned.
-    miniRoute.on('routesfound', function(e) {
-          // Recalculate size to avoid misalignment when the control was added before layout settled
-          miniMap.invalidateSize(true);
+      // Auto-fit when route is ready
+      miniRoute.on('routesfound', function(e) {
+        // One more invalidateSize just in case
+        miniMap.invalidateSize(true);
 
-          // Build bounds from the returned coordinates
+        // Small delay ensures tiles & vector layers are in sync
+        setTimeout(function() {
           var bounds = L.latLngBounds(e.routes[0].coordinates);
+          miniMap.fitBounds(bounds, {
+            padding: [40, 40]
+          });
+        }, 80);
+      });
 
-          // Small delay to make sure tiles and vector layers are in sync before fitBounds
-          setTimeout(function() {
-            miniMap.fitBounds(bounds, {
-              padding: [40, 40]
-            });
-          }, 80); // 50-150 ms usually sufficient; adjust if needed
-    });
-  </script>
+    }, 200); // 200 ms delay after load – safe for most cases
+  });
+</script>
 
   <!-- Clear float -->
   <div style="clear: both;"></div>
