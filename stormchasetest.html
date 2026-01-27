@@ -444,17 +444,13 @@
 "></div>
 
   <script>
-  // Mini-map setup – basic map creation
+  // Create the map container but DON'T add tiles or route yet
   var miniMap = L.map('mini-map', {
     zoomControl: false,
     attributionControl: true
   });
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19
-  }).addTo(miniMap);
-
-  // Custom icon – same as index.html
+  // Custom icon
   var customIcon = L.icon({
     iconUrl: 'images/location.png',
     iconSize: [32, 32],
@@ -471,52 +467,53 @@
   var cazma = [45.7524, 16.6085];
   var NPivanicgrad = [45.6907, 16.3909];
 
-  // Wait for full page load (images, fonts, layout) before finalizing map & route
-  window.addEventListener('load', function() {
-    setTimeout(function() {
-      // Force size recalculation after layout is stable
-      miniMap.invalidateSize(true);
+  // THE REAL FIX: Wait for the hero background image to load, then build everything
+  var heroImg = new Image();
+  heroImg.src = 'images/background13072023.jpg';  // your exact hero image
 
-      // Now create and add the routing control
-      var miniRoute = L.Routing.control({
-        waypoints: [
-          L.latLng(zagreb),
-          L.latLng(zagrebistok),
-          L.latLng(komin),
-          L.latLng(popovec),
-          L.latLng(NPivanicgrad),
-          L.latLng(cazma)
-        ],
-        createMarker: function(i, wp) {
-          if (i === 0 || i === 2 || i === 3 || i === 5) {
-            return L.marker(wp.latLng, { icon: customIcon });
-          }
-          return null;
-        },
-        addWaypoints: false,
-        routeWhileDragging: false,
-        show: false,
-        lineOptions: {
-          styles: [{color: '#0066cc', weight: 6, opacity: 0.8}]
+  heroImg.onload = function() {
+    // Now the hero image is fully loaded → layout is final
+    // 1. Add tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(miniMap);
+
+    // 2. Force size recalculation
+    miniMap.invalidateSize(true);
+
+    // 3. Add the route
+    var miniRoute = L.Routing.control({
+      waypoints: [
+        L.latLng(zagreb),
+        L.latLng(zagrebistok),
+        L.latLng(komin),
+        L.latLng(popovec),
+        L.latLng(NPivanicgrad),
+        L.latLng(cazma)
+      ],
+      createMarker: function(i, wp) {
+        if (i === 0 || i === 2 || i === 3 || i === 5) {
+          return L.marker(wp.latLng, { icon: customIcon });
         }
-      }).addTo(miniMap);
+        return null;
+      },
+      addWaypoints: false,
+      routeWhileDragging: false,
+      show: false,
+      lineOptions: {
+        styles: [{color: '#0066cc', weight: 6, opacity: 0.8}]
+      }
+    }).addTo(miniMap);
 
-      // Auto-fit when route is ready
-      miniRoute.on('routesfound', function(e) {
-        // One more invalidateSize just in case
-        miniMap.invalidateSize(true);
-
-        // Small delay ensures tiles & vector layers are in sync
-        setTimeout(function() {
-          var bounds = L.latLngBounds(e.routes[0].coordinates);
-          miniMap.fitBounds(bounds, {
-            padding: [40, 40]
-          });
-        }, 80);
-      });
-
-    }, 400); // 200 ms delay after load – safe for most cases
-  });
+    // 4. Fit bounds when route is ready
+    miniRoute.on('routesfound', function(e) {
+      miniMap.invalidateSize(true);  // one more just in case
+      setTimeout(function() {
+        var bounds = L.latLngBounds(e.routes[0].coordinates);
+        miniMap.fitBounds(bounds, { padding: [40, 40] });
+      }, 50);
+    });
+  };
 </script>
 
   <!-- Clear float -->
