@@ -444,13 +444,14 @@
 "></div>
 
   <script>
-  // Create the map container but DON'T add tiles or route yet
-  var miniMap = L.map('mini-map', {
-    zoomControl: false,
-    attributionControl: true
-  });
+  // Coordinates and icon (unchanged)
+  var zagreb = [45.7994, 15.9786];
+  var zagrebistok = [45.8008, 16.0546];
+  var komin = [46.0018, 16.2822];
+  var popovec = [45.8532, 16.1388];
+  var cazma = [45.7524, 16.6085];
+  var NPivanicgrad = [45.6907, 16.3909];
 
-  // Custom icon
   var customIcon = L.icon({
     iconUrl: 'images/location.png',
     iconSize: [32, 32],
@@ -459,30 +460,35 @@
     tooltipAnchor: [0, -20]
   });
 
-  // Coordinates
-  var zagreb = [45.7994, 15.9786];
-  var zagrebistok = [45.8008, 16.0546];
-  var komin = [46.0018, 16.2822];
-  var popovec = [45.8532, 16.1388];
-  var cazma = [45.7524, 16.6085];
-  var NPivanicgrad = [45.6907, 16.3909];
+  let miniMap = null;
+  let miniRoute = null;
 
-  // THE REAL FIX: Wait for the hero background image to load, then build everything
-  var heroImg = new Image();
-  heroImg.src = 'images/background13072023.jpg';  // your exact hero image
+  function initMiniMap() {
+    // Prevent multiple initializations
+    if (miniMap) return;
 
-  heroImg.onload = function() {
-    // Now the hero image is fully loaded → layout is final
-    // 1. Add tiles
+    const container = document.getElementById('mini-map');
+    
+    // Safety check - do not initialize if container has no size yet
+    if (container.offsetWidth === 0 || container.offsetHeight === 0) {
+      // Try again in next animation frame
+      requestAnimationFrame(initMiniMap);
+      return;
+    }
+
+    miniMap = L.map('mini-map', {
+      zoomControl: false,
+      attributionControl: true
+    });
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19
     }).addTo(miniMap);
 
-    // 2. Force size recalculation
-    miniMap.invalidateSize(true);
+    // Very important: immediate size correction after creation
+    miniMap.invalidateSize({ animate: false });
 
-    // 3. Add the route
-    var miniRoute = L.Routing.control({
+    miniRoute = L.Routing.control({
       waypoints: [
         L.latLng(zagreb),
         L.latLng(zagrebistok),
@@ -505,15 +511,37 @@
       }
     }).addTo(miniMap);
 
-    // 4. Fit bounds when route is ready
+    // Wait for route + one more size correction
     miniRoute.on('routesfound', function(e) {
-      miniMap.invalidateSize(true);  // one more just in case
-      setTimeout(function() {
-        var bounds = L.latLngBounds(e.routes[0].coordinates);
+      miniMap.invalidateSize({ animate: false });
+      
+      setTimeout(() => {
+        const bounds = L.latLngBounds(e.routes[0].coordinates);
         miniMap.fitBounds(bounds, { padding: [40, 40] });
-      }, 50);
+      }, 150);
     });
-  };
+  }
+
+  // Try to initialize as soon as possible, but keep retrying until sized
+  function tryInit() {
+    if (document.getElementById('mini-map')?.offsetWidth > 0) {
+      initMiniMap();
+    } else {
+      requestAnimationFrame(tryInit);
+    }
+  }
+
+  // Start trying early, but safe
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', tryInit);
+  } else {
+    tryInit();
+  }
+
+  // Last resort safety net
+  window.addEventListener('load', () => {
+    setTimeout(initMiniMap, 300);
+  });
 </script>
 
   <!-- Clear float -->
