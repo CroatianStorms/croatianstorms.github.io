@@ -72,6 +72,7 @@
 @media (max-width: 768px) {
   .hamburger {
     display: block !important;
+    margin-left: auto
   }
 
   .nav-menu {
@@ -83,22 +84,6 @@
     display: flex !important;
   }
 }
-
-/* Optional: Style hamburger */
-.hamburger {
-  font-size: 2rem;
-  color: white;
-  margin-right: -16px;
-}
-
-/* Mobile menu style */
-.mobile-menu {
-  background: rgba(40, 40, 40, 0.95);
-  backdrop-filter: blur(8px);
-}
-header {
-    padding: 0 12px 0 16px !important;
-  }
 /* -----------------------------------------------SIDEBAR STYLE -----------------------------------*/
 .sidebar-item {
   position: relative;
@@ -237,17 +222,14 @@ header {
       margin-right: 12px;
     ">
   <!-- Right: Menu icons + text -->
-  <!-- Hamburger toggle (visible only on mobile) -->
-<label for="menu-toggle" class="hamburger" style="
+<!-- Hamburger toggle -->
+  <input type="checkbox" id="menu-toggle" class="menu-toggle" hidden>
+  <label for="menu-toggle" class="hamburger" style="
     display: none;
     cursor: pointer;
     color: white;
     font-size: 2rem;
-    padding: 12px 0 12px 16px;    /* touch-friendly padding */
-    margin-right: -42px;           /* pulls it flush to right edge */
-    z-index: 1001;
   ">☰</label>
-<input type="checkbox" id="menu-toggle" class="menu-toggle" hidden>
   <!-- Navigation -->
   <nav class="nav-menu" style="
     display: flex;
