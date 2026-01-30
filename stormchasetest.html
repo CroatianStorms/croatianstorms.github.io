@@ -63,6 +63,38 @@
   display: none;                    /* hide SVG icon on hover */
 }
 
+/* Desktop: horizontal menu */
+.nav-menu {
+  display: flex !important;
+}
+
+/* Mobile: hide horizontal, show hamburger */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block !important;
+  }
+
+  .nav-menu {
+    display: none !important;
+  }
+
+  /* Show dropdown when checkbox checked */
+  #menu-toggle:checked ~ .mobile-menu {
+    display: flex !important;
+  }
+}
+
+/* Optional: Style hamburger */
+.hamburger {
+  font-size: 2rem;
+  color: white;
+}
+
+/* Mobile menu style */
+.mobile-menu {
+  background: rgba(40, 40, 40, 0.95);
+  backdrop-filter: blur(8px);
+}
 /* -----------------------------------------------SIDEBAR STYLE -----------------------------------*/
 .sidebar-item {
   position: relative;
@@ -200,18 +232,23 @@
       border-radius: 4px;
       margin-right: 12px;
     ">
-    <!-- Fallback text logo if image not uploaded yet 
-    <span style="
-      color: white;
-      font-weight: bold;
-      font-size: 1.4rem;
-      letter-spacing: 1px;
-      padding-left: 40px;
-    ">CroatianStorms</span>
-  </a>-->
-
   <!-- Right: Menu icons + text -->
-  <nav style="display: flex; align-items: center; gap: 32px; padding-right: 40px;">
+  <!-- Hamburger toggle (visible only on mobile) -->
+  <input type="checkbox" id="menu-toggle" class="menu-toggle" hidden>
+  <label for="menu-toggle" class="hamburger" style="
+    display: none;                /* hidden on desktop */
+    cursor: pointer;
+    color: white;
+    font-size: 1.8rem;
+  ">☰</label>
+
+  <!-- Navigation -->
+  <nav class="nav-menu" style="
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding-right: 40px;
+  ">
   <a href="index.html" class="menu-item" title="Home">
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -248,6 +285,26 @@
     <span class="text">INSTAGRAM</span>
 </a>
   </nav>
+<!-- Mobile menu dropdown (hidden by default) -->
+  <div class="mobile-menu" style="
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: rgba(40, 40, 40, 0.95);
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    z-index: 999;
+  ">
+    <a href="index.html" style="color: white; font-size: 1.1rem;">HOME</a>
+    <a href="#" style="color: white; font-size: 1.1rem;">BLOG</a>
+    <a href="#" style="color: white; font-size: 1.1rem;">PHOTOGRAPHY</a>
+    <a href="#" style="color: white; font-size: 1.1rem;">VIDEOS</a>
+    <a href="https://www.youtube.com/@CroatianStorms" style="color: white; font-size: 1.1rem;">YOUTUBE</a>
+    <a href="https://www.instagram.com/croatian_storms" style="color: white; font-size: 1.1rem;">INSTAGRAM</a>
+  </div>
 </header>
 <!--------------------------------------------------------------------- HERO HEADER with background image ------------------------------------->
 <div style="
