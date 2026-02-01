@@ -67,7 +67,29 @@
 .nav-menu {
   display: flex !important;
 }
+/* Hamburger → X animation */
+#menu-toggle:checked ~ label .top-bar {
+  top: 21px;
+  transform: rotate(45deg);
+}
 
+#menu-toggle:checked ~ label .mid-bar {
+  opacity: 0;
+}
+
+#menu-toggle:checked ~ label .bottom-bar {
+  top: 21px;
+  transform: rotate(-45deg);
+}
+
+#menu-toggle:checked ~ label .close-x {
+  opacity: 1;
+}
+
+/* Make sure the icon container doesn't shift layout */
+.hamburger {
+  position: relative;
+}
 /* Mobile: hide horizontal, show hamburger */
 @media (max-width: 768px) {
   .hamburger {
@@ -86,39 +108,6 @@
   header {
     padding-right: 0 !important;       /* no right padding on mobile */
   }
-}
-/* Hide close icon by default */
-.close-icon {
-  opacity: 0;
-}
-
-/* When menu is open (checkbox checked) */
-#menu-toggle:checked ~ label .hamburger-icon {
-  opacity: 0;                     /* hide hamburger lines */
-}
-
-#menu-toggle:checked ~ label .close-icon {
-  opacity: 1;                     /* show X */
-  transform: translate(-50%, -50%) rotate(0deg); /* reset rotation */
-}
-
-/* Animate hamburger lines to X (optional extra smoothness) */
-#menu-toggle:checked ~ label .hamburger-icon:nth-child(1) {
-  transform: translate(-50%, -50%) rotate(45deg);
-  top: 50%;
-}
-
-#menu-toggle:checked ~ label .hamburger-icon:nth-child(2) {
-  opacity: 0;
-}
-
-#menu-toggle:checked ~ label .hamburger-icon:nth-child(3) {
-  transform: translate(-50%, -50%) rotate(-45deg);
-  top: 50%;
-}
-/* Mobile menu show/hide (keep your existing) */
-#menu-toggle:checked ~ .mobile-menu {
-  display: flex !important;
 }
 /* -----------------------------------------------SIDEBAR STYLE -----------------------------------*/
 .sidebar-item {
@@ -271,39 +260,30 @@
     padding: 10px 0;
   ">
     <!-- Hamburger lines (visible when closed) -->
-  <span class="hamburger-icon" style="
-    margin-left: auto;           /* pushes it to the right */
-    margin-right: 12px;         /* removes any right gap */
-    padding: 10px 0;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  <span class="bar top-bar" style="
+    position: absolute;
+    top: 12px;
+    left: 10px;
     width: 24px;
     height: 2px;
     background: white;
     border-radius: 2px;
     transition: all 0.4s ease;
   "></span>
-  <span class="hamburger-icon" style="
-    margin-left: auto;           /* pushes it to the right */
-    margin-right: 12px;         /* removes any right gap */
-    padding: 10px 0;
-    top: 35%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  <span class="bar mid-bar" style="
+    position: absolute;
+    top: 21px;
+    left: 10px;
     width: 24px;
     height: 2px;
     background: white;
     border-radius: 2px;
     transition: all 0.4s ease;
   "></span>
-  <span class="hamburger-icon" style="
-    margin-left: auto;           /* pushes it to the right */
-    margin-right: 12px;         /* removes any right gap */
-    padding: 10px 0;
-    top: 65%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  <span class="bar bottom-bar" style="
+    position: absolute;
+    top: 30px;
+    left: 10px;
     width: 24px;
     height: 2px;
     background: white;
@@ -311,40 +291,34 @@
     transition: all 0.4s ease;
   "></span>
 
-  <!-- X icon (visible when open) -->
-  <span class="close-icon" style="
-    margin-left: auto;           /* pushes it to the right */
-    margin-right: 12px;         /* removes any right gap */
-    padding: 10px 0;
+  <!-- X icon – hidden by default -->
+  <span class="close-x" style="
+    position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) rotate(45deg);
+    transform: translate(-50%, -50%);
     width: 24px;
     height: 24px;
     opacity: 0;
-    transition: all 0.4s ease;
+    transition: opacity 0.4s ease;
   ">
     <span style="
-      margin-left: auto;           /* pushes it to the right */
-      margin-right: 12px;         /* removes any right gap */
-      padding: 10px 0;
+      position: absolute;
       top: 50%;
       left: 0;
       width: 100%;
       height: 2px;
       background: white;
-      transform: translateY(-50%);
+      transform: translateY(-50%) rotate(45deg);
     "></span>
     <span style="
-      margin-left: auto;           /* pushes it to the right */
-      margin-right: 12px;         /* removes any right gap */
-      padding: 10px 0;
+      position: absolute;
       top: 50%;
       left: 0;
       width: 100%;
       height: 2px;
       background: white;
-      transform: translateY(-50%) rotate(90deg);
+      transform: translateY(-50%) rotate(-45deg);
     "></span>
   </span>
 </label>
