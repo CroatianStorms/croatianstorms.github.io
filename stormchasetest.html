@@ -119,6 +119,7 @@
     padding-right: 0 !important;       /* no right padding on mobile */
   }
 }
+
 /* -----------------------------------------------SIDEBAR STYLE -----------------------------------*/
 .sidebar-item {
   position: relative;
@@ -160,6 +161,15 @@
   color: white;
   text-align: center;
   flex: 1;
+}
+@media (max-width: 768px) {
+  aside {
+    display: none !important;   /* hide sidebar completely on mobile */
+  }
+
+  .main-content {
+    margin-right: 0 !important; /* reset margin so content takes full width */
+  }
 }
 /* -----------------------------------------------SIDEBAR SOCIAL STYLE -----------------------------------*/
 .social-item {
@@ -363,6 +373,15 @@
     <a href="#" style="color: white; font-size: 1.1rem;">VIDEOS</a>
     <a href="https://www.youtube.com/@CroatianStorms" style="color: white; font-size: 1.1rem;">YOUTUBE</a>
     <a href="https://www.instagram.com/croatian_storms" style="color: white; font-size: 1.1rem;">INSTAGRAM</a>
+  <!-- New: Chase season link in mobile menu -->
+  <a href="#chase-season" style="
+    color: white;
+    font-size: 1.2rem;
+    padding: 12px 0;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    margin-top: 12px;
+  ">Sezona (2018–2026)</a>
+  
   </div>
 </header>
 <!--------------------------------------------------------------------- HERO HEADER with background image ------------------------------------->
