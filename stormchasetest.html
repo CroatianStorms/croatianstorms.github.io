@@ -70,24 +70,22 @@
 
 /* Mobile: hide horizontal, show hamburger */
 @media (max-width: 768px) {
-  header {
-    padding-right: 0 !important;
-  }
-  
   .hamburger {
     display: block !important;
-    margin-left: auto;
-    margin-right: 0 !important;
+    margin-left: auto !important;      /* pushes to the right */
+    margin-right: -16px !important;    /* removes any right gap */
   }
 
   .nav-menu {
     display: none !important;
   }
 
-
-  /* Show dropdown when checkbox checked */
   #menu-toggle:checked ~ .mobile-menu {
     display: flex !important;
+  }
+
+  header {
+    padding-right: 0 !important;       /* no right padding on mobile */
   }
 }
 /* -----------------------------------------------SIDEBAR STYLE -----------------------------------*/
@@ -211,7 +209,7 @@
   left: 0;
   right: 0;
   height: 60px;
-  background: rgba(40, 40, 40, 0.75);  /* dark grey semi-transparent – adjust opacity 0.6–0.9 */
+  background: rgba(40, 40, 40, 0.75);
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -222,11 +220,12 @@
   <!-- Left: Custom logo (click → home) -->
   <a href="index.html" style="display: flex; align-items: center; text-decoration: none;">
     <img src="images/logo.png" alt="CroatianStorms Logo" style="
-      height: 40px;                 /* adjust size */
+      height: 40px;
       width: auto;
       border-radius: 4px;
       margin-right: 12px;
     ">
+  </a>
   <!-- Right: Menu icons + text -->
 <!-- Hamburger toggle -->
   <input type="checkbox" id="menu-toggle" class="menu-toggle" hidden>
@@ -235,8 +234,11 @@
     cursor: pointer;
     color: white;
     font-size: 2rem;
+    margin-left: auto;           /* pushes it to the right */
+    margin-right: -12px;         /* removes any right gap */
+    padding: 10px 0;
   ">☰</label>
-  <!-- Navigation -->
+  <!-- Desktop Navigation -->
   <nav class="nav-menu" style="
     display: flex;
     align-items: center;
