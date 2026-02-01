@@ -162,15 +162,7 @@
   text-align: center;
   flex: 1;
 }
-@media (max-width: 768px) {
-  aside {
-    display: none !important;   /* hide sidebar completely on mobile */
-  }
 
-  .main-content {
-    margin-right: 0 !important; /* reset margin so content takes full width */
-  }
-}
 /* -----------------------------------------------SIDEBAR SOCIAL STYLE -----------------------------------*/
 .social-item {
   position: relative;
@@ -239,7 +231,15 @@
 .social-item:hover .icon {
   display: none;
 }
+@media (max-width: 768px) {
+  aside {
+    display: none !important;   /* hide sidebar completely on mobile */
+  }
 
+  .main-content {
+    margin-right: 0 !important; /* reset margin so content takes full width */
+  }
+}
   </style>
 </head>
 <body>
