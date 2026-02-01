@@ -67,7 +67,20 @@
 .nav-menu {
   display: flex !important;
 }
-/* Hamburger → X animation */
+/* Hamburger lines initial positions */
+.hamburger .top-bar {
+  top: 14px;
+}
+
+.hamburger .mid-bar {
+  top: 21px;
+}
+
+.hamburger .bottom-bar {
+  top: 28px;
+}
+
+/* When menu is open → animate to X */
 #menu-toggle:checked ~ label .top-bar {
   top: 21px;
   transform: rotate(45deg);
@@ -75,15 +88,12 @@
 
 #menu-toggle:checked ~ label .mid-bar {
   opacity: 0;
+  top: 21px;
 }
 
 #menu-toggle:checked ~ label .bottom-bar {
   top: 21px;
   transform: rotate(-45deg);
-}
-
-#menu-toggle:checked ~ label .close-x {
-  opacity: 1;
 }
 
 /* Make sure the icon container doesn't shift layout */
@@ -262,7 +272,6 @@
     <!-- Hamburger lines (visible when closed) -->
   <span class="bar top-bar" style="
     position: absolute;
-    top: 12px;
     left: 10px;
     width: 24px;
     height: 2px;
@@ -272,7 +281,6 @@
   "></span>
   <span class="bar mid-bar" style="
     position: absolute;
-    top: 21px;
     left: 10px;
     width: 24px;
     height: 2px;
@@ -282,7 +290,6 @@
   "></span>
   <span class="bar bottom-bar" style="
     position: absolute;
-    top: 30px;
     left: 10px;
     width: 24px;
     height: 2px;
@@ -290,37 +297,6 @@
     border-radius: 2px;
     transition: all 0.4s ease;
   "></span>
-
-  <!-- X icon – hidden by default -->
-  <span class="close-x" style="
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 24px;
-    height: 24px;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-  ">
-    <span style="
-      position: absolute;
-      top: 50%;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: white;
-      transform: translateY(-50%) rotate(45deg);
-    "></span>
-    <span style="
-      position: absolute;
-      top: 50%;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: white;
-      transform: translateY(-50%) rotate(-45deg);
-    "></span>
-  </span>
 </label>
   
   <!-- Desktop Navigation -->
