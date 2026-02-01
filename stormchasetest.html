@@ -233,11 +233,36 @@
 }
 @media (max-width: 768px) {
   aside {
-    display: none !important;   /* hide sidebar completely on mobile */
+    display: none !important;
   }
 
-  .main-content {
-    margin-right: 0 !important; /* reset margin so content takes full width */
+  /* Reset all sidebar-related spacing on main content */
+  .main-content,
+  body > div:not(.mobile-menu):not(header):not(aside) {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    float: none !important;
+    clear: both !important;
+  }
+
+  /* Make sure map and gallery take full width */
+  #mini-map,
+  .gallery {
+    width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* Optional: reduce side padding on very small screens */
+  @media (max-width: 480px) {
+    body > div:not(.mobile-menu):not(header):not(aside) {
+      padding-left: 12px !important;
+      padding-right: 12px !important;
+    }
   }
 }
   </style>
