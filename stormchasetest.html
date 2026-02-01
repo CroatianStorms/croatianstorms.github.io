@@ -79,7 +79,10 @@
   .nav-menu {
     display: none !important;
   }
-
+  
+  #menu-toggle:checked ~ .mobile-menu {
+  display: flex !important;
+  }
   header {
     padding-right: 0 !important;       /* no right padding on mobile */
   }
@@ -113,7 +116,6 @@
   transform: translate(-50%, -50%) rotate(-45deg);
   top: 50%;
 }
-
 /* Mobile menu show/hide (keep your existing) */
 #menu-toggle:checked ~ .mobile-menu {
   display: flex !important;
