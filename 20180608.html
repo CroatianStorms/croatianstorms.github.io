@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lov na oluje 08.06.2018.</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+  <style>
+    body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; max-width: 1200px; margin: 0 auto; background-color: #313131; color: #ffffff;}
+    h1, h2, h3, h4, p, li, span, em, strong {
+    color: #ffffff;
+  }
+    img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+    .gallery { display: flex; flex-wrap: wrap; gap: 10px; }
+
+/* -----------------------------------------------TOP MENU STYLE -----------------------------------*/
+  .menu-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-content: flex-start;
+  min-width: 36px;
+  max-width: 36px;               /* start small */
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  transition: max-width 0.35s ease, border-radius 0.35s ease, box-shadow 0.35s ease;
+  background: transparent;
+  color: white;
+  text-decoration: none;
+}
+
+.menu-item .text {
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition: opacity 0.25s ease 0.1s;
+}
+
+.menu-item:hover {
+  max-width: 260px;              /* larger max-width to fit longer text like "PHOTOGRAPHY" */
+  padding: 3px 12px;             /* 4px smaller then 6px - used for top and bottom */
+  background: #1e3a8a;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  transform: scale(1.04);
+}
+
+.menu-item:hover .text {
+  position: static;              /* reset position for smooth appearance */
+  opacity: 1;
+  visibility: visible;
+  color: white;
+}
+.menu-item svg {
+  transition: all 0.3s ease;
+}
+
+.menu-item:hover svg {
+  display: none;                    /* hide SVG icon on hover */
+}
+
+/* Desktop: horizontal menu */
+.nav-menu {
+  display: flex !important;
+}
+/* Hamburger lines initial positions */
+.hamburger .top-bar {
+  top: 14px;
+}
+
+.hamburger .mid-bar {
+  top: 21px;
+}
+
+.hamburger .bottom-bar {
+  top: 28px;
+}
+
+/* When menu is open → animate to X */
+#menu-toggle:checked ~ label .top-bar {
+  top: 21px;
+  transform: rotate(45deg);
+}
+
+#menu-toggle:checked ~ label .mid-bar {
+  opacity: 0;
+  top: 21px;
+}
+
+#menu-toggle:checked ~ label .bottom-bar {
+  top: 21px;
+  transform: rotate(-45deg);
+}
+
+/* Make sure the icon container doesn't shift layout */
+.hamburger {
+  position: relative;
+}
+/* Mobile: hide horizontal, show hamburger */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block !important;
+    margin-left: auto !important;      /* pushes to the right */
+    margin-right: 55px !important;    /* removes any right gap */
+  }
+
+  .nav-menu {
+    display: none !important;
+  }
+  
+  #menu-toggle:checked ~ .mobile-menu {
+  display: flex !important;
+  }
+  header {
+    padding-right: 0 !important;       /* no right padding on mobile */
+  }
+}
+
+/* -----------------------------------------------SIDEBAR STYLE -----------------------------------*/
+.sidebar-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;         /* centers text */
+  min-width: 40px;                 /* slightly wider than icon-only version */
+  max-width: 40px;
+  height: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+  transition: max-width 0.35s ease, border-radius 0.35s ease, box-shadow 0.35s ease;
+  background: transparent;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.sidebar-item .text {
+  opacity: 1;                      /* always visible in normal state */
+  visibility: visible;
+  white-space: nowrap;
+  transition: opacity 0.25s ease;
+}
+
+.sidebar-item:hover {
+  max-width: 140px;                /* enough for "2026" + padding */
+  padding: 4px 12px;
+  background: #1e3a8a;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  transform: scale(1.04);
+}
+
+.sidebar-item:hover .text {
+  opacity: 1;
+  visibility: visible;
+  color: white;
+  text-align: center;
+  flex: 1;
+}
+
+/* -----------------------------------------------SIDEBAR SOCIAL STYLE -----------------------------------*/
+.social-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-content: flex-start;
+  min-width: 40px;
+  max-width: 40px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  transition: max-width 0.35s ease, border-radius 0.35s ease, box-shadow 0.35s ease;
+  background: transparent;
+  color: white;
+  text-decoration: none;
+}
+.social-item .text {
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition: opacity 0.25s ease 0.1s;
+}
+
+.social-item[href*="youtube.com"]:hover {
+  max-width: 160px;               /* enough for "YouTube", "Instagram" */
+  padding: 4px 12px;
+  background: #ff0000;           /* classic YouTube red */
+  border-radius: 6px;
+  box-shadow: 0 1px 6px rgba(255, 0, 0, 0.4);  /* red glow/shadow */
+  transform: scale(1.04);
+}
+.social-item[href*="instagram.com"]:hover {
+  max-width: 160px;               /* enough for "YouTube", "Instagram" */
+  padding: 4px 12px;
+  background: linear-gradient(
+    45deg,
+    #f09433,
+    #e6683c,
+    #dc2743,
+    #cc2366,
+    #bc1888
+  );
+  border-radius: 6px;
+  box-shadow: 0 1px 6px rgba(188, 24, 136, 0.4);  /* purple-ish shadow */
+  transform: scale(1.04);
+}
+.social-item:hover .text {
+  position: static;
+  opacity: 1;
+  visibility: visible;
+  color: white;
+  text-align: center;
+  flex: 1;
+}
+.social-item .icon {
+  width: 28px;
+  height: 28px;
+  transition: all 0.3s ease;
+  object-fit: contain;
+}
+
+.social-item:hover .icon {
+  display: none;
+}
+@media (max-width: 768px) {
+  aside {
+    display: none !important;
+  }
+
+  /* Reset all sidebar-related spacing on main content */
+  .main-content,
+  body > div:not(.mobile-menu):not(header):not(aside) {
+    width: 100% !important;
+    max-width: 100% !important;
+    float: none !important;
+    clear: both !important;
+  }
+
+  /* Make sure map and gallery take full width */
+  #mini-map,
+  .gallery {
+    width: 100% !important;
+  }
+}
+  </style>
+</head>
+<body>
+<!------------------------------------------------------------------------------ TOP HEADER ------------------------------------>
+<header style="
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: rgba(40, 40, 40, 0.95);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  border-bottom: 2px solid #444;
+">
+  <!-- Left: Custom logo (click → home) -->
+  <a href="index.html" style="display: flex; align-items: center; text-decoration: none;">
+    <img src="images/logo.png" alt="CroatianStorms Logo" style="
+      height: 40px;
+      width: auto;
+      border-radius: 4px;
+      margin-right: 12px;
+    ">
+  </a>
+  <!-- Right: Menu icons + text -->
+<!-- Hamburger toggle -->
+  <input type="checkbox" id="menu-toggle" class="menu-toggle" hidden>
+  <label for="menu-toggle" class="hamburger" style="
+    display: none;
+    cursor: pointer;
+    color: white;
+    font-size: 2rem;
+    margin-left: auto;           /* pushes it to the right */
+    margin-right: 55px;         /* removes any right gap */
+    padding: 20px 0;
+    z-index: 1001;
+  ">
+    <!-- Hamburger lines (visible when closed) -->
+  <span class="bar top-bar" style="
+    position: absolute;
+    left: 10px;
+    width: 24px;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+    transition: all 0.4s ease;
+  "></span>
+  <span class="bar mid-bar" style="
+    position: absolute;
+    left: 10px;
+    width: 24px;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+    transition: all 0.4s ease;
+  "></span>
+  <span class="bar bottom-bar" style="
+    position: absolute;
+    left: 10px;
+    width: 24px;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+    transition: all 0.4s ease;
+  "></span>
+</label>
+  
+  <!-- Desktop Navigation -->
+  <nav class="nav-menu" style="
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding-right: 30px;
+  ">
+  <a href="index.html" class="menu-item" title="Home">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+    <polyline points="9 22 9 12 15 12 15 22"/>
+  </svg>
+  <span class="text">HOME</span>
+</a>
+  <a href="#" class="menu-item" title="Blog">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+</svg>
+  <span class="text">BLOG</span>
+</a>
+  <a href="#" class="menu-item" title="Photography">
+  <svg width="20" height="20" viewBox="-1 -1 26 26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+  <circle cx="12" cy="13" r="4"/>
+</svg>
+  <span class="text">PHOTOGRAPHY</span>
+</a>
+  <a href="#" class="menu-item" title="Videos">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="2" y="4" width="20" height="16" rx="2"/>
+  <polygon points="10 8 16 12 10 16 10 8"/>
+</svg>
+  <span class="text">VIDEOS</span>
+</a>
+<a href="https://www.youtube.com/@CroatianStorms" class="sidebar-item social-item" title="YouTube" target="_blank" rel="noopener">
+    <img class="icon" src="images/youtube.png" alt="YouTube" style="width: 24px; height: 24px;">
+    <span class="text">YOUTUBE</span>
+  </a>
+<a href="https://www.instagram.com/croatian_storms" class="sidebar-item social-item" title="Instagram" target="_blank" rel="noopener">
+    <img class="icon" src="images/instagram.png" alt="Instagram" style="width: 24px; height: 24px;">
+    <span class="text">INSTAGRAM</span>
+</a>
+  </nav>
+<!-- Mobile menu dropdown (hidden by default) -->
+  <div class="mobile-menu" style="
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: rgba(40, 40, 40, 0.95);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    z-index: 999;
+  ">
+    <a href="index.html" style="color: white; font-size: 1.1rem;">HOME</a>
+    <a href="#" style="color: white; font-size: 1.1rem;">BLOG</a>
+    <a href="#" style="color: white; font-size: 1.1rem;">PHOTOGRAPHY</a>
+    <a href="#" style="color: white; font-size: 1.1rem;">VIDEOS</a>
+    <a href="https://www.youtube.com/@CroatianStorms" style="color: white; font-size: 1.1rem;">YOUTUBE</a>
+    <a href="https://www.instagram.com/croatian_storms" style="color: white; font-size: 1.1rem;">INSTAGRAM</a>
+  <!-- New: Chase season link in mobile menu -->
+  <a href="#chase-season" style="
+    color: white;
+    font-size: 1.2rem;
+    padding: 12px 0;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    margin-top: 12px;
+  ">Sezona (2018–2026)</a>
+  </div>
+</header>
+<!--------------------------------------------------------------------- HERO HEADER with background image ------------------------------------->
+<div style="
+  position: relative;
+  height: 388px;                    /* adjust height: 350–500px */
+  width: 100vw;                     /* full viewport width */
+  margin-left: calc(-50vw + 50%);   /* centers it perfectly and extends full width */
+  margin-right: calc(-50vw + 50%);
+  margin-top: 0;
+  background-image: url('images/20230713/background13072023.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+">
+  <!-- Overlay for text readability -->
+  <div style="
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25);  /* bright overlay >0.4 too dark */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;       /* ← changed to push content to bottom */
+    align-items: flex-start;         /* left-aligned text like your current setup */
+    padding: 0 11% 30px 11%;           /* ← added 30px bottom padding for spacing from edge */
+    color: white;
+  ">
+  <!-- Date with icon -->
+  <div style="
+  font-size: 0.9rem;
+  color: white;
+  font-weight: normal;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+">
+  <img 
+    src="images/clock2.png" 
+    alt="Date" 
+    style="color: white; width: 16px; height: 16px;"
+  >
+  <span>08. Lipanj 2018.</span>
+  </div>
+  
+    <!-- Main title with # prefix, bold, large -->
+  <h1 style="
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 2.7rem;          /* adjust 2.5–3.5rem to taste */
+    font-weight: 800;           /* very bold */
+    color: white;
+    margin: 0;
+    margin-bottom: 8px;
+    line-height: 1.1;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+  ">
+    Superćelije u središnjoj Hrvatskoj
+  </h1>
+
+  <div style="margin: 10px 0 20px;">
+  <a href="index.html" style="
+  display: inline-block;
+  padding: 6px 12px;               /* tiny padding */
+  background: #2548aa;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;                 /* even smaller text */
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+">
+  ← Home
+</a>
+  </div>
+  </div>
+  </div>
+  
+<!------------------------------------------------------------SIDEBAR -------------------------------->
+  <aside style="
+  position: sticky;
+  top: 65px;
+  float: right;
+  width: 110px;
+  margin-left: 30px;
+  padding: 20px 0;
+  background: rgba(49, 49, 49, 0.4);                                           /*#313131*/
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  /*border: 1px solid rgba(255,255,255,0.08);*/
+  z-index: 10;
+">
+  <h3 style="
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: white;
+    margin: 0 0 12px 12px;
+    letter-spacing: 0.5px;
+  ">
+    Sezona
+  </h3>
+  <hr style="
+  border: none;
+  border-top: 2px solid rgba(255, 255, 255, 0.2);  /* light white/grey on dark bg */
+">
+  <!-- Years list – text only, no icons -->
+  <div style="display: flex; flex-direction: column; gap: 8px; padding: 0 8px;">
+    <a href="season-2026.html" class="sidebar-item" title="2026">
+      <span class="text">2026</span>
+    </a>
+    <a href="season-2025.html" class="sidebar-item" title="2025">
+      <span class="text">2025</span>
+    </a>
+    <a href="season-2024.html" class="sidebar-item" title="2024">
+      <span class="text">2024</span>
+    </a>
+    <a href="season-2023.html" class="sidebar-item" title="2023">
+      <span class="text">2023</span>
+    </a>
+    <a href="season-2022.html" class="sidebar-item" title="2022">
+      <span class="text">2022</span>
+    </a>
+    <a href="season-2021.html" class="sidebar-item" title="2021">
+      <span class="text">2021</span>
+    </a>
+    <a href="season-2020.html" class="sidebar-item" title="2020">
+      <span class="text">2020</span>
+    </a>
+    <a href="season-2019.html" class="sidebar-item" title="2019">
+      <span class="text">2019</span>
+    </a>
+    <a href="season-2018.html" class="sidebar-item" title="2018">
+      <span class="text">2018</span>
+    </a>
+  <!-- Social icons section -->
+<div style="
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 2px solid rgba(255,255,255,0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+">
+  <a href="https://www.youtube.com/@CroatianStorms" class="sidebar-item social-item" title="YouTube" target="_blank" rel="noopener">
+    <img class="icon" src="images/youtube.png" alt="YouTube" style="width: 28px; height: 28px;">
+    <span class="text">YouTube</span>
+  </a>
+
+  <a href="https://www.instagram.com/croatian_storms" class="sidebar-item social-item" title="Instagram" target="_blank" rel="noopener">
+    <img class="icon" src="images/instagram.png" alt="Instagram" style="width: 28px; height: 28px;">
+    <span class="text">Instagram</span>
+  </a>
+
+  </div>
+  </div>
+  <hr style="
+  border: none;
+  border-top: 2px solid rgba(255, 255, 255, 0.2);  /* light white/grey on dark bg */
+">
+</aside>
+
+  <!------------------------------------------------PAGE STARTS---------------------------------------------------------------------------------------->
+  <div style="margin-right: 150px;">
+  <h2 style="
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 1.4rem;
+  color: white;
+  font-weight: 800;
+  margin-bottom: 8px;
+  gap: 10px;
+  ">
+    Chase karta
+  </h2>
+  <p>Zagreb (početak chase-a) → Komin → pozicioniranje kod Popovca → Čazma (kraj chase-a) → nazad do Zagreba [Ukupno: 180 km]</p>
+
+  <!-- Leaflet CSS + JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+  <!-- Leaflet Routing Machine -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+  <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
+  <!-- Mini-map container -->
+  <div id="mini-map" style="
+  height: 600px;              /* big & impressive */
+  width: 100%;
+  margin: 20px 0 20px 0;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  overflow: hidden;
+"></div>
+
+  <script>
+  // Coordinates and icon (unchanged)
+  var zagreb = [45.7994, 15.9786];
+  var zagrebistok = [45.8008, 16.0546];
+  var komin = [46.0018, 16.2822];
+  var popovec = [45.8532, 16.1388];
+  var cazma = [45.7524, 16.6085];
+  var NPivanicgrad = [45.6907, 16.3909];
+
+  var customIcon = L.icon({
+    iconUrl: 'images/location.png',
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -32],
+    tooltipAnchor: [0, -20]
+  });
+
+  let miniMap = null;
+  let miniRoute = null;
+
+  function initMiniMap() {
+    // Prevent multiple initializations
+    if (miniMap) return;
+
+    const container = document.getElementById('mini-map');
+    
+    // Safety check - do not initialize if container has no size yet
+    if (container.offsetWidth === 0 || container.offsetHeight === 0) {
+      // Try again in next animation frame
+      requestAnimationFrame(initMiniMap);
+      return;
+    }
+
+    miniMap = L.map('mini-map', {
+      zoomControl: false,
+      attributionControl: true
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(miniMap);
+
+    // Very important: immediate size correction after creation
+    miniMap.invalidateSize({ animate: false });
+
+    miniRoute = L.Routing.control({
+      waypoints: [
+        L.latLng(zagreb),
+        L.latLng(zagrebistok),
+        L.latLng(komin),
+        L.latLng(popovec),
+        L.latLng(NPivanicgrad),
+        L.latLng(cazma)
+      ],
+      createMarker: function(i, wp) {
+        if (i === 0 || i === 2 || i === 3 || i === 5) {
+          return L.marker(wp.latLng, { icon: customIcon });
+        }
+        return null;
+      },
+      addWaypoints: false,
+      routeWhileDragging: false,
+      show: false,
+      lineOptions: {
+        styles: [{color: '#0066cc', weight: 6, opacity: 0.8}]
+      }
+    }).addTo(miniMap);
+
+    // Wait for route + one more size correction
+    miniRoute.on('routesfound', function(e) {
+      miniMap.invalidateSize({ animate: false });
+      
+      setTimeout(() => {
+        const bounds = L.latLngBounds(e.routes[0].coordinates);
+        miniMap.fitBounds(bounds, { padding: [40, 40] });
+      }, 150);
+    });
+  }
+
+  // Try to initialize as soon as possible, but keep retrying until sized
+  function tryInit() {
+    if (document.getElementById('mini-map')?.offsetWidth > 0) {
+      initMiniMap();
+    } else {
+      requestAnimationFrame(tryInit);
+    }
+  }
+
+  // Start trying early, but safe
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', tryInit);
+  } else {
+    tryInit();
+  }
+
+  // Last resort safety net
+  window.addEventListener('load', () => {
+    setTimeout(initMiniMap, 300);
+  });
+</script>
+
+  <!-- Clear float -->
+  <div style="clear: both;"></div>
+
+  <h2 style="
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 1.4rem;
+  color: white;
+  font-weight: 800;
+  margin-bottom: 8px;
+  ">
+    Prognoza
+  </h2>
+  <p>Nad srednjom Europom se prema istoku kretala dolina, odnosno prodor u sklopu kojeg je u prizemlju bila vezana hladna fronta. Po visini je ispred prodora bilo prisutno snažno jugozapadno strujanje, 
+    a prolazak fronte se preko naših krajeva očekivao u poslijepodnevnim satima.</p> 
+  <img src="images/20230713/sinoptika.png" alt="ERA5"></img> 
+  <p>Modeli su simulirali konvektivnu energiju u vrijednostima od 1000 do 2000 J/kg u kombinaciji s DLS-om od 25 - 30 m/s.
+  ESTOFEX je za unutrašnjost Hrvatske izdao Level 2 i Level 3 (najviši stupanj rizika).</p>
+  <img src="images/20230713/forecast.png" alt="ESTOFEX"></img>
+    
+  <h2 style="
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 1.4rem;
+  color: white;
+  font-weight: 800;
+  margin-bottom: 8px;
+  ">
+    Tijek chase-a
+  </h2>
+  <p>Moj lov je započeo u Zagrebu nešto iza 14h. U to vrijeme su se već razvile oluje u Sloveniji,
+    a najveći potencijal je pokazala ćelija istočno od Ljubljane koja je u to vrijeme počela jačati.</p> 
+  <img src="images/20230713/radarstart.gif" alt="radar"></img>
+  <p>Oluje su se kretale brzo, oko 70 km/h, pa sam ju umjesto kod Zaprešića, odlučio presresti istočno od Zagreba kako 
+    se kasnije kod praćenja oluje prema istoku ne bi morao brinuti o gustom prometu na obilaznici. 
+    Oko 14:55h sam se pozicionirao u Kominu. Oluja je još bila predaleko da bi se vidjela.</p> 
+  <img src="images/20230713/komin.png" alt="komin"></img>
+  <p>15-tak minuta kasnije, nove radarske slike su otkrile da oluja počinje skretati u desno, 
+    što je značilo da nisam u dobroj poziciji. Morao sam se repozicionirati južnije.
+    U to vrijeme ESTOFEX izdaje mezoskalnu diskusiju koja obuhvaća cijelu unutrašnjost Hrvatske.</p>
+  <img src="images/20230713/mesoscale.png" alt="ESTOFEX"></img>
+  <p>U diskusiji se navodi kako superćelije iz Slovenije idu prema Hrvatskoj te se očekuje da će, ili 
+    zadržati svoju jačinu, ili još i dodatno ojačati. To je bilo podržano činjenicom da je zagrebačka
+    sondaža u 14h (ispred superćelije) izmjerila vrlo povoljne parametre → SBCAPE 2000 J/kg i DLS 28 m/s.</p>
+  <img src="images/20230713/sondaza.png" alt="Sondaza"></img>
+  <p>Oko 15:30h nalazim se u Popovcu s otvorenim pogledom prema Medvednici i nadolazećoj superćeliji.
+    U to vrijeme ćelija ulazi iz Sloveniju u Hrvatsku, te iako još daleko, počinje se nadzirati južni kraj oluje.</p>
+  <img src="images/20230713/radar1.gif" alt="Radar1"></img>
+  <img src="images/20230713/popovec1.png" alt="Superćelija1"></img>
+  <p>Prije nailaska superćelije do glavnog grebena Medvednice, ispod baze oblaka se kratkotrajno razvio wall cloud, 
+    pojačavajući njezinu vizualnu strukturu.</p>
+  <img src="images/20230713/IMG_22232.jpg" alt="Superćelija2"></img>
+  <p>Prelaskom preko grebena Medvednice, wall cloud se raspada zbog ometanja inflow-a. 
+    Zbog toga superćelija vizualno gubi na strukturi, iako je i dalje jasno vidljva baza i kišno-tučonosne zavjese.</p> 
+    <div class="gallery">
+    <img src="images/20230713/IMG_22242.jpg" alt="Superćelija3">
+    <img src="images/20230713/IMG_22302.jpg" alt="Superćelija4">
+  </div>
+  <p>Radar je sugerirao da oluja nije oslabila prelaskom preko Medvednice i nešto prije 16h mi se u potpunosti približila.</p> 
+    <img src="images/20230713/radar2.gif" alt="Radar2"></img>
+  <div class="gallery">
+    <img src="images/20230713/IMG_22322.jpg" alt="Superćelija5">
+    <img src="images/20230713/IMG_22352.jpg" alt="Superćelija6">
+  </div>
+  <p>U to vrijeme shvaćam da sam napravio grešku zbog previše razmišljanja i neodlučnosti. Greška je bila što nisam na vrijeme krenuo na drugu poziciju.
+    Imao sam opciju nastaviti autocestom i brzom cestom prema Vrbovcu što bi me postavilo ispred superćelije na slijedeću poziciju, ali taj prozor je prošao jer je sada bilo prekasno i oluja bi me zahvatila.</p>
+  <img src="images/20230713/popovec2.png" alt="Superćelija7"></img>
+  <p>Jedina druga opcija je bila ići obilazno autocestom A3 do Ivanić Grada, pa po D43 stići do Čazme i presresti superćeliju između Čazme i Bjelovara. 
+    Znao sam odmah da će to biti vrlo teško postići, što zbog prometa, što zbog brzog kretanja oluje. No svejedno sam htio pokušati.
+    Dolaskom do Ivanića, ponovno sam uspostavio vizualni kontakt s superćelijom. Iako teško vidljivo kroz kameru, uživo je bilo jasno da je u zadnjih 20 minuta razvila novi wall cloud ispod baze.</p>
+  <img src="images/20230713/radar3.gif" alt="Radar3"></img>
+  <img src="images/20230713/ivanic1.png" alt="Superćelija8"></img>
+  <p>Da sam na vrijeme krenuo prema Vrbovcu, mogao sam imati ovakav pogled. Nepoznati autor, slikano iz okolice Vrbovca oko 16:15h:</p>
+  <img src="images/20230713/Vrbovec.jpg" alt="Superćelija9"></img>
+  <p>Nažalost prilaskom Čazmi shvaćam da ipak neću stići ispred superćelije koja će proći tik sjeverno od Čazme. Stižem u Čazmu u 16:40h i oluja taman prolazi sjeverno od grada.
+  Na desnoj strani se još vide dijelovi baze, a iza nje guste bijele tučonosne zavjese.</p>
+  <img src="images/20230713/radar4.gif" alt="Radar4"></img>
+  <img src="images/20230713/IMG_22372.jpg" alt="Superćelija10"></img>
+  <p>U Čazmi sam još ostao neko vrijeme, s lijepim pogledom na stražni dio ćelije i updraft koji je dosezao 12 km visine.</p>  
+  <img src="images/20230713/IMG_22432.jpg" alt="Superćelija11"></img>
+  <p>Nakon toga je krenuo novi slabiji razvoj u Sloveniji pa sam oko 19h kod Zagreba dočekao slabije ćelije koje se nisu uspjevale konkretno razviti. Ali barem je bilo nekoliko lijepih CG munja.</p>
+  <img src="images/20230713/zagreb1.png" alt="Zagreb1"></img>
+  <p>Oko 20:30h Zagreb zahvaća jedan slabiji linijski sustav sa shelf cloudom. Ovo je bio kraj chase-a.</p>
+  <img src="images/20230713/IMG_22562.jpg" alt="Zagreb2"></img>
+  <div style="margin: 40px 0;">
+  <h2 style="
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 1.4rem;
+  color: white;
+  font-weight: 800;
+  margin-bottom: 8px;
+  ">
+    Youtube video
+  </h2>
+
+  <!-- Responsive wrapper -->
+  <div style="
+    position: relative;
+    padding-bottom: 56.25%;   /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    background: #000;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  ">
+    <iframe 
+      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+      src="https://www.youtube.com/embed/2QyhQ_ii0vI" 
+      title="Storm chase video"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen>
+    </iframe>
+  </div>
+</div>
+  <!-- small blue Home button -->
+  <div style="margin: 10px 0 20px;">
+  <a href="index.html" style="
+  display: inline-block;
+  padding: 6px 12px;               /* tiny padding */
+  background: #2548aa;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;                 /* even smaller text */
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  ">
+  ← Home
+  </a>
+  </div>
+  </div>
+  
+<footer style="
+  positon:sticky;
+  bottom: 0;
+  margin-right:150px;
+  height: 20px;
+  background: rgba(40, 40, 40, 0.95);
+  z-index: 1001;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  font-size: 0.7rem;
+  color: #aaa;
+  border-top: 2px solid #444;
+">
+  <p>© 2026 CroatianStorms • All storm chase reports & photos are personal observations.</p>
+</footer>
+</body>
+</html>
