@@ -268,6 +268,23 @@
     width: 100% !important;
   }
 }
+    
+/* Fix for invisible + and - icons in zoom control */
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+  color: #ffffff !important;           /* make + and - white */
+  font-size: 18px !important;
+  font-weight: bold !important;
+  background-color: rgba(30, 30, 30, 0.85) !important;   /* dark button background */
+  border: 1px solid #555 !important;
+  text-shadow: 0 0 3px rgba(0,0,0,0.8) !important;
+}
+
+.leaflet-control-zoom-in:hover,
+.leaflet-control-zoom-out:hover {
+  background-color: rgba(30, 58, 138, 0.9) !important;   /* your blue color on hover */
+  color: white !important;
+}
   </style>
 </head>
 <body>
