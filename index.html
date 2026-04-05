@@ -269,7 +269,7 @@
   }
 }
     
-/* Fix for invisible + and - icons in zoom control */
+/* -----------------------------------------------CUSTOM ZOOM CONTROLS STYLE -----------------------------------*/
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
   color: #ffffff !important;           /* make + and - white */
@@ -285,7 +285,7 @@
   background-color: rgba(30, 58, 138, 0.9) !important;   /* your blue color on hover */
   color: white !important;
 }
-/* Custom zoom control positioned below header, top-right */
+
 .custom-zoom {
   position: fixed;
   top: 70px;               /* 60px header height + 10px gap */
@@ -316,6 +316,14 @@
 
 .custom-zoom a:hover {
   background: #1e3a8a;
+}
+/* Completely hide Leaflet Routing Machine UI / white square */
+.leaflet-routing-container,
+.leaflet-control-container .leaflet-routing-container,
+.leaflet-routing-collapsed,
+.leaflet-top.leaflet-right .leaflet-routing-container {
+  display: none !important;
+  visibility: hidden !important;
 }
   </style>
 </head>
@@ -669,7 +677,11 @@
             addWaypoints: false,
             routeWhileDragging: false,
             show: false,
-            lineOptions: { styles: [{color: '#0066cc', weight: 6, opacity: 0.8}] }
+            lineOptions: { styles: [{color: '#0066cc', weight: 6, opacity: 0.8}]},
+            // Extra options to suppress UI
+            containerClassName: 'hidden-routing-container',
+            showAlternatives: false,
+            fitSelectedRoutes: false
           }).addTo(map);
 
           currentRoute.on('routesfound', function(e) {
