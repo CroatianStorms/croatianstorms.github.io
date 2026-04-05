@@ -20,6 +20,18 @@
     h1, h2, h3, h4, p, li, span, em, strong {
     color: #ffffff;
   }
+    /* Make Leaflet popup close button (X) black and visible */
+    .leaflet-popup-close-button {
+      color: black !important;
+      font-size: 24px !important;
+      font-weight: bold;
+      top: 8px !important;
+      right: 8px !important;
+    }
+    
+    .leaflet-popup-close-button:hover {
+      color: #d00 !important;   /* optional: red on hover */
+    }
     html, body, #map { height: 100%; margin: 0; padding: 0; }
     /* Optional: nicer tooltip look */
     .custom-tooltip {
@@ -136,18 +148,6 @@
   header {
     padding-right: 0 !important;       /* no right padding on mobile */
   }
-}
-/* Make Leaflet popup close button (X) black and visible */
-.leaflet-popup-close-button {
-  color: black !important;
-  font-size: 24px !important;
-  font-weight: bold;
-  top: 8px !important;
-  right: 8px !important;
-}
-
-.leaflet-popup-close-button:hover {
-  color: #d00 !important;   /* optional: red on hover */
 }
   </style>
 </head>
