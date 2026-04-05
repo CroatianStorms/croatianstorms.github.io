@@ -555,49 +555,66 @@
       }
     ];
 
-    // Loop through chases to create markers dynamically (scalable)
+// Create markers and group them per chase
     chases.forEach(function(chase) {
       var marker = L.marker(chase.location, { icon: customIcon })
         .bindTooltip(chase.tooltip, { permanent: false, direction: 'top' })
-        .bindPopup(chase.popup, { maxWidth: chase.maxWidth, className: 'custom-popup' })
+        .bindPopup(chase.popup, { maxWidth: 220, className: 'custom-popup' })
         .addTo(map);
 
-      // Attach route events to this specific marker
+      chase.markers.push(marker);     // save reference to this marker
+      allMarkers.push(marker);        // save reference to all markers globally
+
+      // Show only this chase's markers when popup opens
       marker.on('popupopen', function() {
         if (currentRoute) {
           map.removeControl(currentRoute);
           currentRoute = null;
         }
 
+        // Hide markers from ALL other chases
+        chases.forEach(function(otherChase) {
+          if (otherChase !== chase) {
+            otherChase.markers.forEach(function(m) {
+              m.setOpacity(0);        // hide
+              m.getElement().style.pointerEvents = "none"; // disable clicks
+            });
+          }
+        });
+
+        // Add route for current chase
         currentRoute = L.Routing.control({
-          waypoints: chase.waypoints.map(L.latLng),  // Use this chase's waypoints
+          waypoints: chase.waypoints.map(L.latLng),
           createMarker: function() { return null; },
           addWaypoints: false,
           routeWhileDragging: false,
           show: false,
-          lineOptions: {
-            styles: [{color: '#0066cc', weight: 6, opacity: 0.8}]
-          }
+          lineOptions: { styles: [{color: '#0066cc', weight: 6, opacity: 0.8}] }
         }).addTo(map);
 
         currentRoute.on('routesfound', function(e) {
-          var bounds = L.latLngBounds(e.routes[0].coordinates);
-          map.fitBounds(bounds, {
+          map.fitBounds(L.latLngBounds(e.routes[0].coordinates), {
             padding: [250, 250],
             maxZoom: 11
           });
         });
       });
 
+      // When popup closes → show ALL markers again
       marker.on('popupclose', function() {
         if (currentRoute) {
           map.removeControl(currentRoute);
           currentRoute = null;
         }
+
+        allMarkers.forEach(function(m) {
+          m.setOpacity(1);
+          m.getElement().style.pointerEvents = "auto";
+        });
+
         map.setView([45.1, 16.0], 7);
       });
     });
-
   </script>
 </body>
 </html>
