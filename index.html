@@ -137,6 +137,137 @@
     padding-right: 0 !important;       /* no right padding on mobile */
   }
 }
+/* -----------------------------------------------SIDEBAR STYLE -----------------------------------*/
+.sidebar-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;         /* centers text */
+  min-width: 40px;                 /* slightly wider than icon-only version */
+  max-width: 40px;
+  height: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+  transition: max-width 0.35s ease, border-radius 0.35s ease, box-shadow 0.35s ease;
+  background: transparent;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.sidebar-item .text {
+  opacity: 1;                      /* always visible in normal state */
+  visibility: visible;
+  white-space: nowrap;
+  transition: opacity 0.25s ease;
+}
+
+.sidebar-item:hover {
+  max-width: 140px;                /* enough for "2026" + padding */
+  padding: 4px 12px;
+  background: #1e3a8a;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  transform: scale(1.04);
+}
+
+.sidebar-item:hover .text {
+  opacity: 1;
+  visibility: visible;
+  color: white;
+  text-align: center;
+  flex: 1;
+}
+
+/* -----------------------------------------------SIDEBAR SOCIAL STYLE -----------------------------------*/
+.social-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-content: flex-start;
+  min-width: 40px;
+  max-width: 40px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  transition: max-width 0.35s ease, border-radius 0.35s ease, box-shadow 0.35s ease;
+  background: transparent;
+  color: white;
+  text-decoration: none;
+}
+.social-item .text {
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition: opacity 0.25s ease 0.1s;
+}
+
+.social-item[href*="youtube.com"]:hover {
+  max-width: 160px;               /* enough for "YouTube", "Instagram" */
+  padding: 4px 12px;
+  background: #ff0000;           /* classic YouTube red */
+  border-radius: 6px;
+  box-shadow: 0 1px 6px rgba(255, 0, 0, 0.4);  /* red glow/shadow */
+  transform: scale(1.04);
+}
+.social-item[href*="instagram.com"]:hover {
+  max-width: 160px;               /* enough for "YouTube", "Instagram" */
+  padding: 4px 12px;
+  background: linear-gradient(
+    45deg,
+    #f09433,
+    #e6683c,
+    #dc2743,
+    #cc2366,
+    #bc1888
+  );
+  border-radius: 6px;
+  box-shadow: 0 1px 6px rgba(188, 24, 136, 0.4);  /* purple-ish shadow */
+  transform: scale(1.04);
+}
+.social-item:hover .text {
+  position: static;
+  opacity: 1;
+  visibility: visible;
+  color: white;
+  text-align: center;
+  flex: 1;
+}
+.social-item .icon {
+  width: 28px;
+  height: 28px;
+  transition: all 0.3s ease;
+  object-fit: contain;
+}
+
+.social-item:hover .icon {
+  display: none;
+}
+@media (max-width: 768px) {
+  aside {
+    display: none !important;
+  }
+
+  /* Reset all sidebar-related spacing on main content */
+  .main-content,
+  body > div:not(.mobile-menu):not(header):not(aside) {
+    width: 100% !important;
+    max-width: 100% !important;
+    float: none !important;
+    clear: both !important;
+  }
+
+  /* Make sure map and gallery take full width */
+  #mini-map,
+  .gallery {
+    width: 100% !important;
+  }
+}
   </style>
 </head>
 <body>
