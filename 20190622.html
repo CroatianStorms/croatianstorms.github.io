@@ -592,10 +592,9 @@
 
   <script>
   // Coordinates and icon (unchanged)
-  var zagreb = [45.7994, 15.9786];
-  var obrez2018 = [45.7258, 15.9458];
-  var buzin2018 = [45.7517, 15.9888];
-  var petrinjci2018 = [45.3708, 16.5057];
+  var zagrebistok = [45.8008, 16.0546];
+  var sisak2019 = [45.5107, 16.2896];
+  var sisakjug2019 = [45.4429, 16.3665];
 
   var customIcon = L.icon({
     iconUrl: 'images/location.png',
@@ -635,13 +634,12 @@
 
     miniRoute = L.Routing.control({
       waypoints: [
-        L.latLng(zagreb),
-        L.latLng(buzin2018),
-        L.latLng(obrez2018),
-        L.latLng(petrinjci2018)
+        L.latLng(zagrebistok),
+        L.latLng(sisak2019),
+        L.latLng(sisakjug2019)
       ],
       createMarker: function(i, wp) {
-        if (i === 0 || i === 2 || i === 3) {
+        if (i === 0 || i === 1 || i === 2) {
           return L.marker(wp.latLng, { icon: customIcon });
         }
         return null;
