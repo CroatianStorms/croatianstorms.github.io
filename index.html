@@ -677,11 +677,7 @@
             addWaypoints: false,
             routeWhileDragging: false,
             show: false,
-            lineOptions: { styles: [{color: '#0066cc', weight: 6, opacity: 0.8}]},
-            // Extra options to suppress UI
-            containerClassName: 'hidden-routing-container',
-            showAlternatives: false,
-            fitSelectedRoutes: false
+            lineOptions: { styles: [{color: '#0066cc', weight: 6, opacity: 0.8}] }
           }).addTo(map);
 
           currentRoute.on('routesfound', function(e) {
