@@ -26,9 +26,258 @@
       font-size: 13px;
       border: none;
     }
+  /* -----------------------------------------------TOP MENU STYLE -----------------------------------*/
+  .menu-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-content: flex-start;
+  min-width: 36px;
+  max-width: 36px;               /* start small */
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  transition: max-width 0.35s ease, border-radius 0.35s ease, box-shadow 0.35s ease;
+  background: transparent;
+  color: white;
+  text-decoration: none;
+}
+
+.menu-item .text {
+  position: absolute;
+  opacity: 0;
+  visibility: hidden;
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition: opacity 0.25s ease 0.1s;
+}
+
+.menu-item:hover {
+  max-width: 260px;              /* larger max-width to fit longer text like "PHOTOGRAPHY" */
+  padding: 3px 12px;             /* 4px smaller then 6px - used for top and bottom */
+  background: #1e3a8a;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  transform: scale(1.04);
+}
+
+.menu-item:hover .text {
+  position: static;              /* reset position for smooth appearance */
+  opacity: 1;
+  visibility: visible;
+  color: white;
+}
+.menu-item svg {
+  transition: all 0.3s ease;
+}
+
+.menu-item:hover svg {
+  display: none;                    /* hide SVG icon on hover */
+}
+
+/* Desktop: horizontal menu */
+.nav-menu {
+  display: flex !important;
+}
+/* Hamburger lines initial positions */
+.hamburger .top-bar {
+  top: 14px;
+}
+
+.hamburger .mid-bar {
+  top: 21px;
+}
+
+.hamburger .bottom-bar {
+  top: 28px;
+}
+
+/* When menu is open → animate to X */
+#menu-toggle:checked ~ label .top-bar {
+  top: 21px;
+  transform: rotate(45deg);
+}
+
+#menu-toggle:checked ~ label .mid-bar {
+  opacity: 0;
+  top: 21px;
+}
+
+#menu-toggle:checked ~ label .bottom-bar {
+  top: 21px;
+  transform: rotate(-45deg);
+}
+
+/* Make sure the icon container doesn't shift layout */
+.hamburger {
+  position: relative;
+}
+/* Mobile: hide horizontal, show hamburger */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block !important;
+    margin-left: auto !important;      /* pushes to the right */
+    margin-right: 55px !important;    /* removes any right gap */
+  }
+
+  .nav-menu {
+    display: none !important;
+  }
+  
+  #menu-toggle:checked ~ .mobile-menu {
+  display: flex !important;
+  }
+  header {
+    padding-right: 0 !important;       /* no right padding on mobile */
+  }
+}
   </style>
 </head>
 <body>
+<!------------------------------------------------------------------------------ TOP HEADER ------------------------------------>
+<header style="
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: rgba(40, 40, 40, 0.95);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  border-bottom: 2px solid #444;
+">
+  <!-- Left: Custom logo (click → home) -->
+  <a href="index.html" style="display: flex; align-items: center; text-decoration: none;">
+    <img src="images/logo.png" alt="CroatianStorms Logo" style="
+      height: 40px;
+      width: auto;
+      border-radius: 4px;
+      margin-right: 12px;
+    ">
+  </a>
+  <!-- Right: Menu icons + text -->
+<!-- Hamburger toggle -->
+  <input type="checkbox" id="menu-toggle" class="menu-toggle" hidden>
+  <label for="menu-toggle" class="hamburger" style="
+    display: none;
+    cursor: pointer;
+    color: white;
+    font-size: 2rem;
+    margin-left: auto;           /* pushes it to the right */
+    margin-right: 55px;         /* removes any right gap */
+    padding: 20px 0;
+    z-index: 1001;
+  ">
+    <!-- Hamburger lines (visible when closed) -->
+  <span class="bar top-bar" style="
+    position: absolute;
+    left: 10px;
+    width: 24px;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+    transition: all 0.4s ease;
+  "></span>
+  <span class="bar mid-bar" style="
+    position: absolute;
+    left: 10px;
+    width: 24px;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+    transition: all 0.4s ease;
+  "></span>
+  <span class="bar bottom-bar" style="
+    position: absolute;
+    left: 10px;
+    width: 24px;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+    transition: all 0.4s ease;
+  "></span>
+</label>
+  
+  <!-- Desktop Navigation -->
+  <nav class="nav-menu" style="
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding-right: 30px;
+  ">
+  <a href="index.html" class="menu-item" title="Home">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+    <polyline points="9 22 9 12 15 12 15 22"/>
+  </svg>
+  <span class="text">HOME</span>
+</a>
+  <a href="#" class="menu-item" title="Blog">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+</svg>
+  <span class="text">BLOG</span>
+</a>
+  <a href="#" class="menu-item" title="Photography">
+  <svg width="20" height="20" viewBox="-1 -1 26 26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+  <circle cx="12" cy="13" r="4"/>
+</svg>
+  <span class="text">PHOTOGRAPHY</span>
+</a>
+  <a href="#" class="menu-item" title="Videos">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="2" y="4" width="20" height="16" rx="2"/>
+  <polygon points="10 8 16 12 10 16 10 8"/>
+</svg>
+  <span class="text">VIDEOS</span>
+</a>
+<a href="https://www.youtube.com/@CroatianStorms" class="sidebar-item social-item" title="YouTube" target="_blank" rel="noopener">
+    <img class="icon" src="images/youtube.png" alt="YouTube" style="width: 24px; height: 24px;">
+    <span class="text">YOUTUBE</span>
+  </a>
+<a href="https://www.instagram.com/croatian_storms" class="sidebar-item social-item" title="Instagram" target="_blank" rel="noopener">
+    <img class="icon" src="images/instagram.png" alt="Instagram" style="width: 24px; height: 24px;">
+    <span class="text">INSTAGRAM</span>
+</a>
+  </nav>
+<!-- Mobile menu dropdown (hidden by default) -->
+  <div class="mobile-menu" style="
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: rgba(40, 40, 40, 0.95);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    z-index: 999;
+  ">
+    <a href="index.html" style="color: white; font-size: 1.1rem;">HOME</a>
+    <a href="#" style="color: white; font-size: 1.1rem;">BLOG</a>
+    <a href="#" style="color: white; font-size: 1.1rem;">PHOTOGRAPHY</a>
+    <a href="#" style="color: white; font-size: 1.1rem;">VIDEOS</a>
+    <a href="https://www.youtube.com/@CroatianStorms" style="color: white; font-size: 1.1rem;">YOUTUBE</a>
+    <a href="https://www.instagram.com/croatian_storms" style="color: white; font-size: 1.1rem;">INSTAGRAM</a>
+  <!-- New: Chase season link in mobile menu -->
+  <a href="#chase-season" style="
+    color: white;
+    font-size: 1.2rem;
+    padding: 12px 0;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    margin-top: 12px;
+  ">Sezona (2018–2026)</a>
+  </div>
+</header>
+<!-----------------------------------------------------------PAGE STARTS------------------------------------------------->  
   <div id="map"></div>
 
   <script>
