@@ -426,6 +426,7 @@
 
     // Variable to store the current route (shared for now, but scalable per marker)
     var currentRoute = null;
+    var allMarkers = [];
 
     // Custom icon for all markers
     var customIcon = L.icon({
@@ -466,6 +467,7 @@
                  '</a>' +
                '</div>',
         waypoints: [zagreb, zagrebistok, komin2023, popovec2023, NPivanicgrad2023, cazma2023],  // Route for this chase
+        markers: [],
         maxWidth: 220
       },
       {
@@ -483,6 +485,7 @@
                  '</a>' +
                '</div>',
         waypoints: [zagreb, zagrebistok, komin2023, popovec2023, NPivanicgrad2023, cazma2023],  // Same route as popovec marker
+        markers: [],
         maxWidth: 220
       },
       {
@@ -500,6 +503,7 @@
                  '</a>' +
                '</div>',
         waypoints: [zagrebistok, buzin2018, obrez2018, petrinjci2018],
+        markers: [],
         maxWidth: 220
       },
       {
@@ -517,6 +521,7 @@
                  '</a>' +
                '</div>',
         waypoints: [zagrebistok, buzin2018, obrez2018, petrinjci2018],
+        markers: [],
         maxWidth: 220
       },
       {
@@ -534,6 +539,7 @@
                  '</a>' +
                '</div>',
         waypoints: [zagrebistok, sisak2019, sisakjug2019],
+        markers: [],
         maxWidth: 220
       },
       {
@@ -551,6 +557,7 @@
                  '</a>' +
                '</div>',
         waypoints: [zagrebistok, sisak2019, sisakjug2019],
+        markers: [],
         maxWidth: 220
       }
     ];
