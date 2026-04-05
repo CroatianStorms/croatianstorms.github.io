@@ -137,26 +137,6 @@
     padding-right: 0 !important;       /* no right padding on mobile */
   }
 }
-/* Fix for invisible close button (X) in Leaflet popup */
-.leaflet-popup-close-button {
-  color: #000000 !important;        /* pure black */
-  font-size: 26px !important;
-  font-weight: bold !important;
-  top: 10px !important;
-  right: 10px !important;
-  width: 30px !important;
-  height: 30px !important;
-  line-height: 26px !important;
-  text-align: center !important;
-  background: rgba(255, 255, 255, 0.9) !important;   /* light background behind X */
-  border-radius: 50% !important;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.2) !important;
-}
-
-.leaflet-popup-close-button:hover {
-  color: #d00 !important;           /* red on hover */
-  background: white !important;
-}
   </style>
 </head>
 <body>
@@ -343,7 +323,7 @@
       {
         location: popovec2023,  // Popovec location
         tooltip: "Lov na oluje 13.07.2023. (Popovec)",
-        popup: '<div style="text-align:center; min-width:180px;">' +
+        popup: '<div style="text-align:center; min-width:180px; background:#0066cc;">' +
                  '<h4 style="margin:8px 0 4px; color:black;">Lov na oluje 13.07.2023.</h4>' +
                  '<img src="images/20230713/zagreb-thumb.jpg" alt="Zagreb preview" ' +
                       'style="max-width:100%; height:auto; border-radius:4px; margin-bottom:8px;">' +
