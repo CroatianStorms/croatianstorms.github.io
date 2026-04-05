@@ -453,6 +453,9 @@
     // Scalable array of chases – add more objects here for new chases
     var chases = [
       {
+        id: "chase-20230713",
+        markersData: [
+          {
         location: popovec2023,  // Popovec location
         tooltip: "Lov na oluje 13.07.2023. (Popovec)",
         popup: '<div style="text-align:center; min-width:180px;">' +
@@ -465,12 +468,8 @@
                            'text-decoration:none; border-radius:4px; font-weight:bold;">' +
                     'Pročitajte blog →' +
                  '</a>' +
-               '</div>',
-        waypoints: [zagreb, zagrebistok, komin2023, popovec2023, NPivanicgrad2023, cazma2023],  // Route for this chase
-        markers: [],
-        maxWidth: 220
-      },
-      {
+               '</div>'},
+          {
         location: cazma2023,  // New marker at Cazma
         tooltip: "Lov na oluje 13.07.2023. (Čazma)",
         popup: '<div style="text-align:center; min-width:180px;">' +  // Same popup as requested
@@ -483,12 +482,14 @@
                            'text-decoration:none; border-radius:4px; font-weight:bold;">' +
                     'Pročitajte blog →' +
                  '</a>' +
-               '</div>',
-        waypoints: [zagreb, zagrebistok, komin2023, popovec2023, NPivanicgrad2023, cazma2023],  // Same route as popovec marker
-        markers: [],
-        maxWidth: 220
+               '</div>'}
+          ],
+        waypoints: [zagreb, zagrebistok, komin2023, popovec2023, NPivanicgrad2023, cazma2023],  // Route for this chase
       },
       {
+        id: "chase-20180608",
+        markersData: [
+          {
         location: obrez2018,  // New marker at Odranski Obrež
         tooltip: "Lov na oluje 08.06.2018. (Odranski Obrež)",
         popup: '<div style="text-align:center; min-width:180px;">' +  // Same popup as requested
@@ -501,13 +502,9 @@
                            'text-decoration:none; border-radius:4px; font-weight:bold;">' +
                     'Pročitajte blog →' +
                  '</a>' +
-               '</div>',
-        waypoints: [zagrebistok, buzin2018, obrez2018, petrinjci2018],
-        markers: [],
-        maxWidth: 220
-      },
-      {
-        location: petrinjci2018,  // New marker at Petrinjci
+               '</div>'},
+          {
+            location: petrinjci2018,  // New marker at Petrinjci
         tooltip: "Lov na oluje 08.06.2018. (Petrinjci)",
         popup: '<div style="text-align:center; min-width:180px;">' +  // Same popup as requested
                  '<h4 style="margin:8px 0 4px; color:black;">Lov na oluje 08.06.2018.</h4>' +
@@ -519,12 +516,14 @@
                            'text-decoration:none; border-radius:4px; font-weight:bold;">' +
                     'Pročitajte blog →' +
                  '</a>' +
-               '</div>',
+               '</div>'}
+          ],
         waypoints: [zagrebistok, buzin2018, obrez2018, petrinjci2018],
-        markers: [],
-        maxWidth: 220
       },
       {
+        id: "chase-20190622",
+        markersData: [
+          {
         location: sisak2019,  // New marker at Petrinjci
         tooltip: "Lov na oluje 22.06.2019. (Sisak-Sela)",
         popup: '<div style="text-align:center; min-width:180px;">' +  // Same popup as requested
@@ -537,13 +536,9 @@
                            'text-decoration:none; border-radius:4px; font-weight:bold;">' +
                     'Pročitajte blog →' +
                  '</a>' +
-               '</div>',
-        waypoints: [zagrebistok, sisak2019, sisakjug2019],
-        markers: [],
-        maxWidth: 220
-      },
-      {
-        location: sisakjug2019,  // New marker at Petrinjci
+               '</div>'},
+          {
+            location: sisakjug2019,  // New marker at Petrinjci
         tooltip: "Lov na oluje 22.06.2019. (Sisak-Jug)",
         popup: '<div style="text-align:center; min-width:180px;">' +  // Same popup as requested
                  '<h4 style="margin:8px 0 4px; color:black;">Lov na oluje 22.06.2019.</h4>' +
@@ -555,71 +550,73 @@
                            'text-decoration:none; border-radius:4px; font-weight:bold;">' +
                     'Pročitajte blog →' +
                  '</a>' +
-               '</div>',
+               '</div>'}
+          ],
         waypoints: [zagrebistok, sisak2019, sisakjug2019],
-        markers: [],
-        maxWidth: 220
-      }
+      },
+// Add more chases here...
     ];
 
-// Create markers and group them per chase
+// Create markers
     chases.forEach(function(chase) {
-      var marker = L.marker(chase.location, { icon: customIcon })
-        .bindTooltip(chase.tooltip, { permanent: false, direction: 'top' })
-        .bindPopup(chase.popup, { maxWidth: 220, className: 'custom-popup' })
-        .addTo(map);
+      chase.markers = [];   // store markers belonging to this chase
 
-      chase.markers.push(marker);     // save reference to this marker
-      allMarkers.push(marker);        // save reference to all markers globally
+      chase.markersData.forEach(function(data) {
+        var marker = L.marker(data.location, { icon: customIcon })
+          .bindTooltip(data.tooltip, { permanent: false, direction: 'top' })
+          .bindPopup(data.popup, { maxWidth: 220, className: 'custom-popup' })
+          .addTo(map);
 
-      // Show only this chase's markers when popup opens
-      marker.on('popupopen', function() {
-        if (currentRoute) {
-          map.removeControl(currentRoute);
-          currentRoute = null;
-        }
+        // Attach chase ID to marker for easy identification
+        marker.chaseId = chase.id;
 
-        // Hide markers from ALL other chases
-        chases.forEach(function(otherChase) {
-          if (otherChase !== chase) {
-            otherChase.markers.forEach(function(m) {
-              m.setOpacity(0);        // hide
-              m.getElement().style.pointerEvents = "none"; // disable clicks
+        chase.markers.push(marker);
+        allMarkers.push(marker);
+
+        // Popup open logic
+        marker.on('popupopen', function() {
+          if (currentRoute) map.removeControl(currentRoute);
+
+          // Hide markers from ALL other chases
+          allMarkers.forEach(function(m) {
+            if (m.chaseId !== chase.id) {
+              m.setOpacity(0);
+              m.getElement().style.pointerEvents = "none";
+            }
+          });
+
+          // Show route for this chase
+          currentRoute = L.Routing.control({
+            waypoints: chase.waypoints.map(L.latLng),
+            createMarker: function() { return null; },
+            addWaypoints: false,
+            routeWhileDragging: false,
+            show: false,
+            lineOptions: { styles: [{color: '#0066cc', weight: 6, opacity: 0.8}] }
+          }).addTo(map);
+
+          currentRoute.on('routesfound', function(e) {
+            map.fitBounds(L.latLngBounds(e.routes[0].coordinates), {
+              padding: [250, 250],
+              maxZoom: 11
             });
-          }
-        });
-
-        // Add route for current chase
-        currentRoute = L.Routing.control({
-          waypoints: chase.waypoints.map(L.latLng),
-          createMarker: function() { return null; },
-          addWaypoints: false,
-          routeWhileDragging: false,
-          show: false,
-          lineOptions: { styles: [{color: '#0066cc', weight: 6, opacity: 0.8}] }
-        }).addTo(map);
-
-        currentRoute.on('routesfound', function(e) {
-          map.fitBounds(L.latLngBounds(e.routes[0].coordinates), {
-            padding: [250, 250],
-            maxZoom: 11
           });
         });
-      });
 
-      // When popup closes → show ALL markers again
-      marker.on('popupclose', function() {
-        if (currentRoute) {
-          map.removeControl(currentRoute);
-          currentRoute = null;
-        }
+        // Popup close – show ALL markers again
+        marker.on('popupclose', function() {
+          if (currentRoute) {
+            map.removeControl(currentRoute);
+            currentRoute = null;
+          }
 
-        allMarkers.forEach(function(m) {
-          m.setOpacity(1);
-          m.getElement().style.pointerEvents = "auto";
+          allMarkers.forEach(function(m) {
+            m.setOpacity(1);
+            m.getElement().style.pointerEvents = "auto";
+          });
+
+          map.setView([45.1, 16.0], 7);
         });
-
-        map.setView([45.1, 16.0], 7);
       });
     });
   </script>
