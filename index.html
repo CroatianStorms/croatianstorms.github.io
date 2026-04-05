@@ -230,6 +230,14 @@
   box-shadow: 0 1px 6px rgba(188, 24, 136, 0.4);  /* purple-ish shadow */
   transform: scale(1.04);
 }
+.social-item[href*="facebook.com"]:hover {
+  max-width: 160px;               /* enough for "YouTube", "Instagram" */
+  padding: 4px 12px;
+  background: #1e3a8a;           
+  border-radius: 6px;
+  box-shadow: 0 1px 6px rgba(255, 0, 0, 0.4);  /* red glow/shadow */
+  transform: scale(1.04);
+}
 .social-item:hover .text {
   position: static;
   opacity: 1;
@@ -438,6 +446,10 @@
     <img class="icon" src="images/instagram.png" alt="Instagram" style="width: 24px; height: 24px;">
     <span class="text">INSTAGRAM</span>
 </a>
+<a href="https://www.facebook.com/profile.php?id=61578515157182" class="sidebar-item social-item" title="Facebook" target="_blank" rel="noopener">
+    <img class="icon" src="images/facebook.png" alt="Facebook" style="width: 24px; height: 24px;">
+    <span class="text">FACEBOOK</span>
+</a>
   </nav>
 <!-- Mobile menu dropdown (hidden by default) -->
   <div class="mobile-menu" style="
@@ -459,6 +471,7 @@
     <a href="#" style="color: white; font-size: 1.1rem;">VIDEOS</a>
     <a href="https://www.youtube.com/@CroatianStorms" style="color: white; font-size: 1.1rem;">YOUTUBE</a>
     <a href="https://www.instagram.com/croatian_storms" style="color: white; font-size: 1.1rem;">INSTAGRAM</a>
+    <a href="https://www.facebook.com/profile.php?id=61578515157182" style="color: white; font-size: 1.1rem;">FACEBOOK</a>
   <!-- New: Chase season link in mobile menu -->
   <a href="#chase-season" style="
     color: white;
