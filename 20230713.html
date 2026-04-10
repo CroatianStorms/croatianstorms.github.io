@@ -215,6 +215,14 @@
   box-shadow: 0 1px 6px rgba(188, 24, 136, 0.4);  /* purple-ish shadow */
   transform: scale(1.04);
 }
+.social-item[href*="facebook.com"]:hover {
+  max-width: 160px;               /* enough for "YouTube", "Instagram" */
+  padding: 4px 12px;
+  background: #1e3a8a;           
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15); 
+  transform: scale(1.04);
+}
 .social-item:hover .text {
   position: static;
   opacity: 1;
@@ -571,6 +579,11 @@
     <span class="text">Instagram</span>
   </a>
 
+  <a href="https://www.facebook.com/profile.php?id=61578515157182" class="sidebar-item social-item" title="Facebook" target="_blank" rel="noopener">
+    <img class="icon" src="images/facebook.png" alt="Facebook" style="width: 28px; height: 28px;">
+    <span class="text">Facebook</span>
+  </a>
+  
   </div>
   </div>
   <hr style="
