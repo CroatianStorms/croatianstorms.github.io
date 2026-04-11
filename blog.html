@@ -164,7 +164,21 @@
   text-align: center;
   flex: 1;
 }
+/* Special style for READ MORE button so text is visible from the start */
+.read-more-btn {
+  min-width: 140px !important;
+  max-width: 160px !important;
+  padding: 4px 16px !important;
+  border-radius: 6px !important;
+  background: #1e3a8a;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
 
+.read-more-btn:hover {
+  max-width: 180px !important;
+  padding: 4px 20px !important;
+  background: #2548aa;
+}
 /* -----------------------------------------------SIDEBAR SOCIAL STYLE -----------------------------------*/
 .social-item {
   position: relative;
@@ -561,9 +575,11 @@
     Ipak po modelima se najjača oluja očekivala u središnjoj Hrvatskoj i ja sam čekao da krene njezin razvoj. 
     U 14:45h jedna ćelija je naglo buknula tik istočno od Karlovca i to je bio moj početak chase-a iz Zagreba.</p>
     
-<!-- READ MORE button -->
-<a href="20190622.html" class="sidebar-item" style="display: inline-flex;">
-  <span class="text">READ MORE</span>
+<!-- READ MORE button – text visible by default + same hover style -->
+<a href="20190622.html" 
+   class="sidebar-item read-more-btn" 
+   style="display: inline-flex; min-width: 140px; max-width: 160px;">
+  <span class="text">READ MORE →</span>
 </a>
   </div>
   <hr style="
