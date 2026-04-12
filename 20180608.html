@@ -44,11 +44,11 @@
 
 .menu-item:hover {
   max-width: 260px;              /* larger max-width to fit longer text like "PHOTOGRAPHY" */
-  padding: 3px 12px;             /* 4px smaller then 6px - used for top and bottom */
+  padding: 0 12px;             /* ← Updated: 0 top/bottom, 12px left/right */
   background: #1e3a8a;
   border-radius: 6px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-  transform: scale(1.04);
+  border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .menu-item:hover .text {
@@ -150,7 +150,6 @@
 
 .sidebar-item:hover {
   max-width: 140px;                /* enough for "2026" + padding */
-  padding: 4px 12px;
   background: #1e3a8a;
   border-radius: 6px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.15);
@@ -361,7 +360,7 @@
   </svg>
   <span class="text">SUPERCELLS</span>
 </a>
-  <a href="#" class="menu-item" title="Blog">
+  <a href="blog.html" class="menu-item" title="Blog">
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
   <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
 </svg>
@@ -409,9 +408,9 @@
     z-index: 999;
   ">
     <a href="index.html" style="color: white; font-size: 1.1rem;">HOME</a>
-    <a href="index.html" style="color: white; font-size: 1.1rem;">RADAR</a>
-    <a href="index.html" style="color: white; font-size: 1.1rem;">SUPERCELLS</a>
-    <a href="#" style="color: white; font-size: 1.1rem;">BLOG</a>
+    <a href="#" style="color: white; font-size: 1.1rem;">RADAR</a>
+    <a href="#" style="color: white; font-size: 1.1rem;">SUPERCELLS</a>
+    <a href="blog.html" style="color: white; font-size: 1.1rem;">BLOG</a>
     <a href="#" style="color: white; font-size: 1.1rem;">PHOTOGRAPHY</a>
     <a href="#" style="color: white; font-size: 1.1rem;">VIDEOS</a>
     <a href="https://www.youtube.com/@CroatianStorms" style="color: white; font-size: 1.1rem;">YOUTUBE</a>
@@ -484,21 +483,13 @@
     Superćelije u središnjoj Hrvatskoj
   </h1>
 
-  <div style="margin: 10px 0 20px;">
-  <a href="index.html" style="
-  display: inline-block;
-  padding: 6px 12px;               /* tiny padding */
-  background: #2548aa;
-  color: white;
-  text-decoration: none;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 13px;                 /* even smaller text */
-  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-">
-  ← Home
+  <a href="index.html" class="menu-item" title="Home">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+    <polyline points="9 22 9 12 15 12 15 22"/>
+  </svg>
+  <span class="text">HOME</span>
 </a>
-  </div>
   </div>
   </div>
   
@@ -807,21 +798,13 @@
   </div>
 </div>
   <!-- small blue Home button -->
-  <div style="margin: 10px 0 20px;">
-  <a href="index.html" style="
-  display: inline-block;
-  padding: 6px 12px;               /* tiny padding */
-  background: #2548aa;
-  color: white;
-  text-decoration: none;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 13px;                 /* even smaller text */
-  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-  ">
-  ← Home
-  </a>
-  </div>
+  <a href="index.html" class="menu-item" title="Home">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+    <polyline points="9 22 9 12 15 12 15 22"/>
+  </svg>
+  <span class="text">HOME</span>
+</a>
   </div>
   
 <footer style="
