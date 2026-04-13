@@ -6,6 +6,15 @@
   <title>Lov na oluje 08.06.2018.</title>
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="/images/favicon.png">
+  
+  <!-- Leaflet CSS + JS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+  <!-- Leaflet Routing Machine -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+  <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
   <style>
     body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; max-width: 1200px; margin: 0 auto; background-color: #313131; color: #ffffff;}
     h1, h2, h3, h4, p, li, span, em, strong {
@@ -597,18 +606,11 @@
   </h2>
   <p>Zagreb (početak chase-a) → Odranski Obrež → Petrinjci (kraj chase-a) → nazad do Zagreba [Ukupno: 175 km]</p>
 
-  <!-- Leaflet CSS + JS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-
-  <!-- Leaflet Routing Machine -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
-  <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
-
   <!-- Mini-map container -->
   <div id="mini-map" style="
   height: 600px;              /* big & impressive */
   width: 100%;
+  margin: 20px 0 20px 0;
   border: 2px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
