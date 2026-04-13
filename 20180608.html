@@ -677,6 +677,12 @@
       });
     }, 100);
   });
+  // Extra safety – force size after everything is loaded
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      miniMap.invalidateSize({ animate: false });
+    }, 300);
+  });
 </script>
 
   <!-- Clear float -->
