@@ -21,6 +21,12 @@
     color: #ffffff;
   }
     img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+    /* Prevent global img styling from breaking Leaflet tile alignment */
+    .leaflet-container .leaflet-tile {
+      max-width: none !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+    }
     .gallery { display: flex; flex-wrap: wrap; gap: 10px; }
 
 /* -----------------------------------------------TOP MENU STYLE -----------------------------------*/
@@ -632,52 +638,68 @@
     tooltipAnchor: [0, -20]
   });
 
-  var miniMap = L.map('mini-map', {
-    zoomControl: false,
-    attributionControl: true
-  });
+  var miniMap = null;
+  var miniRoute = null;
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19
-  }).addTo(miniMap);
+  function initMiniMap() {
+    if (miniMap) return;
 
-  // Force correct size immediately
-  miniMap.invalidateSize({ animate: false });
-
-  var miniRoute = L.Routing.control({
-    waypoints: [
-      L.latLng(zagreb),
-      L.latLng(buzin2018),
-      L.latLng(obrez2018),
-      L.latLng(petrinjci2018)
-    ],
-    createMarker: function(i, wp) {
-      // Show markers only at start and end
-      if (i === 0 || i === 2 || i === 3) {
-        return L.marker(wp.latLng, { icon: customIcon });
-      }
-      return null;
-    },
-    addWaypoints: false,
-    routeWhileDragging: false,
-    show: false,
-    lineOptions: {
-      styles: [{ color: '#0066cc', weight: 6, opacity: 0.85 }]
+    var container = document.getElementById('mini-map');
+    if (container.offsetWidth === 0 || container.offsetHeight === 0) {
+      requestAnimationFrame(initMiniMap);
+      return;
     }
-  }).addTo(miniMap);
 
-  // This is the key part that fixes alignment
-  miniRoute.on('routesfound', function(e) {
+    miniMap = L.map('mini-map', {
+      zoomControl: false,
+      attributionControl: true
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(miniMap);
+
     miniMap.invalidateSize({ animate: false });
-    
-    setTimeout(() => {
-      var bounds = L.latLngBounds(e.routes[0].coordinates);
-      miniMap.fitBounds(bounds, {
-        padding: [40, 40],     // balanced padding for detail page
-        maxZoom: 13
-      });
-    }, 100);
-  });
+
+    miniRoute = L.Routing.control({
+      waypoints: [
+        L.latLng(zagreb),
+        L.latLng(buzin2018),
+        L.latLng(obrez2018),
+        L.latLng(petrinjci2018)
+      ],
+      createMarker: function(i, wp) {
+        if (i === 0 || i === 2 || i === 3) {
+          return L.marker(wp.latLng, { icon: customIcon });
+        }
+        return null;
+      },
+      addWaypoints: false,
+      routeWhileDragging: false,
+      show: false,
+      lineOptions: {
+        styles: [{ color: '#0066cc', weight: 6, opacity: 0.85 }]
+      }
+    }).addTo(miniMap);
+
+    miniRoute.on('routesfound', function(e) {
+      miniMap.invalidateSize({ animate: false });
+      
+      setTimeout(function() {
+        var bounds = L.latLngBounds(e.routes[0].coordinates);
+        miniMap.fitBounds(bounds, {
+          padding: [40, 40],
+          maxZoom: 13
+        });
+      }, 150);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMiniMap);
+  } else {
+    initMiniMap();
+  }
 </script>
 
   <!-- Clear float -->
