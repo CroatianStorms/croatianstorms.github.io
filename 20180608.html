@@ -651,7 +651,7 @@
     ],
     createMarker: function(i, wp) {
       // Show markers only at start and end
-      if (i === 0 || i === 3) {
+      if (i === 0 || i === 2 || i === 3) {
         return L.marker(wp.latLng, { icon: customIcon });
       }
       return null;
