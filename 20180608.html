@@ -33,18 +33,19 @@
 }
 
 .menu-item .text {
-  position: absolute;
+  position: static;
   opacity: 0;
   visibility: hidden;
   white-space: nowrap;
   font-weight: 600;
   font-size: 0.8rem;
   transition: opacity 0.25s ease 0.1s;
+  padding-left: 8px;
 }
 
 .menu-item:hover {
   max-width: 260px;              /* larger max-width to fit longer text like "PHOTOGRAPHY" */
-  padding: 0 12px;             /* ← Updated: 0 top/bottom, 12px left/right */
+  padding: 0 12px 0 8px;             /* ← Updated: 0 top/bottom, 12px left/right */
   background: #1e3a8a;
   border-radius: 6px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.15);
@@ -52,7 +53,6 @@
 }
 
 .menu-item:hover .text {
-  position: static;              /* reset position for smooth appearance */
   opacity: 1;
   visibility: visible;
   color: white;
