@@ -616,11 +616,10 @@
   overflow: hidden;
 "></div>
 
-  <script>
-  // Coordinates and icon (unchanged)
+<script>
   var zagreb = [45.7994, 15.9786];
-  var obrez2018 = [45.7258, 15.9458];
   var buzin2018 = [45.7517, 15.9888];
+  var obrez2018 = [45.7258, 15.9458];
   var petrinjci2018 = [45.3708, 16.5057];
 
   var customIcon = L.icon({
@@ -631,85 +630,51 @@
     tooltipAnchor: [0, -20]
   });
 
-  let miniMap = null;
-  let miniRoute = null;
+  var miniMap = L.map('mini-map', {
+    zoomControl: false,
+    attributionControl: true
+  });
 
-  function initMiniMap() {
-    // Prevent multiple initializations
-    if (miniMap) return;
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19
+  }).addTo(miniMap);
 
-    const container = document.getElementById('mini-map');
-    
-    // Safety check - do not initialize if container has no size yet
-    if (container.offsetWidth === 0 || container.offsetHeight === 0) {
-      // Try again in next animation frame
-      requestAnimationFrame(initMiniMap);
-      return;
-    }
+  // Force correct size immediately
+  miniMap.invalidateSize({ animate: false });
 
-    miniMap = L.map('mini-map', {
-      zoomControl: false,
-      attributionControl: true
-    });
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19
-    }).addTo(miniMap);
-
-    // Very important: immediate size correction after creation
-    miniMap.invalidateSize({ animate: false });
-
-    miniRoute = L.Routing.control({
-      waypoints: [
-        L.latLng(zagreb),
-        L.latLng(buzin2018),
-        L.latLng(obrez2018),
-        L.latLng(petrinjci2018)
-      ],
-      createMarker: function(i, wp) {
-        if (i === 0 || i === 2 || i === 3) {
-          return L.marker(wp.latLng, { icon: customIcon });
-        }
-        return null;
-      },
-      addWaypoints: false,
-      routeWhileDragging: false,
-      show: false,
-      lineOptions: {
-        styles: [{color: '#0066cc', weight: 6, opacity: 0.8}]
+  var miniRoute = L.Routing.control({
+    waypoints: [
+      L.latLng(zagreb),
+      L.latLng(buzin2018),
+      L.latLng(obrez2018),
+      L.latLng(petrinjci2018)
+    ],
+    createMarker: function(i, wp) {
+      // Show markers only at start and end
+      if (i === 0 || i === 3) {
+        return L.marker(wp.latLng, { icon: customIcon });
       }
-    }).addTo(miniMap);
-
-    // Wait for route + one more size correction
-    miniRoute.on('routesfound', function(e) {
-      miniMap.invalidateSize({ animate: false });
-      
-      setTimeout(() => {
-        const bounds = L.latLngBounds(e.routes[0].coordinates);
-        miniMap.fitBounds(bounds, { padding: [20, 20] });
-      }, 150);
-    });
-  }
-
-  // Try to initialize as soon as possible, but keep retrying until sized
-  function tryInit() {
-    if (document.getElementById('mini-map')?.offsetWidth > 0) {
-      initMiniMap();
-    } else {
-      requestAnimationFrame(tryInit);
+      return null;
+    },
+    addWaypoints: false,
+    routeWhileDragging: false,
+    show: false,
+    lineOptions: {
+      styles: [{ color: '#0066cc', weight: 6, opacity: 0.85 }]
     }
-  }
+  }).addTo(miniMap);
 
-  // Start trying early, but safe
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', tryInit);
-  } else {
-    tryInit();
-  }
-
-  // Last resort safety net
-  window.addEventListener('load', () => {
-    setTimeout(initMiniMap, 300);
+  // This is the key part that fixes alignment
+  miniRoute.on('routesfound', function(e) {
+    miniMap.invalidateSize({ animate: false });
+    
+    setTimeout(() => {
+      var bounds = L.latLngBounds(e.routes[0].coordinates);
+      miniMap.fitBounds(bounds, {
+        padding: [40, 40],     // balanced padding for detail page
+        maxZoom: 13
+      });
+    }, 100);
   });
 </script>
 
