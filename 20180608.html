@@ -21,6 +21,13 @@
     color: #ffffff;
   }
     img { max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; }
+    /* Prevent global img styling from breaking Leaflet tile alignment */
+    .leaflet-container img {
+      max-width: none !important;
+      height: auto !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+    }
     .gallery { display: flex; flex-wrap: wrap; gap: 10px; }
 
 /* -----------------------------------------------TOP MENU STYLE -----------------------------------*/
