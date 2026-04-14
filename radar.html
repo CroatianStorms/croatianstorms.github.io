@@ -540,14 +540,50 @@ a:hover h2 {
   border: none;
   border-top: 2px solid rgba(255, 255, 255, 0.2);  /* light white/grey on dark bg */
   ">
-   <!-- Windy.com radar embed (centered on Croatia) -->
-<iframe 
-  src="https://embed.windy.com/embed2.html?lat=45.5&lon=16.0&zoom=7&level=surface&overlay=radar&product=radar&menu=&message=true&marker=&calendar=now&pressure=&type=map&location=coordinates&detail=&metricWind=default&metricTemp=%C2%B0C"
-  width="100%" 
-  height="700" 
-  frameborder="0" 
-  style="border: 2px solid #444; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
-</iframe>
+<!-- OpenStreetMap + DHMZ Radar Overlay -->
+<div id="radar-map" style="height: 700px; width: 100%; margin: 30px 0; border: 2px solid #444; border-radius: 8px;"></div>
+
+<script>
+// Create map
+var radarMap = L.map('radar-map', {
+  zoomControl: true,
+  attributionControl: true
+}).setView([45.5, 16.0], 8);   // centered on Croatia
+
+// Base layer: OpenStreetMap
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; OpenStreetMap contributors',
+  maxZoom: 19
+}).addTo(radarMap);
+
+// DHMZ Radar Overlay (latest composite image)
+var dh mzRadarOverlay = L.imageOverlay(
+  'https://meteo.hr/podaci/radar/kompozit.png',   // official latest radar image
+  [[46.55, 13.0], [42.35, 19.5]],                 // bounding box for Croatia
+  {
+    opacity: 0.75,          // adjust transparency
+    interactive: false
+  }
+).addTo(radarMap);
+
+// Optional: Add a refresh button
+var refreshBtn = L.control({position: 'topright'});
+refreshBtn.onAdd = function() {
+  var div = L.DomUtil.create('div', '');
+  div.innerHTML = '<button onclick="refreshRadar()" style="padding:6px 12px; background:#1e3a8a; color:white; border:none; border-radius:4px; cursor:pointer;">Refresh Radar</button>';
+  return div;
+};
+refreshBtn.addTo(radarMap);
+
+function refreshRadar() {
+  radarMap.removeLayer(dhmzRadarOverlay);
+  dhmzRadarOverlay = L.imageOverlay(
+    'https://meteo.hr/podaci/radar/kompozit.png?' + new Date().getTime(), // force reload
+    [[46.55, 13.0], [42.35, 19.5]],
+    { opacity: 0.75 }
+  ).addTo(radarMap);
+}
+</script>
   <hr style="
     border: none;
     border-top: 2px solid rgba(255, 255, 255, 0.2);  /* light white/grey on dark bg */
