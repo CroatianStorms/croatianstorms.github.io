@@ -519,7 +519,7 @@
     // Approximate radar coverage (in km) used to build image bounds
     var radarRangeKm = 240;
     var latDelta = radarRangeKm / 97;
-    var lonDelta = radarRangeKm / (102 * Math.cos(bilogoraRadarCenter[0] * Math.PI / 160));
+    var lonDelta = radarRangeKm / (102 * Math.cos(bilogoraRadarCenter[0] * Math.PI / 185));
     var bilogoraBounds = [
       [bilogoraRadarCenter[0] - latDelta, bilogoraRadarCenter[1] - lonDelta], // SW
       [bilogoraRadarCenter[0] + latDelta, bilogoraRadarCenter[1] + lonDelta]  // NE
