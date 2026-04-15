@@ -547,6 +547,9 @@
       return 'https://vrijeme.hr/bilogora-stat.png?t=' + Date.now();
     }
 
+    // Crop this many pixels from the top of the radar image (set to 0 to disable)
+    var radarCropTopPx = 60;
+
     function rgbToHsv(r, g, b) {
       r /= 255; g /= 255; b /= 255;
       var max = Math.max(r, g, b), min = Math.min(r, g, b);
@@ -564,16 +567,43 @@
       return [h, s, v];
     }
 
+    function getBoundsAfterTopCrop(baseBounds, cropTopRatio) {
+      var southLat = baseBounds[0][0];
+      var westLon = baseBounds[0][1];
+      var northLat = baseBounds[1][0];
+      var eastLon = baseBounds[1][1];
+      var latSpan = northLat - southLat;
+      var croppedNorthLat = northLat - (latSpan * cropTopRatio);
+
+      return [
+        [southLat, westLon],
+        [croppedNorthLat, eastLon]
+      ];
+    }
+
     function createEchoOnlyRadarUrl(sourceUrl) {
       return new Promise(function(resolve, reject) {
         var img = new Image();
         img.crossOrigin = 'anonymous';
         img.onload = function() {
+          var safeCropTopPx = Math.max(0, Math.min(radarCropTopPx, img.naturalHeight - 1));
+          var cropTopRatio = safeCropTopPx / img.naturalHeight;
+
           var canvas = document.createElement('canvas');
           canvas.width = img.naturalWidth;
-          canvas.height = img.naturalHeight;
+          canvas.height = img.naturalHeight - safeCropTopPx;
           var ctx = canvas.getContext('2d');
-          ctx.drawImage(img, 0, 0);
+          ctx.drawImage(
+            img,
+            0,
+            safeCropTopPx,
+            img.naturalWidth,
+            img.naturalHeight - safeCropTopPx,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+          );
 
           var frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
           var data = frame.data;
@@ -598,7 +628,10 @@
           }
 
           ctx.putImageData(frame, 0, 0);
-          resolve(canvas.toDataURL('image/png'));
+          resolve({
+            filteredDataUrl: canvas.toDataURL('image/png'),
+            filteredBounds: getBoundsAfterTopCrop(bilogoraBounds, cropTopRatio)
+          });
         };
         img.onerror = reject;
         img.src = sourceUrl;
@@ -615,12 +648,14 @@
     function refreshRadarOverlay() {
       var sourceUrl = getRadarImageUrl();
       createEchoOnlyRadarUrl(sourceUrl)
-        .then(function(filteredDataUrl) {
-          radarOverlay.setUrl(filteredDataUrl);
+        .then(function(filteredRadar) {
+          radarOverlay.setUrl(filteredRadar.filteredDataUrl);
+          radarOverlay.setBounds(filteredRadar.filteredBounds);
         })
         .catch(function() {
           // Fallback: show original image if pixel processing is blocked (e.g. CORS)
           radarOverlay.setUrl(sourceUrl);
+          radarOverlay.setBounds(bilogoraBounds);
         });
     }
 
