@@ -511,6 +511,46 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
+
+    // DHMZ Bilogora radar overlay (static PNG)
+    // Radar location provided: 45.8835, 17.2005
+    var bilogoraRadarCenter = [45.8835, 17.2005];
+    // Approximate radar coverage (in km) used to build image bounds
+    var radarRangeKm = 250;
+    var latDelta = radarRangeKm / 111.32;
+    var lonDelta = radarRangeKm / (111.32 * Math.cos(bilogoraRadarCenter[0] * Math.PI / 180));
+    var bilogoraBounds = [
+      [bilogoraRadarCenter[0] - latDelta, bilogoraRadarCenter[1] - lonDelta], // SW
+      [bilogoraRadarCenter[0] + latDelta, bilogoraRadarCenter[1] + lonDelta]  // NE
+    ];
+
+    function getRadarImageUrl() {
+      // Cache-busting query string so browser fetches a fresh radar image
+      return 'https://vrijeme.hr/bilogora-stat.png?t=' + Date.now();
+    }
+
+    var radarOverlay = L.imageOverlay(
+      getRadarImageUrl(),
+      bilogoraBounds,
+      { opacity: 0.62, interactive: false }
+    );
+    radarOverlay.addTo(map);
+
+    // Auto-refresh radar image every minute
+    var radarRefreshIntervalMs = 60 * 1000;
+    setInterval(function() {
+      radarOverlay.setUrl(getRadarImageUrl());
+    }, radarRefreshIntervalMs);
+
+    // Optional marker for radar position
+    L.circleMarker(bilogoraRadarCenter, {
+      radius: 4,
+      color: '#7dd3fc',
+      weight: 2,
+      fillColor: '#0ea5e9',
+      fillOpacity: 0.9
+    }).addTo(map).bindTooltip('DHMZ Bilogora radar');
+
     map.invalidateSize();
     
     // Custom zoom control in top-right, below header
