@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CroatianStorm's chase arhiva</title>
+  <title>CroatianStorm's radar map</title>
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="/images/favicon.png">
   
@@ -513,12 +513,13 @@
     }).addTo(map);
 
     // DHMZ Bilogora radar overlay (static PNG)
-    // Radar location provided: 45.8835, 17.2005
-    var bilogoraRadarCenter = [45.8835, 17.2005];
+    // Radar location provided: 45.9206, 17.4651
+    var bilogoraRadarCenter = [45.9206, 17.4750];
+    var bilogoraRadarCircle = [45.8835, 17.2005];
     // Approximate radar coverage (in km) used to build image bounds
-    var radarRangeKm = 250;
-    var latDelta = radarRangeKm / 111.32;
-    var lonDelta = radarRangeKm / (111.32 * Math.cos(bilogoraRadarCenter[0] * Math.PI / 180));
+    var radarRangeKm = 240;
+    var latDelta = radarRangeKm / 97;
+    var lonDelta = radarRangeKm / (102 * Math.cos(bilogoraRadarCenter[0] * Math.PI / 181));
     var bilogoraBounds = [
       [bilogoraRadarCenter[0] - latDelta, bilogoraRadarCenter[1] - lonDelta], // SW
       [bilogoraRadarCenter[0] + latDelta, bilogoraRadarCenter[1] + lonDelta]  // NE
@@ -618,7 +619,7 @@
       weight: 2,
       fillColor: '#0ea5e9',
       fillOpacity: 0.9
-    }).addTo(map).bindTooltip('DHMZ Bilogora radar');
+    }).addTo(map).bindTooltip('Bilogora');
 
     map.invalidateSize();
     
