@@ -544,13 +544,13 @@
     }, radarRefreshIntervalMs);
 
     // Optional marker for radar position
-    L.circleMarker(bilogoraRadarCenter, {
+    L.circleMarker(bilogoraRadarCircle, {
       radius: 4,
       color: '#7dd3fc',
       weight: 2,
       fillColor: '#0ea5e9',
       fillOpacity: 0.9
-    }).addTo(map).bindTooltip('DHMZ Bilogora radar');
+    }).addTo(map).bindTooltip('Bilogora');
 
     map.invalidateSize();
     
