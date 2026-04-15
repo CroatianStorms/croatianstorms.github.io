@@ -525,21 +525,32 @@
       [bilogoraRadarCenter[0] + latDelta, bilogoraRadarCenter[1] + lonDelta]  // NE
     ];
 
+    function getRadarImageUrl() {
+      // Cache-busting query string so browser fetches a fresh radar image
+      return 'https://vrijeme.hr/bilogora-stat.png?t=' + Date.now();
+    }
+
     var radarOverlay = L.imageOverlay(
-      'https://vrijeme.hr/bilogora-stat.png',
+      getRadarImageUrl(),
       bilogoraBounds,
       { opacity: 0.62, interactive: false }
     );
     radarOverlay.addTo(map);
 
+    // Auto-refresh radar image every minute
+    var radarRefreshIntervalMs = 60 * 1000;
+    setInterval(function() {
+      radarOverlay.setUrl(getRadarImageUrl());
+    }, radarRefreshIntervalMs);
+
     // Optional marker for radar position
-    L.circleMarker(bilogoraRadarCircle, {
+    L.circleMarker(bilogoraRadarCenter, {
       radius: 4,
       color: '#7dd3fc',
       weight: 2,
       fillColor: '#0ea5e9',
       fillOpacity: 0.9
-    }).addTo(map).bindTooltip('Bilogora');
+    }).addTo(map).bindTooltip('DHMZ Bilogora radar');
 
     map.invalidateSize();
     
