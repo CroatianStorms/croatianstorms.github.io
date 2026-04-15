@@ -538,6 +538,52 @@
     
     zoomControl.addTo(map);
     
+  // ==================================== BILOGORA RADAR OVERLAY ====================================
+    var bilogoraLayer = L.imageOverlay(
+        'https://vrijeme.hr/bilogora-stat.png?' + Date.now(),
+        [[46.35, 15.85], [45.35, 17.05]],   // correct bounding box
+        { opacity: 0.82, interactive: false }
+    ).addTo(map);
+
+    // Toggle control
+    var toggleControl = L.control({position: 'topright'});
+    toggleControl.onAdd = function(map) {
+        var div = L.DomUtil.create('div', '');
+        div.innerHTML = `
+            <label style="background:rgba(30,30,30,0.95); color:white; padding:8px 14px; border-radius:6px; 
+                          cursor:pointer; display:flex; align-items:center; gap:8px; font-size:0.9rem; box-shadow:0 2px 8px rgba(0,0,0,0.4);">
+                <input type="checkbox" id="bilogora-toggle" checked style="accent-color:#1e3a8a;">
+                <span>Bilogora Radar</span>
+            </label>`;
+        
+        div.querySelector('#bilogora-toggle').addEventListener('change', function() {
+            if (this.checked) {
+                bilogoraLayer.addTo(map);
+            } else {
+                map.removeLayer(bilogoraLayer);
+            }
+        });
+        return div;
+    };
+    toggleControl.addTo(map);
+
+    // Refresh button
+    var refreshControl = L.control({position: 'topright'});
+    refreshControl.onAdd = function(map) {
+        var div = L.DomUtil.create('div', '');
+        div.innerHTML = `<button onclick="refreshBilogora()" style="padding:8px 14px; background:#1e3a8a; color:white; border:none; border-radius:6px; cursor:pointer; font-size:0.9rem;">Refresh Radar</button>`;
+        return div;
+    };
+    refreshControl.addTo(map);
+
+    window.refreshBilogora = function() {
+        map.removeLayer(bilogoraLayer);
+        bilogoraLayer = L.imageOverlay(
+            'https://vrijeme.hr/bilogora-stat.png?' + Date.now(),
+            [[46.35, 15.85], [45.35, 17.05]],
+            { opacity: 0.82 }
+        ).addTo(map);
+    };
   </script>
 </body>
 </html>
