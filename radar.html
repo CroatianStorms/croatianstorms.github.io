@@ -538,14 +538,56 @@
     
     zoomControl.addTo(map);
     
-  // ==================================== BILOGORA RADAR OVERLAY ====================================
-    var bilogoraLayer = L.imageOverlay(
-        'https://vrijeme.hr/bilogora-stat.png?' + Date.now(),
-        [[46.35, 15.85], [45.35, 17.05]],   // correct bounding box
-        { opacity: 0.82, interactive: false }
-    ).addTo(map);
+  // ================== BILOGORA RADAR (ECHOES ONLY) ==================
+    var bilogoraLayer = null;
 
-    // Toggle control
+    function loadCleanRadar() {
+        if (bilogoraLayer) map.removeLayer(bilogoraLayer);
+
+        var img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = 'https://vrijeme.hr/bilogora-stat.png?' + Date.now();
+
+        img.onload = function() {
+            var canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+
+            var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            var data = imageData.data;
+
+            // Remove background - keep only radar echoes (dBZ colors)
+            for (var i = 0; i < data.length; i += 4) {
+                var r = data[i];
+                var g = data[i + 1];
+                var b = data[i + 2];
+
+                // Keep only colored pixels (radar echoes), make everything else transparent
+                if (r < 35 && g < 35 && b < 35) {
+                    data[i + 3] = 0;        // transparent
+                }
+            }
+
+            ctx.putImageData(imageData, 0, 0);
+
+            var cleanUrl = canvas.toDataURL('image/png');
+
+            bilogoraLayer = L.imageOverlay(cleanUrl, [
+                [46.45, 15.90],
+                [45.25, 18.45]
+            ], {
+                opacity: 0.88,
+                interactive: false
+            }).addTo(map);
+        };
+    }
+
+    // Load radar on start
+    loadCleanRadar();
+
+    // Toggle switch
     var toggleControl = L.control({position: 'topright'});
     toggleControl.onAdd = function(map) {
         var div = L.DomUtil.create('div', '');
@@ -553,13 +595,13 @@
             <label style="background:rgba(30,30,30,0.95); color:white; padding:8px 14px; border-radius:6px; 
                           cursor:pointer; display:flex; align-items:center; gap:8px; font-size:0.9rem; box-shadow:0 2px 8px rgba(0,0,0,0.4);">
                 <input type="checkbox" id="bilogora-toggle" checked style="accent-color:#1e3a8a;">
-                <span>Bilogora Radar</span>
+                <span>Bilogora Radar (echoes only)</span>
             </label>`;
         
         div.querySelector('#bilogora-toggle').addEventListener('change', function() {
             if (this.checked) {
-                bilogoraLayer.addTo(map);
-            } else {
+                loadCleanRadar();
+            } else if (bilogoraLayer) {
                 map.removeLayer(bilogoraLayer);
             }
         });
@@ -571,19 +613,10 @@
     var refreshControl = L.control({position: 'topright'});
     refreshControl.onAdd = function(map) {
         var div = L.DomUtil.create('div', '');
-        div.innerHTML = `<button onclick="refreshBilogora()" style="padding:8px 14px; background:#1e3a8a; color:white; border:none; border-radius:6px; cursor:pointer; font-size:0.9rem;">Refresh Radar</button>`;
+        div.innerHTML = `<button onclick="loadCleanRadar()" style="padding:8px 14px; background:#1e3a8a; color:white; border:none; border-radius:6px; cursor:pointer; font-size:0.9rem;">Refresh Radar</button>`;
         return div;
     };
     refreshControl.addTo(map);
-
-    window.refreshBilogora = function() {
-        map.removeLayer(bilogoraLayer);
-        bilogoraLayer = L.imageOverlay(
-            'https://vrijeme.hr/bilogora-stat.png?' + Date.now(),
-            [[46.35, 15.85], [45.35, 17.05]],
-            { opacity: 0.82 }
-        ).addTo(map);
-    };
-  </script>
+</script>
 </body>
 </html>
