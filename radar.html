@@ -514,7 +514,8 @@
 
     // DHMZ Bilogora radar overlay (static PNG)
     // Radar location provided: 45.8835, 17.2005
-    var bilogoraRadarCenter = [45.8835, 17.2005];
+    var bilogoraRadarCenter = [45.8835, 17.4308];
+    var bilogoraRadarCircle = [45.8835, 17.2005];
     // Approximate radar coverage (in km) used to build image bounds
     var radarRangeKm = 250;
     var latDelta = radarRangeKm / 111.32;
@@ -532,13 +533,13 @@
     radarOverlay.addTo(map);
 
     // Optional marker for radar position
-    L.circleMarker(bilogoraRadarCenter, {
+    L.circleMarker(bilogoraRadarCircle, {
       radius: 4,
       color: '#7dd3fc',
       weight: 2,
       fillColor: '#0ea5e9',
       fillOpacity: 0.9
-    }).addTo(map).bindTooltip('DHMZ Bilogora radar');
+    }).addTo(map).bindTooltip('Bilogora');
 
     map.invalidateSize();
     
