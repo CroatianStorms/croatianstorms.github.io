@@ -332,6 +332,23 @@
   display: none !important;
   visibility: hidden !important;
 }
+
+.radar-pill-marker {
+  width: 34px;
+  height: 20px;
+  background: #0ea5e9;
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.4px;
+  line-height: 1;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
   </style>
 </head>
 <body>
@@ -511,6 +528,152 @@
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 19
     }).addTo(map);
+
+    // DHMZ Bilogora radar overlay (static PNG)
+    // Radar location provided: 45.8835, 17.2005
+    var bilogoraRadarCenter = [45.8835, 17.2005];
+    // Approximate radar coverage (in km) used to build image bounds
+    var radarRangeKm = 250;
+    var latDelta = radarRangeKm / 111.32;
+    var lonDelta = radarRangeKm / (111.32 * Math.cos(bilogoraRadarCenter[0] * Math.PI / 180));
+    var bilogoraBounds = [
+      [bilogoraRadarCenter[0] - latDelta, bilogoraRadarCenter[1] - lonDelta], // SW
+      [bilogoraRadarCenter[0] + latDelta, bilogoraRadarCenter[1] + lonDelta]  // NE
+    ];
+
+    function getRadarImageUrl() {
+      // Cache-busting query string so browser fetches a fresh radar image
+      return 'https://vrijeme.hr/bilogora-stat.png?t=' + Date.now();
+    }
+
+    // Crop this many pixels from the top of the radar image (set to 0 to disable)
+    var radarCropTopPx = 60;
+
+    function rgbToHsv(r, g, b) {
+      r /= 255; g /= 255; b /= 255;
+      var max = Math.max(r, g, b), min = Math.min(r, g, b);
+      var d = max - min;
+      var h = 0;
+      if (d !== 0) {
+        if (max === r) h = ((g - b) / d) % 6;
+        else if (max === g) h = (b - r) / d + 2;
+        else h = (r - g) / d + 4;
+      }
+      h = Math.round(h * 60);
+      if (h < 0) h += 360;
+      var s = max === 0 ? 0 : d / max;
+      var v = max;
+      return [h, s, v];
+    }
+
+    function getBoundsAfterTopCrop(baseBounds, cropTopRatio) {
+      var southLat = baseBounds[0][0];
+      var westLon = baseBounds[0][1];
+      var northLat = baseBounds[1][0];
+      var eastLon = baseBounds[1][1];
+      var latSpan = northLat - southLat;
+      var croppedNorthLat = northLat - (latSpan * cropTopRatio);
+
+      return [
+        [southLat, westLon],
+        [croppedNorthLat, eastLon]
+      ];
+    }
+
+    function createEchoOnlyRadarUrl(sourceUrl) {
+      return new Promise(function(resolve, reject) {
+        var img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function() {
+          var safeCropTopPx = Math.max(0, Math.min(radarCropTopPx, img.naturalHeight - 1));
+          var cropTopRatio = safeCropTopPx / img.naturalHeight;
+
+          var canvas = document.createElement('canvas');
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight - safeCropTopPx;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(
+            img,
+            0,
+            safeCropTopPx,
+            img.naturalWidth,
+            img.naturalHeight - safeCropTopPx,
+            0,
+            0,
+            canvas.width,
+            canvas.height
+          );
+
+          var frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          var data = frame.data;
+
+          for (var i = 0; i < data.length; i += 4) {
+            var r = data[i];
+            var g = data[i + 1];
+            var b = data[i + 2];
+            var a = data[i + 3];
+            if (a === 0) continue;
+
+            // Keep only radar-like echo colors and suppress grayscale/background pixels.
+            // This approximates showing 2–70 dBZ classes from the DHMZ palette.
+            var hsv = rgbToHsv(r, g, b);
+            var saturation = hsv[1];
+            var value = hsv[2];
+
+            var isColoredEcho = saturation > 0.28 && value > 0.22;
+            if (!isColoredEcho) {
+              data[i + 3] = 0;
+            }
+          }
+
+          ctx.putImageData(frame, 0, 0);
+          resolve({
+            filteredDataUrl: canvas.toDataURL('image/png'),
+            filteredBounds: getBoundsAfterTopCrop(bilogoraBounds, cropTopRatio)
+          });
+        };
+        img.onerror = reject;
+        img.src = sourceUrl;
+      });
+    }
+
+    var radarOverlay = L.imageOverlay(
+      getRadarImageUrl(),
+      bilogoraBounds,
+      { opacity: 0.72, interactive: false }
+    );
+    radarOverlay.addTo(map);
+
+    function refreshRadarOverlay() {
+      var sourceUrl = getRadarImageUrl();
+      createEchoOnlyRadarUrl(sourceUrl)
+        .then(function(filteredRadar) {
+          radarOverlay.setUrl(filteredRadar.filteredDataUrl);
+          radarOverlay.setBounds(filteredRadar.filteredBounds);
+        })
+        .catch(function() {
+          // Fallback: show original image if pixel processing is blocked (e.g. CORS)
+          radarOverlay.setUrl(sourceUrl);
+          radarOverlay.setBounds(bilogoraBounds);
+        });
+    }
+
+    // Render filtered radar immediately and then auto-refresh every minute
+    refreshRadarOverlay();
+    var radarRefreshIntervalMs = 60 * 1000;
+    setInterval(refreshRadarOverlay, radarRefreshIntervalMs);
+
+    // Fixed-size radar position pill marker
+    var bilogoraPillIcon = L.divIcon({
+      className: '',
+      html: '<div class="radar-pill-marker">BIL</div>',
+      iconSize: [34, 20],
+      iconAnchor: [17, 10]
+    });
+    L.marker(bilogoraRadarCenter, { icon: bilogoraPillIcon })
+      .addTo(map)
+      .bindTooltip('DHMZ Bilogora radar');
+
     map.invalidateSize();
     
     // Custom zoom control in top-right, below header
