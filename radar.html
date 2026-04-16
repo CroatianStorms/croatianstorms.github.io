@@ -332,7 +332,7 @@
   display: none !important;
   visibility: hidden !important;
 }
-
+/* -----------------------------------------------RADAR FEATURES STYLE -----------------------------------*/
 .radar-pill-marker {
   width: 34px;
   height: 20px;
@@ -356,7 +356,7 @@
   border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 8px;
   padding: 10px;
-  min-width: 92px;
+  min-width: 80px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
   font-family: Arial, sans-serif;
 }
@@ -653,7 +653,7 @@
         { dbz: 10, color: '#00aeff' },
         { dbz: 2, color: '#a5a5a5' }
       ];
-      div.innerHTML = '<div class="dbz-legend-title">DHMZ Z (dBZ)</div>';
+      div.innerHTML = '<div class="dbz-legend-title">Z: MAX (dBZ)</div>';
       for (var i = 0; i < levels.length; i++) {
         var row = document.createElement('div');
         row.className = 'dbz-legend-row';
