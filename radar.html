@@ -11,6 +11,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
           crossorigin=""></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <!-- Leaflet Routing Machine (added) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
   <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
@@ -385,6 +386,24 @@
 .leaflet-top .dbz-legend {
   margin-top: 64px;
 }
+
+.radar-time-control {
+  min-width: 170px;
+  font-size: 12px;
+}
+
+.radar-time-label {
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  opacity: 0.9;
+}
+
+.radar-time-value {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
   </style>
 </head>
 <body>
@@ -629,7 +648,7 @@
     var radarOverlay = L.imageOverlay(
       getRadarImageUrl(),
       bilogoraBounds,
-      { opacity: 0.72, interactive: false }
+      { opacity: 0.72, interactive: false, crossOrigin: 'anonymous' }
     );
     radarOverlay.addTo(map);
 
@@ -668,6 +687,107 @@
     };
     dbzLegendControl.addTo(map);
 
+    var radarTimeControl = L.control({ position: 'bottomleft' });
+    var radarTimeValueEl = null;
+    radarTimeControl.onAdd = function() {
+      var div = L.DomUtil.create('div', 'dbz-legend radar-time-control');
+      div.innerHTML =
+        '<div class="radar-time-label">Radar image time</div>' +
+        '<div class="radar-time-value">---- -- -- / --:--</div>';
+      radarTimeValueEl = div.querySelector('.radar-time-value');
+      L.DomEvent.disableClickPropagation(div);
+      L.DomEvent.disableScrollPropagation(div);
+      return div;
+    };
+    radarTimeControl.addTo(map);
+
+    function formatRadarTimestampParts(year, month, day, hour, minute) {
+      return year + '-' + month + '-' + day + ' / ' + hour + ':' + minute;
+    }
+
+    function parseRadarTimestampFromImageUrl(imageUrl) {
+      if (!imageUrl) return null;
+      var decodedUrl = decodeURIComponent(imageUrl);
+      var strictPatterns = [
+        /(?:^|[^0-9])(20\d{2})[-/.](\d{2})[-/.](\d{2})[T_\s](\d{2})[:.](\d{2})(?:[^0-9]|$)/,
+        /(?:^|[^0-9])(\d{2})[-/.](\d{2})[-/.](20\d{2})[T_\s](\d{2})[:.](\d{2})(?:[^0-9]|$)/
+      ];
+      var isoMatch = decodedUrl.match(strictPatterns[0]);
+      if (isoMatch) {
+        return formatRadarTimestampParts(isoMatch[1], isoMatch[2], isoMatch[3], isoMatch[4], isoMatch[5]);
+      }
+      var euroMatch = decodedUrl.match(strictPatterns[1]);
+      if (euroMatch) {
+        return formatRadarTimestampParts(euroMatch[3], euroMatch[2], euroMatch[1], euroMatch[4], euroMatch[5]);
+      }
+      return null;
+    }
+
+    function parseRadarTimestampFromText(rawText) {
+      if (!rawText) return null;
+      var normalizedText = rawText.replace(/\s+/g, ' ').trim();
+      var match = normalizedText.match(/(20\d{2})[-/.](\d{2})[-/.](\d{2})\s+(\d{2})[:.](\d{2})/);
+      if (!match) return null;
+      return formatRadarTimestampParts(match[1], match[2], match[3], match[4], match[5]);
+    }
+
+    async function parseRadarTimestampFromImageOcr(overlayImg) {
+      if (!overlayImg || !overlayImg.complete || !window.Tesseract) return null;
+      var width = Math.min(overlayImg.naturalWidth || 0, 460);
+      var height = Math.min(overlayImg.naturalHeight || 0, 90);
+      if (width < 120 || height < 30) return null;
+
+      var canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(overlayImg, 0, 0, width, height, 0, 0, width, height);
+
+      var imageData = ctx.getImageData(0, 0, width, height);
+      var pixels = imageData.data;
+      for (var i = 0; i < pixels.length; i += 4) {
+        var gray = (pixels[i] + pixels[i + 1] + pixels[i + 2]) / 3;
+        var value = gray > 150 ? 255 : 0;
+        pixels[i] = value;
+        pixels[i + 1] = value;
+        pixels[i + 2] = value;
+      }
+      ctx.putImageData(imageData, 0, 0);
+
+      var result = await window.Tesseract.recognize(canvas, 'eng', {
+        tessedit_char_whitelist: '0123456789-:. ',
+        preserve_interword_spaces: '1'
+      });
+      return parseRadarTimestampFromText(result && result.data ? result.data.text : '');
+    }
+
+    var lastKnownRadarTimestamp = null;
+    var radarTimestampRequestId = 0;
+    async function updateRadarTimestampDisplay() {
+      if (!radarTimeValueEl) return;
+      var overlayImg = radarOverlay.getElement();
+      if (!overlayImg) return;
+      var requestId = ++radarTimestampRequestId;
+
+      var sourceUrl = overlayImg.currentSrc || overlayImg.src || '';
+      var parsedTimestamp = parseRadarTimestampFromImageUrl(sourceUrl);
+
+      if (!parsedTimestamp) {
+        try {
+          parsedTimestamp = await parseRadarTimestampFromImageOcr(overlayImg);
+        } catch (e) {
+          parsedTimestamp = null;
+        }
+      }
+
+      if (requestId !== radarTimestampRequestId) return;
+
+      if (parsedTimestamp) {
+        lastKnownRadarTimestamp = parsedTimestamp;
+      }
+      radarTimeValueEl.textContent = lastKnownRadarTimestamp || '---- -- -- / --:--';
+    }
+
     function refreshRadarOverlay() {
       var sourceUrl = getRadarImageUrl();
       radarOverlay.setUrl(sourceUrl);
@@ -677,6 +797,7 @@
 
     // Render radar immediately and then auto-refresh every minute
     registerRadarCropMask();
+    radarOverlay.on('load', updateRadarTimestampDisplay);
     refreshRadarOverlay();
     var radarRefreshIntervalMs = 60 * 1000;
     setInterval(refreshRadarOverlay, radarRefreshIntervalMs);
