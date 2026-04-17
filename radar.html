@@ -385,6 +385,37 @@
 .leaflet-top .dbz-legend {
   margin-top: 64px;
 }
+
+.radar-time-control {
+  min-width: 260px;
+  font-size: 12px;
+}
+
+.radar-time-label {
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  opacity: 0.9;
+}
+
+.radar-time-value {
+  width: 240px;
+  height: 34px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+  position: relative;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.radar-time-image {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(0, 0);
+  transform-origin: top left;
+}
   </style>
 </head>
 <body>
@@ -668,10 +699,30 @@
     };
     dbzLegendControl.addTo(map);
 
+    var radarTimeControl = L.control({ position: 'bottomleft' });
+    var radarTimeImageEl = null;
+    radarTimeControl.onAdd = function() {
+      var div = L.DomUtil.create('div', 'dbz-legend radar-time-control');
+      div.innerHTML =
+        '<div class="radar-time-label">Radar image timestamp</div>' +
+        '<div class="radar-time-value"><img class="radar-time-image" alt="Radar timestamp strip" /></div>';
+      radarTimeImageEl = div.querySelector('.radar-time-image');
+      L.DomEvent.disableClickPropagation(div);
+      L.DomEvent.disableScrollPropagation(div);
+      return div;
+    };
+    radarTimeControl.addTo(map);
+
+    function updateRadarTimestampDisplay(imageUrl) {
+      if (!radarTimeImageEl) return;
+      radarTimeImageEl.src = imageUrl;
+    }
+
     function refreshRadarOverlay() {
       var sourceUrl = getRadarImageUrl();
       radarOverlay.setUrl(sourceUrl);
       radarOverlay.setBounds(bilogoraBounds);
+      updateRadarTimestampDisplay(sourceUrl);
       applyRadarTopCropMask();
     }
 
