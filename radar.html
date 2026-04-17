@@ -385,6 +385,24 @@
 .leaflet-top .dbz-legend {
   margin-top: 64px;
 }
+
+.radar-time-control {
+  min-width: 170px;
+  font-size: 12px;
+}
+
+.radar-time-label {
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  opacity: 0.9;
+}
+
+.radar-time-value {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
   </style>
 </head>
 <body>
@@ -668,6 +686,71 @@
     };
     dbzLegendControl.addTo(map);
 
+    var radarTimeControl = L.control({ position: 'bottomleft' });
+    var radarTimeValueEl = null;
+    radarTimeControl.onAdd = function() {
+      var div = L.DomUtil.create('div', 'dbz-legend radar-time-control');
+      div.innerHTML =
+        '<div class="radar-time-label">Radar image time</div>' +
+        '<div class="radar-time-value">---- -- -- / --:--</div>';
+      radarTimeValueEl = div.querySelector('.radar-time-value');
+      L.DomEvent.disableClickPropagation(div);
+      L.DomEvent.disableScrollPropagation(div);
+      return div;
+    };
+    radarTimeControl.addTo(map);
+
+    function formatRadarTimestamp(date) {
+      var year = date.getFullYear();
+      var month = String(date.getMonth() + 1).padStart(2, '0');
+      var day = String(date.getDate()).padStart(2, '0');
+      var hour = String(date.getHours()).padStart(2, '0');
+      var minute = String(date.getMinutes()).padStart(2, '0');
+      return year + '-' + month + '-' + day + ' / ' + hour + ':' + minute;
+    }
+
+    function parseRadarTimestampFromImageUrl(imageUrl) {
+      if (!imageUrl) return null;
+      var decodedUrl = decodeURIComponent(imageUrl);
+      var patterns = [
+        /(\d{4})[-/.]?(\d{2})[-/.]?(\d{2})[T_\s-]?(\d{2})[:.]?(\d{2})/,
+        /(\d{2})[-/.]?(\d{2})[-/.]?(\d{4})[T_\s-]?(\d{2})[:.]?(\d{2})/
+      ];
+      for (var i = 0; i < patterns.length; i++) {
+        var match = decodedUrl.match(patterns[i]);
+        if (!match) continue;
+        var year;
+        var month;
+        var day;
+        if (i === 0) {
+          year = Number(match[1]);
+          month = Number(match[2]);
+          day = Number(match[3]);
+        } else {
+          day = Number(match[1]);
+          month = Number(match[2]);
+          year = Number(match[3]);
+        }
+        var hour = Number(match[4]);
+        var minute = Number(match[5]);
+        var parsedDate = new Date(year, month - 1, day, hour, minute);
+        if (!isNaN(parsedDate.getTime())) return parsedDate;
+      }
+      return null;
+    }
+
+    function updateRadarTimestampDisplay() {
+      if (!radarTimeValueEl) return;
+      var overlayImg = radarOverlay.getElement();
+      if (!overlayImg) return;
+      var sourceUrl = overlayImg.currentSrc || overlayImg.src || '';
+      var parsedDate = parseRadarTimestampFromImageUrl(sourceUrl);
+      if (!parsedDate) {
+        parsedDate = new Date();
+      }
+      radarTimeValueEl.textContent = formatRadarTimestamp(parsedDate);
+    }
+
     function refreshRadarOverlay() {
       var sourceUrl = getRadarImageUrl();
       radarOverlay.setUrl(sourceUrl);
@@ -677,6 +760,7 @@
 
     // Render radar immediately and then auto-refresh every minute
     registerRadarCropMask();
+    radarOverlay.on('load', updateRadarTimestampDisplay);
     refreshRadarOverlay();
     var radarRefreshIntervalMs = 60 * 1000;
     setInterval(refreshRadarOverlay, radarRefreshIntervalMs);
