@@ -719,6 +719,14 @@
       radarTimeImageEl.src = imageUrl;
     }
 
+    function syncRadarTimestampFromOverlay() {
+      var overlayImg = radarOverlay.getElement();
+      if (!overlayImg) return;
+      var resolvedUrl = overlayImg.currentSrc || overlayImg.src || '';
+      if (!resolvedUrl) return;
+      updateRadarTimestampDisplay(resolvedUrl);
+    }
+
     function refreshRadarOverlay() {
       var sourceUrl = getRadarImageUrl();
       radarOverlay.setUrl(sourceUrl);
@@ -729,7 +737,7 @@
 
     // Render radar immediately and then auto-refresh every minute
     registerRadarCropMask();
-    radarOverlay.on('load', updateRadarTimestampDisplay);
+    radarOverlay.on('load', syncRadarTimestampFromOverlay);
     refreshRadarOverlay();
     var radarRefreshIntervalMs = 60 * 1000;
     setInterval(refreshRadarOverlay, radarRefreshIntervalMs);
