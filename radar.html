@@ -400,6 +400,9 @@
 }
 
 .radar-time-value {
+  /* Tune these offsets to move the cropped radar timestamp image inside this box */
+  --radar-time-offset-x: 0px;
+  --radar-time-offset-y: -10px;
   width: 240px;
   height: 34px;
   overflow: hidden;
@@ -414,7 +417,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  transform: translate(0, 100);
+  transform: translate(var(--radar-time-offset-x), var(--radar-time-offset-y));
   transform-origin: top left;
 }
   </style>
