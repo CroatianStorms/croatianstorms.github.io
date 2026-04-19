@@ -404,7 +404,7 @@
   --radar-time-offset-x: -18px;
   --radar-time-offset-y: -60px;
   width: 240px;
-  height: 24px;
+  height: 23px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 4px;
@@ -708,7 +708,7 @@
     radarTimeControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'dbz-legend radar-time-control');
       div.innerHTML =
-        '<div class="radar-time-label">Radar image timestamp</div>' +
+        '<div class="radar-time-label">Radarska slika (vrijeme):</div>' +
         '<div class="radar-time-value"><img class="radar-time-image" alt="Radar timestamp strip" /></div>';
       radarTimeImageEl = div.querySelector('.radar-time-image');
       L.DomEvent.disableClickPropagation(div);
