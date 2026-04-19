@@ -11,6 +11,7 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
           integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
           crossorigin=""></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <!-- Leaflet Routing Machine (added) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
   <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
@@ -400,10 +401,10 @@
 
 .radar-time-value {
   /* Tune these offsets to move the cropped radar timestamp image inside this box */
-  --radar-time-offset-x: 0px;
-  --radar-time-offset-y: -10px;
+  --radar-time-offset-x: -18px;
+  --radar-time-offset-y: -60px;
   width: 240px;
-  height: 34px;
+  height: 23px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 4px;
@@ -715,7 +716,7 @@
     radarTimeControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'dbz-legend radar-time-control');
       div.innerHTML =
-        '<div class="radar-time-label">Radar image timestamp</div>' +
+        '<div class="radar-time-label">Radarska slika (vrijeme):</div>' +
         '<div class="radar-time-value"><img class="radar-time-image" alt="Radar timestamp strip" /></div>';
       radarTimeImageEl = div.querySelector('.radar-time-image');
       L.DomEvent.disableClickPropagation(div);
