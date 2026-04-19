@@ -676,6 +676,16 @@
     );
     radarOverlay.addTo(map);
 
+    // Visual range ring (240 km) centered at radar circle position
+    var radarRangeRing = L.circle(bilogoraRadarCircle, {
+      radius: radarRangeKm * 1000,
+      color: '#7dd3fc',
+      weight: 2,
+      opacity: 0.9,
+      fill: false,
+      interactive: false
+    }).addTo(map);
+
     // DHMZ reflectivity legend (Z in dBZ) on left side
     var dbzLegendControl = L.control({ position: 'topleft' });
     dbzLegendControl.onAdd = function() {
@@ -762,6 +772,8 @@
     L.marker(bilogoraRadarCircle, { icon: bilogoraPillIcon })
       .addTo(map)
       .bindTooltip('Bilogora');
+
+    radarRangeRing.bringToFront();
 
     map.invalidateSize();
     
