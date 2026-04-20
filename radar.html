@@ -600,30 +600,47 @@
       maxZoom: 19
     }).addTo(map);
 
-    // DHMZ Bilogora radar overlay (static PNG)
-    // Radar location provided: 45.9206, 17.4651
-    var bilogoraRadarCenter = [45.9206, 17.4750];
-    var bilogoraRadarCircle = [45.8835, 17.2005];
-    // Approximate radar coverage (in km) used to build image bounds
+    // Approximate radar coverage (in km) used to build image bounds/rings
     var radarRangeKm = 240;
-    var latDelta = radarRangeKm / 97;
-    var lonDelta = radarRangeKm / (102 * Math.cos(bilogoraRadarCenter[0] * Math.PI / 181));
-    var bilogoraBounds = [
-      [bilogoraRadarCenter[0] - latDelta, bilogoraRadarCenter[1] - lonDelta], // SW
-      [bilogoraRadarCenter[0] + latDelta, bilogoraRadarCenter[1] + lonDelta]  // NE
-    ];
-
-    function getRadarImageUrl() {
-      // Cache-busting query string so browser fetches a fresh radar image
-      return 'https://vrijeme.hr/bilogora-stat.png?t=' + Date.now();
-    }
-
     // Positive value shifts only the visual range ring slightly to the south (down on map)
     var radarRangeCenterSouthShiftKm = 4.6;
-    function getRadarRangeRingCenterLatLng() {
+    var radarConfigs = [
+      {
+        id: 'bilogora',
+        name: 'Bilogora',
+        center: [45.9206, 17.4750],
+        circle: [45.8835, 17.2005],
+        imageUrl: 'https://vrijeme.hr/bilogora-stat.png',
+        pillText: 'BIL'
+      },
+      {
+        id: 'puntijarka',
+        name: 'Puntijarka',
+        center: [45.9449, 16.2428],
+        circle: [45.9078, 15.9683],
+        imageUrl: 'https://vrijeme.hr/puntijarka-stat.png',
+        pillText: 'PUN'
+      }
+    ];
+
+    function buildRadarBounds(radarCenter) {
+      var latDelta = radarRangeKm / 97;
+      var lonDelta = radarRangeKm / (102 * Math.cos(radarCenter[0] * Math.PI / 181));
       return [
-        bilogoraRadarCircle[0] - (radarRangeCenterSouthShiftKm / 111),
-        bilogoraRadarCircle[1]
+        [radarCenter[0] - latDelta, radarCenter[1] - lonDelta], // SW
+        [radarCenter[0] + latDelta, radarCenter[1] + lonDelta]  // NE
+      ];
+    }
+
+    function getRadarImageUrl(baseUrl) {
+      // Cache-busting query string so browser fetches a fresh radar image
+      return baseUrl + '?t=' + Date.now();
+    }
+
+    function getRadarRangeRingCenterLatLng(radarCircleCenter) {
+      return [
+        radarCircleCenter[0] - (radarRangeCenterSouthShiftKm / 111),
+        radarCircleCenter[1]
       ];
     }
 
@@ -644,18 +661,19 @@
       return [lat2 * 180 / Math.PI, lng2 * 180 / Math.PI];
     }
 
-    function applyRadarCircularMask() {
-      var overlayImg = radarOverlay.getElement();
+    function applyRadarCircularMask(radarLayer) {
+      if (!radarLayer) return;
+      var overlayImg = radarLayer.overlay.getElement();
       if (!overlayImg) return;
 
       var mapRect = map.getContainer().getBoundingClientRect();
       var imageRect = overlayImg.getBoundingClientRect();
       if (!imageRect.width || !imageRect.height) return;
 
-      var centerContainerPoint = map.latLngToContainerPoint(bilogoraRadarCircle);
+      var centerContainerPoint = map.latLngToContainerPoint(radarLayer.circleCenter);
       var eastPointLatLng = destinationPoint(
-        bilogoraRadarCircle[0],
-        bilogoraRadarCircle[1],
+        radarLayer.circleCenter[0],
+        radarLayer.circleCenter[1],
         90,
         radarRangeKm
       );
@@ -673,17 +691,48 @@
       overlayImg.style.webkitClipPath = circleMask;
     }
 
-    function registerRadarCircularMask() {
-      radarOverlay.on('load', applyRadarCircularMask);
-      map.on('zoomend moveend resize', applyRadarCircularMask);
-    }
+    function createRadarLayer(config) {
+      var bounds = buildRadarBounds(config.center);
+      var overlay = L.imageOverlay(
+        getRadarImageUrl(config.imageUrl),
+        bounds,
+        { opacity: 0.72, interactive: false }
+      ).addTo(map);
 
-    var radarOverlay = L.imageOverlay(
-      getRadarImageUrl(),
-      bilogoraBounds,
-      { opacity: 0.72, interactive: false }
-    );
-    radarOverlay.addTo(map);
+      var ringCenter = getRadarRangeRingCenterLatLng(config.circle);
+      var ring = L.circle(ringCenter, {
+        radius: radarRangeKm * 1000,
+        color: 'rgba(20, 20, 20, 0.88)',
+        weight: 2,
+        opacity: 0.9,
+        fill: false,
+        interactive: false
+      }).addTo(map);
+
+      var pillIcon = L.divIcon({
+        className: '',
+        html: '<div class="radar-pill-marker">' + config.pillText + '</div>',
+        iconSize: [34, 20],
+        iconAnchor: [17, 10]
+      });
+      L.marker(config.circle, { icon: pillIcon })
+        .addTo(map)
+        .bindTooltip(config.name);
+
+      return {
+        id: config.id,
+        name: config.name,
+        imageUrl: config.imageUrl,
+        bounds: bounds,
+        circleCenter: config.circle,
+        overlay: overlay,
+        ring: ring
+      };
+    }
+    var radarLayers = [];
+    for (var r = 0; r < radarConfigs.length; r++) {
+      radarLayers.push(createRadarLayer(radarConfigs[r]));
+    }
 
     // Visual range ring (240 km) centered at radar circle position
     var radarRangeRingCenter = getRadarRangeRingCenterLatLng();
@@ -751,37 +800,49 @@
     }
 
     function syncRadarTimestampFromOverlay() {
-      var overlayImg = radarOverlay.getElement();
+      if (!radarLayers.length) return;
+      var overlayImg = radarLayers[0].overlay.getElement();
       if (!overlayImg) return;
       var resolvedUrl = overlayImg.currentSrc || overlayImg.src || '';
       if (!resolvedUrl) return;
       updateRadarTimestampDisplay(resolvedUrl);
     }
 
-    function refreshRadarOverlay() {
-      var sourceUrl = getRadarImageUrl();
-      radarOverlay.setUrl(sourceUrl);
-      radarOverlay.setBounds(bilogoraBounds);
-      applyRadarCircularMask();
+    function applyAllRadarMasks() {
+      for (var i = 0; i < radarLayers.length; i++) {
+        applyRadarCircularMask(radarLayers[i]);
+      }
+    }
+
+    function refreshRadarOverlays() {
+      for (var i = 0; i < radarLayers.length; i++) {
+        var radarLayer = radarLayers[i];
+        var sourceUrl = getRadarImageUrl(radarLayer.imageUrl);
+        radarLayer.overlay.setUrl(sourceUrl);
+        radarLayer.overlay.setBounds(radarLayer.bounds);
+      }
+      applyAllRadarMasks();
     }
 
     // Render radar immediately and then auto-refresh every minute
-    registerRadarCircularMask();
-    radarOverlay.on('load', syncRadarTimestampFromOverlay);
-    refreshRadarOverlay();
+    for (var i = 0; i < radarLayers.length; i++) {
+      (function(radarLayer) {
+        radarLayer.overlay.on('load', function() {
+          applyRadarCircularMask(radarLayer);
+          if (radarLayer.id === 'bilogora') {
+            syncRadarTimestampFromOverlay();
+          }
+        });
+      })(radarLayers[i]);
+    }
+    map.on('zoomend moveend resize', applyAllRadarMasks);
+    refreshRadarOverlays();
     var radarRefreshIntervalMs = 60 * 1000;
-    setInterval(refreshRadarOverlay, radarRefreshIntervalMs);
+    setInterval(refreshRadarOverlays, radarRefreshIntervalMs);
 
-    // Fixed-size radar position pill marker
-    var bilogoraPillIcon = L.divIcon({
-      className: '',
-      html: '<div class="radar-pill-marker">BIL</div>',
-      iconSize: [34, 20],
-      iconAnchor: [17, 10]
-    });
-    L.marker(bilogoraRadarCircle, { icon: bilogoraPillIcon })
-      .addTo(map)
-      .bindTooltip('Bilogora');
+    for (var i = 0; i < radarLayers.length; i++) {
+      radarLayers[i].ring.bringToFront();
+    }
 
     radarRangeRing.bringToFront();
 
