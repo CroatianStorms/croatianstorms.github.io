@@ -349,6 +349,11 @@
   letter-spacing: 0.4px;
   line-height: 1;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  transition: background 0.2s ease;
+}
+
+.radar-pill-marker.is-selected {
+  background: #008000;
 }
 
 .dbz-legend {
@@ -807,6 +812,14 @@
         var isSelected = radarLayer.id === selectedRadarId;
         radarLayer.overlay.setOpacity(isSelected ? 0.72 : 0);
         radarLayer.ring.setStyle({ opacity: isSelected ? 0.9 : 0, fillOpacity: 0 });
+
+        var markerElement = radarLayer.marker.getElement();
+        if (markerElement) {
+          var pillElement = markerElement.querySelector('.radar-pill-marker');
+          if (pillElement) {
+            pillElement.classList.toggle('is-selected', isSelected);
+          }
+        }
       }
       applyAllRadarMasks();
       syncRadarTimestampFromOverlay();
