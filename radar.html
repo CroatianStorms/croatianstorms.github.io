@@ -618,9 +618,9 @@
       return 'https://vrijeme.hr/bilogora-stat.png?t=' + Date.now();
     }
 
-    // Positive value shifts the range ring/crop center slightly to the south (down on map)
-    var radarRangeCenterSouthShiftKm = 0;
-    function getRadarRangeCenterLatLng() {
+    // Positive value shifts only the visual range ring slightly to the south (down on map)
+    var radarRangeCenterSouthShiftKm = 8;
+    function getRadarRangeRingCenterLatLng() {
       return [
         bilogoraRadarCircle[0] - (radarRangeCenterSouthShiftKm / 111),
         bilogoraRadarCircle[1]
@@ -652,11 +652,10 @@
       var imageRect = overlayImg.getBoundingClientRect();
       if (!imageRect.width || !imageRect.height) return;
 
-      var rangeCenter = getRadarRangeCenterLatLng();
-      var centerContainerPoint = map.latLngToContainerPoint(rangeCenter);
+      var centerContainerPoint = map.latLngToContainerPoint(bilogoraRadarCircle);
       var eastPointLatLng = destinationPoint(
-        rangeCenter[0],
-        rangeCenter[1],
+        bilogoraRadarCircle[0],
+        bilogoraRadarCircle[1],
         90,
         radarRangeKm
       );
@@ -687,8 +686,8 @@
     radarOverlay.addTo(map);
 
     // Visual range ring (240 km) centered at radar circle position
-    var radarRangeCenter = getRadarRangeCenterLatLng();
-    var radarRangeRing = L.circle(radarRangeCenter, {
+    var radarRangeRingCenter = getRadarRangeRingCenterLatLng();
+    var radarRangeRing = L.circle(radarRangeRingCenter, {
       radius: radarRangeKm * 1000,
       color: 'rgba(255, 255, 255, 0.45)',
       weight: 2,
