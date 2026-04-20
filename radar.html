@@ -618,21 +618,54 @@
       return 'https://vrijeme.hr/bilogora-stat.png?t=' + Date.now();
     }
 
+    // Positive value shifts the range ring/crop center slightly to the south (down on map)
+    var radarRangeCenterSouthShiftKm = 8;
+    function getRadarRangeCenterLatLng() {
+      return [
+        bilogoraRadarCircle[0] - (radarRangeCenterSouthShiftKm / 111),
+        bilogoraRadarCircle[1]
+      ];
+    }
+
+    function destinationPoint(lat, lng, bearingDeg, distanceKm) {
+      var earthRadiusKm = 6371;
+      var bearing = bearingDeg * Math.PI / 180;
+      var lat1 = lat * Math.PI / 180;
+      var lng1 = lng * Math.PI / 180;
+      var angularDistance = distanceKm / earthRadiusKm;
+      var lat2 = Math.asin(
+        Math.sin(lat1) * Math.cos(angularDistance) +
+        Math.cos(lat1) * Math.sin(angularDistance) * Math.cos(bearing)
+      );
+      var lng2 = lng1 + Math.atan2(
+        Math.sin(bearing) * Math.sin(angularDistance) * Math.cos(lat1),
+        Math.cos(angularDistance) - Math.sin(lat1) * Math.sin(lat2)
+      );
+      return [lat2 * 180 / Math.PI, lng2 * 180 / Math.PI];
+    }
+
     function applyRadarCircularMask() {
       var overlayImg = radarOverlay.getElement();
-      if (!overlayImg || !radarRangeRing) return;
-
-      // Use the rendered Leaflet circle geometry so mask and range ring stay perfectly aligned
-      var ringLayerPoint = radarRangeRing._point;
-      var ringPixelRadius = radarRangeRing._radius;
-      if (!ringLayerPoint || !isFinite(ringPixelRadius) || ringPixelRadius <= 0) return;
+      if (!overlayImg) return;
 
       var mapRect = map.getContainer().getBoundingClientRect();
       var imageRect = overlayImg.getBoundingClientRect();
       if (!imageRect.width || !imageRect.height) return;
 
-      var centerContainerPoint = map.layerPointToContainerPoint(ringLayerPoint);
-      var pixelRadius = ringPixelRadius;
+      var rangeCenter = getRadarRangeCenterLatLng();
+      var centerContainerPoint = map.latLngToContainerPoint(rangeCenter);
+      var eastPointLatLng = destinationPoint(
+        rangeCenter[0],
+        rangeCenter[1],
+        90,
+        radarRangeKm
+      );
+      var eastContainerPoint = map.latLngToContainerPoint(eastPointLatLng);
+      var pixelRadius = Math.hypot(
+        eastContainerPoint.x - centerContainerPoint.x,
+        eastContainerPoint.y - centerContainerPoint.y
+      );
+      if (!isFinite(pixelRadius) || pixelRadius <= 0) return;
 
       var centerX = mapRect.left + centerContainerPoint.x - imageRect.left;
       var centerY = mapRect.top + centerContainerPoint.y - imageRect.top;
@@ -654,7 +687,8 @@
     radarOverlay.addTo(map);
 
     // Visual range ring (240 km) centered at radar circle position
-    var radarRangeRing = L.circle(bilogoraRadarCircle, {
+    var radarRangeCenter = getRadarRangeCenterLatLng();
+    var radarRangeRing = L.circle(radarRangeCenter, {
       radius: radarRangeKm * 1000,
       color: 'rgba(255, 255, 255, 0.45)',
       weight: 2,
