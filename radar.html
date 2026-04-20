@@ -619,7 +619,7 @@
     }
 
     // Positive value shifts only the visual range ring slightly to the south (down on map)
-    var radarRangeCenterSouthShiftKm = 8;
+    var radarRangeCenterSouthShiftKm = 4;
     function getRadarRangeRingCenterLatLng() {
       return [
         bilogoraRadarCircle[0] - (radarRangeCenterSouthShiftKm / 111),
@@ -689,7 +689,7 @@
     var radarRangeRingCenter = getRadarRangeRingCenterLatLng();
     var radarRangeRing = L.circle(radarRangeRingCenter, {
       radius: radarRangeKm * 1000,
-      color: 'rgba(255, 255, 255, 0.45)',
+      color: 'rgba(20, 20, 20, 0.88)',
       weight: 2,
       opacity: 0.9,
       fill: false,
