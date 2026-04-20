@@ -385,6 +385,40 @@
 .leaflet-top .dbz-legend {
   margin-top: 64px;
 }
+
+.radar-time-control {
+  min-width: 260px;
+  font-size: 12px;
+}
+
+.radar-time-label {
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  opacity: 0.9;
+}
+
+.radar-time-value {
+  /* Tune these offsets to move the cropped radar timestamp image inside this box */
+  --radar-time-offset-x: 18px;
+  --radar-time-offset-y: -60px;
+  width: 240px;
+  height: 23px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+  position: relative;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.radar-time-image {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(var(--radar-time-offset-x), var(--radar-time-offset-y));
+  transform-origin: top left;
+}
   </style>
 </head>
 <body>
@@ -470,7 +504,7 @@
   </svg>
   <span class="text">HOME</span>
 </a>
-  <a href="#" class="menu-item" title="Radar">
+  <a href="radar.html" class="menu-item" title="Radar">
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
   <circle cx="12" cy="12" r="8"/>
   <circle cx="12" cy="12" r="4"/>
@@ -533,7 +567,7 @@
     z-index: 999;
   ">
     <a href="index.html" style="color: white; font-size: 1.1rem;">HOME</a>
-    <a href="#" style="color: white; font-size: 1.1rem;">RADAR</a>
+    <a href="radar.html" style="color: white; font-size: 1.1rem;">RADAR</a>
     <a href="#" style="color: white; font-size: 1.1rem;">SUPERCELLS</a>
     <a href="blog.html" style="color: white; font-size: 1.1rem;">BLOG</a>
     <a href="#" style="color: white; font-size: 1.1rem;">PHOTOGRAPHY</a>
@@ -565,73 +599,139 @@
       maxZoom: 19
     }).addTo(map);
 
-    // DHMZ Bilogora radar overlay (static PNG)
-    // Radar location provided: 45.9206, 17.4651
-    var bilogoraRadarCenter = [45.9206, 17.4750];
-    var bilogoraRadarCircle = [45.8835, 17.2005];
-    // Approximate radar coverage (in km) used to build image bounds
+    // Approximate radar coverage (in km) used to build image bounds/rings
     var radarRangeKm = 240;
-    var latDelta = radarRangeKm / 97;
-    var lonDelta = radarRangeKm / (102 * Math.cos(bilogoraRadarCenter[0] * Math.PI / 181));
-    var bilogoraBounds = [
-      [bilogoraRadarCenter[0] - latDelta, bilogoraRadarCenter[1] - lonDelta], // SW
-      [bilogoraRadarCenter[0] + latDelta, bilogoraRadarCenter[1] + lonDelta]  // NE
+    // Positive value shifts only the visual range ring slightly to the south (down on map)
+    var radarRangeCenterSouthShiftKm = 4.6;
+    var radarConfigs = [
+      {
+        id: 'bilogora',
+        name: 'Bilogora',
+        center: [45.9206, 17.4750],
+        circle: [45.8835, 17.2005],
+        imageUrl: 'https://vrijeme.hr/bilogora-stat.png',
+        pillText: 'BIL'
+      },
+      {
+        id: 'puntijarka',
+        name: 'Puntijarka',
+        center: [45.9449, 16.2428],
+        circle: [45.9078, 15.9683],
+        imageUrl: 'https://vrijeme.hr/puntijarka-stat.png',
+        pillText: 'PUN'
+      }
     ];
 
-    function getRadarImageUrl() {
+    function buildRadarBounds(radarCenter) {
+      var latDelta = radarRangeKm / 97;
+      var lonDelta = radarRangeKm / (102 * Math.cos(radarCenter[0] * Math.PI / 181));
+      return [
+        [radarCenter[0] - latDelta, radarCenter[1] - lonDelta], // SW
+        [radarCenter[0] + latDelta, radarCenter[1] + lonDelta]  // NE
+      ];
+    }
+
+    function getRadarImageUrl(baseUrl) {
       // Cache-busting query string so browser fetches a fresh radar image
-      return 'https://vrijeme.hr/bilogora-stat.png?t=' + Date.now();
+      return baseUrl + '?t=' + Date.now();
     }
 
-    // Top-crop tuning by zoom (base crop is for initial zoom level)
-    var radarBaseZoomLevel = 7;
-    var radarBaseCropTopPx = 53;
-    // Adjustments for next 3 zoom-out and zoom-in levels
-    // (negative = less crop, positive = more crop)
-    var radarCropAdjustByZoomDelta = {
-      '-3': -46,
-      '-2': -39,
-      '-1': -26,
-      '0': 0,
-      '1': 53,
-      '2': 159,
-      '3': 371
-    };
-
-    function getRadarCropTopPxForZoom() {
-      var zoomDelta = map.getZoom() - radarBaseZoomLevel;
-      var clampedDelta = Math.max(-3, Math.min(3, zoomDelta));
-      var zoomAdjustment = radarCropAdjustByZoomDelta[String(clampedDelta)] || 0;
-      return Math.max(0, radarBaseCropTopPx + zoomAdjustment);
+    function getRadarRangeRingCenterLatLng(radarCircleCenter) {
+      return [
+        radarCircleCenter[0] - (radarRangeCenterSouthShiftKm / 111),
+        radarCircleCenter[1]
+      ];
     }
 
-    function applyRadarTopCropMask() {
-      var overlayImg = radarOverlay.getElement();
+    function destinationPoint(lat, lng, bearingDeg, distanceKm) {
+      var earthRadiusKm = 6371;
+      var bearing = bearingDeg * Math.PI / 180;
+      var lat1 = lat * Math.PI / 180;
+      var lng1 = lng * Math.PI / 180;
+      var angularDistance = distanceKm / earthRadiusKm;
+      var lat2 = Math.asin(
+        Math.sin(lat1) * Math.cos(angularDistance) +
+        Math.cos(lat1) * Math.sin(angularDistance) * Math.cos(bearing)
+      );
+      var lng2 = lng1 + Math.atan2(
+        Math.sin(bearing) * Math.sin(angularDistance) * Math.cos(lat1),
+        Math.cos(angularDistance) - Math.sin(lat1) * Math.sin(lat2)
+      );
+      return [lat2 * 180 / Math.PI, lng2 * 180 / Math.PI];
+    }
+
+    function applyRadarCircularMask(radarLayer) {
+      if (!radarLayer) return;
+      var overlayImg = radarLayer.overlay.getElement();
       if (!overlayImg) return;
-      var currentCropTopPx = getRadarCropTopPxForZoom();
-      var currentCropRightPx = currentCropTopPx;
-      if (currentCropTopPx <= 0 && currentCropRightPx <= 0) {
-        overlayImg.style.clipPath = 'none';
-        overlayImg.style.webkitClipPath = 'none';
-        return;
-      }
 
-      // Keep original transform generated by Leaflet, crop top and right strips by zoom-aware values
-      overlayImg.style.clipPath = 'inset(' + currentCropTopPx + 'px ' + currentCropRightPx + 'px 0 0)';
-      overlayImg.style.webkitClipPath = 'inset(' + currentCropTopPx + 'px ' + currentCropRightPx + 'px 0 0)';
+      var mapRect = map.getContainer().getBoundingClientRect();
+      var imageRect = overlayImg.getBoundingClientRect();
+      if (!imageRect.width || !imageRect.height) return;
+
+      var centerContainerPoint = map.latLngToContainerPoint(radarLayer.circleCenter);
+      var eastPointLatLng = destinationPoint(
+        radarLayer.circleCenter[0],
+        radarLayer.circleCenter[1],
+        90,
+        radarRangeKm
+      );
+      var eastContainerPoint = map.latLngToContainerPoint(eastPointLatLng);
+      var pixelRadius = Math.hypot(
+        eastContainerPoint.x - centerContainerPoint.x,
+        eastContainerPoint.y - centerContainerPoint.y
+      );
+      if (!isFinite(pixelRadius) || pixelRadius <= 0) return;
+
+      var centerX = mapRect.left + centerContainerPoint.x - imageRect.left;
+      var centerY = mapRect.top + centerContainerPoint.y - imageRect.top;
+      var circleMask = 'circle(' + pixelRadius.toFixed(2) + 'px at ' + centerX.toFixed(2) + 'px ' + centerY.toFixed(2) + 'px)';
+      overlayImg.style.clipPath = circleMask;
+      overlayImg.style.webkitClipPath = circleMask;
     }
 
-    function registerRadarCropMask() {
-      radarOverlay.on('load', applyRadarTopCropMask);
-      map.on('zoomend moveend resize', applyRadarTopCropMask);
-    }
+    function createRadarLayer(config) {
+      var bounds = buildRadarBounds(config.center);
+      var overlay = L.imageOverlay(
+        getRadarImageUrl(config.imageUrl),
+        bounds,
+        { opacity: 0.72, interactive: false }
+      ).addTo(map);
 
-    var radarOverlay = L.imageOverlay(
-      getRadarImageUrl(),
-      bilogoraBounds,
-      { opacity: 0.72, interactive: false }
-    );
-    radarOverlay.addTo(map);
+      var ringCenter = getRadarRangeRingCenterLatLng(config.circle);
+      var ring = L.circle(ringCenter, {
+        radius: radarRangeKm * 1000,
+        color: 'rgba(20, 20, 20, 0.88)',
+        weight: 2,
+        opacity: 0.9,
+        fill: false,
+        interactive: false
+      }).addTo(map);
+
+      var pillIcon = L.divIcon({
+        className: '',
+        html: '<div class="radar-pill-marker">' + config.pillText + '</div>',
+        iconSize: [34, 20],
+        iconAnchor: [17, 10]
+      });
+      L.marker(config.circle, { icon: pillIcon })
+        .addTo(map)
+        .bindTooltip(config.name);
+
+      return {
+        id: config.id,
+        name: config.name,
+        imageUrl: config.imageUrl,
+        bounds: bounds,
+        circleCenter: config.circle,
+        overlay: overlay,
+        ring: ring
+      };
+    }
+    var radarLayers = [];
+    for (var r = 0; r < radarConfigs.length; r++) {
+      radarLayers.push(createRadarLayer(radarConfigs[r]));
+    }
 
     // DHMZ reflectivity legend (Z in dBZ) on left side
     var dbzLegendControl = L.control({ position: 'topleft' });
@@ -668,29 +768,69 @@
     };
     dbzLegendControl.addTo(map);
 
-    function refreshRadarOverlay() {
-      var sourceUrl = getRadarImageUrl();
-      radarOverlay.setUrl(sourceUrl);
-      radarOverlay.setBounds(bilogoraBounds);
-      applyRadarTopCropMask();
+    var radarTimeControl = L.control({ position: 'bottomleft' });
+    var radarTimeImageEl = null;
+    radarTimeControl.onAdd = function() {
+      var div = L.DomUtil.create('div', 'dbz-legend radar-time-control');
+      div.innerHTML =
+        '<div class="radar-time-label">Radarska slika (vrijeme):</div>' +
+        '<div class="radar-time-value"><img class="radar-time-image" alt="Radar timestamp strip" /></div>';
+      radarTimeImageEl = div.querySelector('.radar-time-image');
+      L.DomEvent.disableClickPropagation(div);
+      L.DomEvent.disableScrollPropagation(div);
+      return div;
+    };
+    radarTimeControl.addTo(map);
+
+    function updateRadarTimestampDisplay(imageUrl) {
+      if (!radarTimeImageEl) return;
+      radarTimeImageEl.src = imageUrl;
+    }
+
+    function syncRadarTimestampFromOverlay() {
+      if (!radarLayers.length) return;
+      var overlayImg = radarLayers[0].overlay.getElement();
+      if (!overlayImg) return;
+      var resolvedUrl = overlayImg.currentSrc || overlayImg.src || '';
+      if (!resolvedUrl) return;
+      updateRadarTimestampDisplay(resolvedUrl);
+    }
+
+    function applyAllRadarMasks() {
+      for (var i = 0; i < radarLayers.length; i++) {
+        applyRadarCircularMask(radarLayers[i]);
+      }
+    }
+
+    function refreshRadarOverlays() {
+      for (var i = 0; i < radarLayers.length; i++) {
+        var radarLayer = radarLayers[i];
+        var sourceUrl = getRadarImageUrl(radarLayer.imageUrl);
+        radarLayer.overlay.setUrl(sourceUrl);
+        radarLayer.overlay.setBounds(radarLayer.bounds);
+      }
+      applyAllRadarMasks();
     }
 
     // Render radar immediately and then auto-refresh every minute
-    registerRadarCropMask();
-    refreshRadarOverlay();
+    for (var i = 0; i < radarLayers.length; i++) {
+      (function(radarLayer) {
+        radarLayer.overlay.on('load', function() {
+          applyRadarCircularMask(radarLayer);
+          if (radarLayer.id === 'bilogora') {
+            syncRadarTimestampFromOverlay();
+          }
+        });
+      })(radarLayers[i]);
+    }
+    map.on('zoomend moveend resize', applyAllRadarMasks);
+    refreshRadarOverlays();
     var radarRefreshIntervalMs = 60 * 1000;
-    setInterval(refreshRadarOverlay, radarRefreshIntervalMs);
+    setInterval(refreshRadarOverlays, radarRefreshIntervalMs);
 
-    // Fixed-size radar position pill marker
-    var bilogoraPillIcon = L.divIcon({
-      className: '',
-      html: '<div class="radar-pill-marker">BIL</div>',
-      iconSize: [34, 20],
-      iconAnchor: [17, 10]
-    });
-    L.marker(bilogoraRadarCircle, { icon: bilogoraPillIcon })
-      .addTo(map)
-      .bindTooltip('Bilogora');
+    for (var i = 0; i < radarLayers.length; i++) {
+      radarLayers[i].ring.bringToFront();
+    }
 
     map.invalidateSize();
     
