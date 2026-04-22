@@ -849,20 +849,30 @@
       radarTimeImageEl.src = imageUrl;
     }
 
+    function getRadarOverlaySourceUrl(radarLayer) {
+      if (isRadarAnimationPlaying && radarLayer.id === selectedRadarId) {
+        return radarLayer.animationUrl;
+      }
+      return radarLayer.imageUrl;
+    }
+
+    function refreshRadarLayerSource(radarLayer) {
+      radarLayer.overlay.setUrl(getRadarImageUrl(getRadarOverlaySourceUrl(radarLayer)));
+      radarLayer.overlay.setBounds(radarLayer.bounds);
+    }
+
     function playSelectedRadarAnimation() {
       var selectedRadarLayer = getSelectedRadarLayer();
       if (!selectedRadarLayer) return;
       isRadarAnimationPlaying = true;
-      selectedRadarLayer.overlay.setUrl(getRadarImageUrl(selectedRadarLayer.animationUrl));
-      selectedRadarLayer.overlay.setBounds(selectedRadarLayer.bounds);
+      refreshRadarLayerSource(selectedRadarLayer);
     }
 
     function stopSelectedRadarAnimation() {
-      var selectedRadarLayer = getSelectedRadarLayer();
-      if (!selectedRadarLayer) return;
       isRadarAnimationPlaying = false;
-      selectedRadarLayer.overlay.setUrl(getRadarImageUrl(selectedRadarLayer.imageUrl));
-      selectedRadarLayer.overlay.setBounds(selectedRadarLayer.bounds);
+      for (var i = 0; i < radarLayers.length; i++) {
+        refreshRadarLayerSource(radarLayers[i]);
+      }
       syncRadarTimestampFromOverlay();
     }
 
@@ -892,9 +902,8 @@
         var isSelected = radarLayer.id === selectedRadarId;
         radarLayer.overlay.setOpacity(isSelected ? 0.72 : 0);
         radarLayer.ring.setStyle({ opacity: isSelected ? 0.9 : 0, fillOpacity: 0 });
-        if (isRadarAnimationPlaying && isSelected) {
-          radarLayer.overlay.setUrl(getRadarImageUrl(radarLayer.animationUrl));
-          radarLayer.overlay.setBounds(radarLayer.bounds);
+        if (isSelected) {
+          refreshRadarLayerSource(radarLayer);
         }
 
         var markerElement = radarLayer.marker.getElement();
@@ -931,15 +940,7 @@
     function refreshRadarOverlays() {
       for (var i = 0; i < radarLayers.length; i++) {
         var radarLayer = radarLayers[i];
-        if (isRadarAnimationPlaying && radarLayer.id === selectedRadarId) {
-          continue;
-        }
-        var sourceUrl = getRadarImageUrl(radarLayer.imageUrl);
-        if (isRadarAnimationPlaying && radarLayer.id === selectedRadarId) {
-          sourceUrl = getRadarImageUrl(radarLayer.animationUrl);
-        }
-        radarLayer.overlay.setUrl(sourceUrl);
-        radarLayer.overlay.setBounds(radarLayer.bounds);
+        refreshRadarLayerSource(radarLayer);
       }
       applyAllRadarMasks();
     }
