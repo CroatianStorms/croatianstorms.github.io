@@ -931,6 +931,9 @@
     function refreshRadarOverlays() {
       for (var i = 0; i < radarLayers.length; i++) {
         var radarLayer = radarLayers[i];
+        if (isRadarAnimationPlaying && radarLayer.id === selectedRadarId) {
+          continue;
+        }
         var sourceUrl = getRadarImageUrl(radarLayer.imageUrl);
         if (isRadarAnimationPlaying && radarLayer.id === selectedRadarId) {
           sourceUrl = getRadarImageUrl(radarLayer.animationUrl);
