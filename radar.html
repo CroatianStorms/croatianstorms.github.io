@@ -831,8 +831,6 @@
       L.DomEvent.disableScrollPropagation(div);
       return div;
     };
-    radarAnimationControl.addTo(map);
-
     radarTimeControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'dbz-legend radar-time-control');
       div.innerHTML =
@@ -844,6 +842,7 @@
       return div;
     };
     radarTimeControl.addTo(map);
+    radarAnimationControl.addTo(map);
 
     function updateRadarTimestampDisplay(imageUrl) {
       if (!radarTimeImageEl) return;
@@ -854,7 +853,7 @@
       var selectedRadarLayer = getSelectedRadarLayer();
       if (!selectedRadarLayer) return;
       isRadarAnimationPlaying = true;
-      selectedRadarLayer.overlay.setUrl(selectedRadarLayer.animationUrl);
+      selectedRadarLayer.overlay.setUrl(getRadarImageUrl(selectedRadarLayer.animationUrl));
       selectedRadarLayer.overlay.setBounds(selectedRadarLayer.bounds);
     }
 
@@ -894,7 +893,7 @@
         radarLayer.overlay.setOpacity(isSelected ? 0.72 : 0);
         radarLayer.ring.setStyle({ opacity: isSelected ? 0.9 : 0, fillOpacity: 0 });
         if (isRadarAnimationPlaying && isSelected) {
-          radarLayer.overlay.setUrl(radarLayer.animationUrl);
+          radarLayer.overlay.setUrl(getRadarImageUrl(radarLayer.animationUrl));
           radarLayer.overlay.setBounds(radarLayer.bounds);
         }
 
@@ -936,6 +935,9 @@
           continue;
         }
         var sourceUrl = getRadarImageUrl(radarLayer.imageUrl);
+        if (isRadarAnimationPlaying && radarLayer.id === selectedRadarId) {
+          sourceUrl = getRadarImageUrl(radarLayer.animationUrl);
+        }
         radarLayer.overlay.setUrl(sourceUrl);
         radarLayer.overlay.setBounds(radarLayer.bounds);
       }
