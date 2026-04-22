@@ -399,9 +399,21 @@
 
 .radar-animation-control {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
   margin-bottom: 8px;
+}
+
+.radar-animation-label {
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.radar-animation-actions {
+  display: flex;
+  gap: 8px;
 }
 
 .radar-animation-button {
@@ -814,8 +826,11 @@
     radarAnimationControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'dbz-legend radar-animation-control');
       div.innerHTML =
-        '<button class="radar-animation-button radar-play-button" type="button">Play</button>' +
-        '<button class="radar-animation-button radar-stop-button" type="button">Stop</button>';
+        '<div class="radar-animation-label">Radarska animacija:</div>' +
+        '<div class="radar-animation-actions">' +
+          '<button class="radar-animation-button radar-play-button" type="button">Play</button>' +
+          '<button class="radar-animation-button radar-stop-button" type="button">Stop</button>' +
+        '</div>';
 
       var playButton = div.querySelector('.radar-play-button');
       var stopButton = div.querySelector('.radar-stop-button');
