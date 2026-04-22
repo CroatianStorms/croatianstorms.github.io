@@ -397,6 +397,28 @@
   font-size: 12px;
 }
 
+.radar-animation-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.radar-animation-button {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.45);
+  color: #ffffff;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.radar-animation-button:hover {
+  background: rgba(30, 58, 138, 0.65);
+}
+
 .radar-time-label {
   font-size: 11px;
   font-weight: 700;
@@ -616,6 +638,7 @@
         center: [45.9206, 17.4750],
         circle: [45.8835, 17.2005],
         imageUrl: 'https://vrijeme.hr/bilogora-stat.png',
+        animationUrl: 'https://vrijeme.hr/anim_bilogora.gif',
         pillText: 'BIL',
         timeBoxWidthPx: 240
       },
@@ -625,6 +648,7 @@
         center: [45.9449, 16.2428],
         circle: [45.9078, 15.9683],
         imageUrl: 'https://vrijeme.hr/puntijarka-stat.png',
+        animationUrl: 'https://vrijeme.hr/anim_puntijarka.gif',
         pillText: 'PUN',
         timeBoxWidthPx: 250
       }
@@ -733,6 +757,7 @@
         id: config.id,
         name: config.name,
         imageUrl: config.imageUrl,
+        animationUrl: config.animationUrl,
         timeBoxWidthPx: config.timeBoxWidthPx,
         bounds: bounds,
         circleCenter: config.circle,
@@ -783,6 +808,31 @@
 
     var radarTimeControl = L.control({ position: 'bottomleft' });
     var radarTimeImageEl = null;
+    var radarAnimationControl = L.control({ position: 'bottomleft' });
+    var isRadarAnimationPlaying = false;
+
+    radarAnimationControl.onAdd = function() {
+      var div = L.DomUtil.create('div', 'dbz-legend radar-animation-control');
+      div.innerHTML =
+        '<button class="radar-animation-button radar-play-button" type="button">Play</button>' +
+        '<button class="radar-animation-button radar-stop-button" type="button">Stop</button>';
+
+      var playButton = div.querySelector('.radar-play-button');
+      var stopButton = div.querySelector('.radar-stop-button');
+
+      playButton.addEventListener('click', function() {
+        playSelectedRadarAnimation();
+      });
+      stopButton.addEventListener('click', function() {
+        stopSelectedRadarAnimation();
+      });
+
+      L.DomEvent.disableClickPropagation(div);
+      L.DomEvent.disableScrollPropagation(div);
+      return div;
+    };
+    radarAnimationControl.addTo(map);
+
     radarTimeControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'dbz-legend radar-time-control');
       div.innerHTML =
@@ -798,6 +848,23 @@
     function updateRadarTimestampDisplay(imageUrl) {
       if (!radarTimeImageEl) return;
       radarTimeImageEl.src = imageUrl;
+    }
+
+    function playSelectedRadarAnimation() {
+      var selectedRadarLayer = getSelectedRadarLayer();
+      if (!selectedRadarLayer) return;
+      isRadarAnimationPlaying = true;
+      selectedRadarLayer.overlay.setUrl(selectedRadarLayer.animationUrl);
+      selectedRadarLayer.overlay.setBounds(selectedRadarLayer.bounds);
+    }
+
+    function stopSelectedRadarAnimation() {
+      var selectedRadarLayer = getSelectedRadarLayer();
+      if (!selectedRadarLayer) return;
+      isRadarAnimationPlaying = false;
+      selectedRadarLayer.overlay.setUrl(getRadarImageUrl(selectedRadarLayer.imageUrl));
+      selectedRadarLayer.overlay.setBounds(selectedRadarLayer.bounds);
+      syncRadarTimestampFromOverlay();
     }
 
     function updateRadarTimeValueBoxWidth() {
@@ -826,6 +893,10 @@
         var isSelected = radarLayer.id === selectedRadarId;
         radarLayer.overlay.setOpacity(isSelected ? 0.72 : 0);
         radarLayer.ring.setStyle({ opacity: isSelected ? 0.9 : 0, fillOpacity: 0 });
+        if (isRadarAnimationPlaying && isSelected) {
+          radarLayer.overlay.setUrl(radarLayer.animationUrl);
+          radarLayer.overlay.setBounds(radarLayer.bounds);
+        }
 
         var markerElement = radarLayer.marker.getElement();
         if (markerElement) {
@@ -861,6 +932,9 @@
     function refreshRadarOverlays() {
       for (var i = 0; i < radarLayers.length; i++) {
         var radarLayer = radarLayers[i];
+        if (isRadarAnimationPlaying && radarLayer.id === selectedRadarId) {
+          continue;
+        }
         var sourceUrl = getRadarImageUrl(radarLayer.imageUrl);
         radarLayer.overlay.setUrl(sourceUrl);
         radarLayer.overlay.setBounds(radarLayer.bounds);
