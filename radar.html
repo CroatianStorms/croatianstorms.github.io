@@ -616,7 +616,8 @@
         center: [45.9206, 17.4750],
         circle: [45.8835, 17.2005],
         imageUrl: 'https://vrijeme.hr/bilogora-stat.png',
-        pillText: 'BIL'
+        pillText: 'BIL',
+        timeBoxWidthPx: 240
       },
       {
         id: 'puntijarka',
@@ -624,7 +625,8 @@
         center: [45.9449, 16.2428],
         circle: [45.9078, 15.9683],
         imageUrl: 'https://vrijeme.hr/puntijarka-stat.png',
-        pillText: 'PUN'
+        pillText: 'PUN',
+        timeBoxWidthPx: 250
       }
     ];
 
@@ -731,6 +733,7 @@
         id: config.id,
         name: config.name,
         imageUrl: config.imageUrl,
+        timeBoxWidthPx: config.timeBoxWidthPx,
         bounds: bounds,
         circleCenter: config.circle,
         overlay: overlay,
@@ -797,6 +800,17 @@
       radarTimeImageEl.src = imageUrl;
     }
 
+    function updateRadarTimeValueBoxWidth() {
+      if (!radarTimeImageEl) return;
+      var timeValueBox = radarTimeImageEl.closest('.radar-time-value');
+      if (!timeValueBox) return;
+      var selectedRadarLayer = getSelectedRadarLayer();
+      var widthPx = selectedRadarLayer && selectedRadarLayer.timeBoxWidthPx
+        ? selectedRadarLayer.timeBoxWidthPx
+        : 240;
+      timeValueBox.style.width = widthPx + 'px';
+    }
+
     var selectedRadarId = 'bilogora';
     function getSelectedRadarLayer() {
       for (var i = 0; i < radarLayers.length; i++) {
@@ -821,6 +835,7 @@
           }
         }
       }
+      updateRadarTimeValueBoxWidth();
       applyAllRadarMasks();
       syncRadarTimestampFromOverlay();
     }
