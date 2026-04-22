@@ -349,6 +349,11 @@
   letter-spacing: 0.4px;
   line-height: 1;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  transition: background 0.2s ease;
+}
+
+.radar-pill-marker.is-selected {
+  background: #008000;
 }
 
 .dbz-legend {
@@ -611,7 +616,8 @@
         center: [45.9206, 17.4750],
         circle: [45.8835, 17.2005],
         imageUrl: 'https://vrijeme.hr/bilogora-stat.png',
-        pillText: 'BIL'
+        pillText: 'BIL',
+        timeBoxWidthPx: 240
       },
       {
         id: 'puntijarka',
@@ -619,7 +625,8 @@
         center: [45.9449, 16.2428],
         circle: [45.9078, 15.9683],
         imageUrl: 'https://vrijeme.hr/puntijarka-stat.png',
-        pillText: 'PUN'
+        pillText: 'PUN',
+        timeBoxWidthPx: 250
       }
     ];
 
@@ -726,6 +733,7 @@
         id: config.id,
         name: config.name,
         imageUrl: config.imageUrl,
+        timeBoxWidthPx: config.timeBoxWidthPx,
         bounds: bounds,
         circleCenter: config.circle,
         overlay: overlay,
@@ -792,6 +800,17 @@
       radarTimeImageEl.src = imageUrl;
     }
 
+    function updateRadarTimeValueBoxWidth() {
+      if (!radarTimeImageEl) return;
+      var timeValueBox = radarTimeImageEl.closest('.radar-time-value');
+      if (!timeValueBox) return;
+      var selectedRadarLayer = getSelectedRadarLayer();
+      var widthPx = selectedRadarLayer && selectedRadarLayer.timeBoxWidthPx
+        ? selectedRadarLayer.timeBoxWidthPx
+        : 240;
+      timeValueBox.style.width = widthPx + 'px';
+    }
+
     var selectedRadarId = 'bilogora';
     function getSelectedRadarLayer() {
       for (var i = 0; i < radarLayers.length; i++) {
@@ -807,7 +826,16 @@
         var isSelected = radarLayer.id === selectedRadarId;
         radarLayer.overlay.setOpacity(isSelected ? 0.72 : 0);
         radarLayer.ring.setStyle({ opacity: isSelected ? 0.9 : 0, fillOpacity: 0 });
+
+        var markerElement = radarLayer.marker.getElement();
+        if (markerElement) {
+          var pillElement = markerElement.querySelector('.radar-pill-marker');
+          if (pillElement) {
+            pillElement.classList.toggle('is-selected', isSelected);
+          }
+        }
       }
+      updateRadarTimeValueBoxWidth();
       applyAllRadarMasks();
       syncRadarTimestampFromOverlay();
     }
