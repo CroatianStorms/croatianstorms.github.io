@@ -349,6 +349,11 @@
   letter-spacing: 0.4px;
   line-height: 1;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+  transition: background 0.2s ease;
+}
+
+.radar-pill-marker.is-selected {
+  background: #008000;
 }
 
 .dbz-legend {
@@ -390,6 +395,53 @@
 .radar-time-control {
   min-width: 260px;
   font-size: 12px;
+}
+
+.radar-animation-control {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.radar-animation-label {
+  font-size: 11px;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.radar-animation-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.radar-animation-button {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: #0ea5e9;
+  color: #ffffff;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.radar-play-button:hover {
+  background: #008000;
+}
+
+.radar-stop-button:hover {
+  background: #ff0000;
+}
+
+.radar-play-button.is-active {
+  background: #008000;
+}
+
+.radar-stop-button.is-active {
+  background: #ff0000;
 }
 
 .radar-time-label {
@@ -611,7 +663,9 @@
         center: [45.9206, 17.4750],
         circle: [45.8835, 17.2005],
         imageUrl: 'https://vrijeme.hr/bilogora-stat.png',
-        pillText: 'BIL'
+        animationUrl: 'https://vrijeme.hr/anim_bilogora.gif',
+        pillText: 'BIL',
+        timeBoxWidthPx: 240
       },
       {
         id: 'puntijarka',
@@ -619,7 +673,19 @@
         center: [45.9449, 16.2428],
         circle: [45.9078, 15.9683],
         imageUrl: 'https://vrijeme.hr/puntijarka-stat.png',
-        pillText: 'PUN'
+        animationUrl: 'https://vrijeme.hr/anim_puntijarka.gif',
+        pillText: 'PUN',
+        timeBoxWidthPx: 250
+      },
+      {
+        id: 'gradiste',
+        name: 'Gradište',
+        center: [45.1963, 18.9778],
+        circle: [45.1592, 18.7033],
+        imageUrl: 'https://vrijeme.hr/gradiste-stat.png',
+        animationUrl: 'https://vrijeme.hr/anim_gradiste.gif',
+        pillText: 'GRA',
+        timeBoxWidthPx: 240
       }
     ];
 
@@ -726,6 +792,8 @@
         id: config.id,
         name: config.name,
         imageUrl: config.imageUrl,
+        animationUrl: config.animationUrl,
+        timeBoxWidthPx: config.timeBoxWidthPx,
         bounds: bounds,
         circleCenter: config.circle,
         overlay: overlay,
@@ -775,6 +843,34 @@
 
     var radarTimeControl = L.control({ position: 'bottomleft' });
     var radarTimeImageEl = null;
+    var radarAnimationControl = L.control({ position: 'bottomleft' });
+    var isRadarAnimationPlaying = false;
+    var radarPlayButtonEl = null;
+    var radarStopButtonEl = null;
+
+    radarAnimationControl.onAdd = function() {
+      var div = L.DomUtil.create('div', 'dbz-legend radar-animation-control');
+      div.innerHTML =
+        '<div class="radar-animation-label">Radarska animacija:</div>' +
+        '<div class="radar-animation-actions">' +
+          '<button class="radar-animation-button radar-play-button" type="button">Play</button>' +
+          '<button class="radar-animation-button radar-stop-button" type="button">Stop</button>' +
+        '</div>';
+
+      radarPlayButtonEl = div.querySelector('.radar-play-button');
+      radarStopButtonEl = div.querySelector('.radar-stop-button');
+
+      radarPlayButtonEl.addEventListener('click', function() {
+        playSelectedRadarAnimation();
+      });
+      radarStopButtonEl.addEventListener('click', function() {
+        stopSelectedRadarAnimation();
+      });
+
+      L.DomEvent.disableClickPropagation(div);
+      L.DomEvent.disableScrollPropagation(div);
+      return div;
+    };
     radarTimeControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'dbz-legend radar-time-control');
       div.innerHTML =
@@ -786,10 +882,57 @@
       return div;
     };
     radarTimeControl.addTo(map);
+    radarAnimationControl.addTo(map);
 
     function updateRadarTimestampDisplay(imageUrl) {
       if (!radarTimeImageEl) return;
       radarTimeImageEl.src = imageUrl;
+    }
+
+    function updateRadarAnimationButtonStates() {
+      if (!radarPlayButtonEl || !radarStopButtonEl) return;
+      radarPlayButtonEl.classList.toggle('is-active', isRadarAnimationPlaying);
+      radarStopButtonEl.classList.toggle('is-active', isRadarAnimationPlaying);
+    }
+
+    function getRadarOverlaySourceUrl(radarLayer) {
+      if (isRadarAnimationPlaying && radarLayer.id === selectedRadarId) {
+        return radarLayer.animationUrl;
+      }
+      return radarLayer.imageUrl;
+    }
+
+    function refreshRadarLayerSource(radarLayer) {
+      radarLayer.overlay.setUrl(getRadarImageUrl(getRadarOverlaySourceUrl(radarLayer)));
+      radarLayer.overlay.setBounds(radarLayer.bounds);
+    }
+
+    function playSelectedRadarAnimation() {
+      var selectedRadarLayer = getSelectedRadarLayer();
+      if (!selectedRadarLayer) return;
+      isRadarAnimationPlaying = true;
+      updateRadarAnimationButtonStates();
+      refreshRadarLayerSource(selectedRadarLayer);
+    }
+
+    function stopSelectedRadarAnimation() {
+      isRadarAnimationPlaying = false;
+      updateRadarAnimationButtonStates();
+      for (var i = 0; i < radarLayers.length; i++) {
+        refreshRadarLayerSource(radarLayers[i]);
+      }
+      syncRadarTimestampFromOverlay();
+    }
+
+    function updateRadarTimeValueBoxWidth() {
+      if (!radarTimeImageEl) return;
+      var timeValueBox = radarTimeImageEl.closest('.radar-time-value');
+      if (!timeValueBox) return;
+      var selectedRadarLayer = getSelectedRadarLayer();
+      var widthPx = selectedRadarLayer && selectedRadarLayer.timeBoxWidthPx
+        ? selectedRadarLayer.timeBoxWidthPx
+        : 240;
+      timeValueBox.style.width = widthPx + 'px';
     }
 
     var selectedRadarId = 'bilogora';
@@ -807,7 +950,19 @@
         var isSelected = radarLayer.id === selectedRadarId;
         radarLayer.overlay.setOpacity(isSelected ? 0.72 : 0);
         radarLayer.ring.setStyle({ opacity: isSelected ? 0.9 : 0, fillOpacity: 0 });
+        if (isSelected) {
+          refreshRadarLayerSource(radarLayer);
+        }
+
+        var markerElement = radarLayer.marker.getElement();
+        if (markerElement) {
+          var pillElement = markerElement.querySelector('.radar-pill-marker');
+          if (pillElement) {
+            pillElement.classList.toggle('is-selected', isSelected);
+          }
+        }
       }
+      updateRadarTimeValueBoxWidth();
       applyAllRadarMasks();
       syncRadarTimestampFromOverlay();
     }
@@ -833,9 +988,7 @@
     function refreshRadarOverlays() {
       for (var i = 0; i < radarLayers.length; i++) {
         var radarLayer = radarLayers[i];
-        var sourceUrl = getRadarImageUrl(radarLayer.imageUrl);
-        radarLayer.overlay.setUrl(sourceUrl);
-        radarLayer.overlay.setBounds(radarLayer.bounds);
+        refreshRadarLayerSource(radarLayer);
       }
       applyAllRadarMasks();
     }
