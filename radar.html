@@ -418,17 +418,30 @@
 
 .radar-animation-button {
   border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(0, 0, 0, 0.45);
+  background: #0ea5e9;
   color: #ffffff;
   border-radius: 4px;
   padding: 4px 10px;
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
+  transition: background 0.2s ease;
 }
 
-.radar-animation-button:hover {
-  background: rgba(30, 58, 138, 0.65);
+.radar-play-button:hover {
+  background: #008000;
+}
+
+.radar-stop-button:hover {
+  background: #ff0000;
+}
+
+.radar-play-button.is-active {
+  background: #008000;
+}
+
+.radar-stop-button.is-active {
+  background: #ff0000;
 }
 
 .radar-time-label {
@@ -822,6 +835,8 @@
     var radarTimeImageEl = null;
     var radarAnimationControl = L.control({ position: 'bottomleft' });
     var isRadarAnimationPlaying = false;
+    var radarPlayButtonEl = null;
+    var radarStopButtonEl = null;
 
     radarAnimationControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'dbz-legend radar-animation-control');
@@ -832,13 +847,13 @@
           '<button class="radar-animation-button radar-stop-button" type="button">Stop</button>' +
         '</div>';
 
-      var playButton = div.querySelector('.radar-play-button');
-      var stopButton = div.querySelector('.radar-stop-button');
+      radarPlayButtonEl = div.querySelector('.radar-play-button');
+      radarStopButtonEl = div.querySelector('.radar-stop-button');
 
-      playButton.addEventListener('click', function() {
+      radarPlayButtonEl.addEventListener('click', function() {
         playSelectedRadarAnimation();
       });
-      stopButton.addEventListener('click', function() {
+      radarStopButtonEl.addEventListener('click', function() {
         stopSelectedRadarAnimation();
       });
 
@@ -864,6 +879,12 @@
       radarTimeImageEl.src = imageUrl;
     }
 
+    function updateRadarAnimationButtonStates() {
+      if (!radarPlayButtonEl || !radarStopButtonEl) return;
+      radarPlayButtonEl.classList.toggle('is-active', isRadarAnimationPlaying);
+      radarStopButtonEl.classList.toggle('is-active', isRadarAnimationPlaying);
+    }
+
     function getRadarOverlaySourceUrl(radarLayer) {
       if (isRadarAnimationPlaying && radarLayer.id === selectedRadarId) {
         return radarLayer.animationUrl;
@@ -880,11 +901,13 @@
       var selectedRadarLayer = getSelectedRadarLayer();
       if (!selectedRadarLayer) return;
       isRadarAnimationPlaying = true;
+      updateRadarAnimationButtonStates();
       refreshRadarLayerSource(selectedRadarLayer);
     }
 
     function stopSelectedRadarAnimation() {
       isRadarAnimationPlaying = false;
+      updateRadarAnimationButtonStates();
       for (var i = 0; i < radarLayers.length; i++) {
         refreshRadarLayerSource(radarLayers[i]);
       }
