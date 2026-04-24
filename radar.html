@@ -325,6 +325,30 @@
 .custom-zoom a:hover {
   background: #1e3a8a;
 }
+
+.legend-toggle-control {
+  margin-top: 6px;
+}
+
+.legend-toggle-button {
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  background: #ffffff;
+  color: #1f2937;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.legend-toggle-button:hover {
+  background: #f3f4f6;
+}
 /* Completely hide Leaflet Routing Machine UI / white square */
 .leaflet-routing-container,
 .leaflet-control-container .leaflet-routing-container,
@@ -838,8 +862,11 @@
 
     // DHMZ reflectivity legend (Z in dBZ) on left side
     var dbzLegendControl = L.control({ position: 'topleft' });
+    var dbzLegendElement = null;
+    var isDbzLegendVisible = true;
     dbzLegendControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'dbz-legend');
+      dbzLegendElement = div;
       var levels = [
         { dbz: 70, color: '#ff00ff' },
         { dbz: 65, color: '#9955c9' },
@@ -1070,6 +1097,26 @@
     };
     
     zoomControl.addTo(map);
+
+    var legendToggleControl = L.control({ position: 'topright' });
+    legendToggleControl.onAdd = function() {
+      var div = L.DomUtil.create('div', 'legend-toggle-control');
+      var button = L.DomUtil.create('button', 'legend-toggle-button', div);
+      button.type = 'button';
+      button.innerHTML = '&#9776;';
+      button.title = 'Legenda';
+      button.setAttribute('aria-label', 'Legenda');
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        isDbzLegendVisible = !isDbzLegendVisible;
+        if (dbzLegendElement) {
+          dbzLegendElement.style.display = isDbzLegendVisible ? 'block' : 'none';
+        }
+      });
+      L.DomEvent.disableClickPropagation(div);
+      return div;
+    };
+    legendToggleControl.addTo(map);
 
 </script>
 </body>
