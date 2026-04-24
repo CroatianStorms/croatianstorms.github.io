@@ -366,6 +366,70 @@
 .legend-toggle-button.is-on::after {
   transform: translateX(20px);
 }
+
+.opacity-control {
+  position: fixed;
+  top: 136px;
+  right: 15px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.opacity-toggle-button {
+  width: 24px;
+  height: 44px;
+  border: none;
+  border-radius: 999px;
+  background: #0ea5e9;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s ease;
+  padding: 0;
+}
+
+.opacity-toggle-button::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease;
+}
+
+.opacity-toggle-button.is-on {
+  background: #008000;
+}
+
+.opacity-toggle-button.is-on::after {
+  transform: translateY(20px);
+}
+
+.opacity-slider-panel {
+  display: none;
+  background: rgba(20, 20, 20, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 8px;
+  padding: 8px;
+  width: 120px;
+}
+
+.opacity-slider-label {
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.opacity-slider-input {
+  width: 100%;
+}
 /* Completely hide Leaflet Routing Machine UI / white square */
 .leaflet-routing-container,
 .leaflet-control-container .leaflet-routing-container,
@@ -406,6 +470,11 @@
   min-width: 75px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
   font-family: Arial, sans-serif;
+  position: relative;
+}
+
+.dbz-reflectivity-legend {
+  padding-top: 36px;
   position: relative;
 }
 
@@ -1029,6 +1098,7 @@
     }
 
     var selectedRadarId = 'bilogora';
+    var selectedRadarOpacityPercent = 72;
     function getSelectedRadarLayer() {
       for (var i = 0; i < radarLayers.length; i++) {
         if (radarLayers[i].id === selectedRadarId) return radarLayers[i];
@@ -1041,7 +1111,7 @@
       for (var i = 0; i < radarLayers.length; i++) {
         var radarLayer = radarLayers[i];
         var isSelected = radarLayer.id === selectedRadarId;
-        radarLayer.overlay.setOpacity(isSelected ? 0.72 : 0);
+        radarLayer.overlay.setOpacity(isSelected ? (selectedRadarOpacityPercent / 100) : 0);
         radarLayer.ring.setStyle({ opacity: isSelected ? 0.9 : 0, fillOpacity: 0 });
         if (isSelected) {
           refreshRadarLayerSource(radarLayer);
@@ -1111,6 +1181,29 @@
     
     // Custom zoom control in top-right, below header
     var zoomControl = L.control({position: 'topright'});
+    var isOpacityControlEnabled = false;
+    var opacityToggleButtonEl = null;
+    var opacitySliderPanelEl = null;
+    var opacitySliderInputEl = null;
+    var opacitySliderValueEl = null;
+
+    function updateRadarOverlayOpacity() {
+      for (var i = 0; i < radarLayers.length; i++) {
+        radarLayers[i].overlay.setOpacity(radarLayers[i].id === selectedRadarId ? (selectedRadarOpacityPercent / 100) : 0);
+      }
+    }
+
+    function updateOpacityControlUi() {
+      if (opacityToggleButtonEl) {
+        opacityToggleButtonEl.classList.toggle('is-on', isOpacityControlEnabled);
+      }
+      if (opacitySliderPanelEl) {
+        opacitySliderPanelEl.style.display = isOpacityControlEnabled ? 'block' : 'none';
+      }
+      if (opacitySliderValueEl) {
+        opacitySliderValueEl.textContent = selectedRadarOpacityPercent + '%';
+      }
+    }
     
     zoomControl.onAdd = function(map) {
       var div = L.DomUtil.create('div', 'custom-zoom');
@@ -1133,6 +1226,42 @@
     };
     
     zoomControl.addTo(map);
+
+    var opacityControl = L.control({ position: 'topright' });
+    opacityControl.onAdd = function() {
+      var div = L.DomUtil.create('div', 'opacity-control');
+      opacityToggleButtonEl = L.DomUtil.create('button', 'opacity-toggle-button', div);
+      opacityToggleButtonEl.type = 'button';
+      opacityToggleButtonEl.title = 'Prozirnost radara';
+      opacityToggleButtonEl.setAttribute('aria-label', 'Prozirnost radara');
+
+      opacitySliderPanelEl = L.DomUtil.create('div', 'opacity-slider-panel', div);
+      opacitySliderValueEl = L.DomUtil.create('div', 'opacity-slider-label', opacitySliderPanelEl);
+      opacitySliderValueEl.textContent = selectedRadarOpacityPercent + '%';
+      opacitySliderInputEl = L.DomUtil.create('input', 'opacity-slider-input', opacitySliderPanelEl);
+      opacitySliderInputEl.type = 'range';
+      opacitySliderInputEl.min = '0';
+      opacitySliderInputEl.max = '100';
+      opacitySliderInputEl.step = '1';
+      opacitySliderInputEl.value = String(selectedRadarOpacityPercent);
+
+      opacityToggleButtonEl.addEventListener('click', function(e) {
+        e.preventDefault();
+        isOpacityControlEnabled = !isOpacityControlEnabled;
+        updateOpacityControlUi();
+      });
+
+      opacitySliderInputEl.addEventListener('input', function() {
+        selectedRadarOpacityPercent = parseInt(opacitySliderInputEl.value, 10);
+        updateOpacityControlUi();
+        updateRadarOverlayOpacity();
+      });
+
+      updateOpacityControlUi();
+      L.DomEvent.disableClickPropagation(div);
+      return div;
+    };
+    opacityControl.addTo(map);
 
     function updateLegendToggleButtonState() {
       if (!legendToggleButtonEl) return;
