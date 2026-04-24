@@ -331,23 +331,36 @@
 }
 
 .legend-toggle-button {
-  width: 30px;
-  height: 30px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
-  background: #ffffff;
-  color: #1f2937;
-  font-size: 17px;
-  font-weight: 700;
-  line-height: 1;
+  width: 44px;
+  height: 24px;
+  border: none;
+  border-radius: 999px;
+  background: #0ea5e9;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
+  transition: background 0.2s ease;
+  padding: 0;
 }
 
-.legend-toggle-button:hover {
-  background: #f3f4f6;
+.legend-toggle-button::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease;
+}
+
+.legend-toggle-button.is-on {
+  background: #008000;
+}
+
+.legend-toggle-button.is-on::after {
+  transform: translateX(20px);
 }
 /* Completely hide Leaflet Routing Machine UI / white square */
 .leaflet-routing-container,
@@ -864,6 +877,7 @@
     var dbzLegendControl = L.control({ position: 'topleft' });
     var dbzLegendElement = null;
     var isDbzLegendVisible = true;
+    var legendToggleButtonEl = null;
     dbzLegendControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'dbz-legend');
       dbzLegendElement = div;
@@ -1098,17 +1112,23 @@
     
     zoomControl.addTo(map);
 
+    function updateLegendToggleButtonState() {
+      if (!legendToggleButtonEl) return;
+      legendToggleButtonEl.classList.toggle('is-on', isDbzLegendVisible);
+    }
+
     var legendToggleControl = L.control({ position: 'topright' });
     legendToggleControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'legend-toggle-control');
-      var button = L.DomUtil.create('button', 'legend-toggle-button', div);
-      button.type = 'button';
-      button.innerHTML = '&#9776;';
-      button.title = 'Legenda';
-      button.setAttribute('aria-label', 'Legenda');
-      button.addEventListener('click', function(e) {
+      legendToggleButtonEl = L.DomUtil.create('button', 'legend-toggle-button', div);
+      legendToggleButtonEl.type = 'button';
+      legendToggleButtonEl.title = 'Legenda';
+      legendToggleButtonEl.setAttribute('aria-label', 'Legenda');
+      updateLegendToggleButtonState();
+      legendToggleButtonEl.addEventListener('click', function(e) {
         e.preventDefault();
         isDbzLegendVisible = !isDbzLegendVisible;
+        updateLegendToggleButtonState();
         if (dbzLegendElement) {
           dbzLegendElement.style.display = isDbzLegendVisible ? 'block' : 'none';
         }
