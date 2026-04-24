@@ -329,7 +329,8 @@
 .legend-toggle-control {
   position: absolute;
   top: 8px;
-  right: 10px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 2;
 }
 
@@ -405,6 +406,11 @@
   min-width: 75px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
   font-family: Arial, sans-serif;
+  position: relative;
+}
+
+.dbz-reflectivity-legend {
+  padding-top: 36px;
   position: relative;
 }
 
@@ -883,7 +889,7 @@
     var isDbzLegendVisible = true;
     var legendToggleButtonEl = null;
     dbzLegendControl.onAdd = function() {
-      var div = L.DomUtil.create('div', 'dbz-legend');
+      var div = L.DomUtil.create('div', 'dbz-legend dbz-reflectivity-legend');
       var toggleWrap = document.createElement('div');
       toggleWrap.className = 'legend-toggle-control';
       legendToggleButtonEl = document.createElement('button');
