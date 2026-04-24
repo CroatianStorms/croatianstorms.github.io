@@ -327,10 +327,10 @@
 }
 
 .legend-toggle-control {
-  position: fixed;
-  top: 136px;
-  right: 15px;
-  z-index: 1000;
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  z-index: 2;
 }
 
 .legend-toggle-button {
@@ -401,10 +401,11 @@
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 8px;
-  padding: 10px;
+  padding: 36px 10px 10px;
   min-width: 75px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
   font-family: Arial, sans-serif;
+  position: relative;
 }
 
 .dbz-legend-title {
@@ -878,12 +879,23 @@
 
     // DHMZ reflectivity legend (Z in dBZ) on left side
     var dbzLegendControl = L.control({ position: 'topleft' });
-    var dbzLegendElement = null;
+    var dbzLegendContentEl = null;
     var isDbzLegendVisible = true;
     var legendToggleButtonEl = null;
     dbzLegendControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'dbz-legend');
-      dbzLegendElement = div;
+      var toggleWrap = document.createElement('div');
+      toggleWrap.className = 'legend-toggle-control';
+      legendToggleButtonEl = document.createElement('button');
+      legendToggleButtonEl.type = 'button';
+      legendToggleButtonEl.className = 'legend-toggle-button';
+      legendToggleButtonEl.title = 'Legenda';
+      legendToggleButtonEl.setAttribute('aria-label', 'Legenda');
+      toggleWrap.appendChild(legendToggleButtonEl);
+      div.appendChild(toggleWrap);
+
+      dbzLegendContentEl = document.createElement('div');
+      dbzLegendContentEl.className = 'dbz-legend-content';
       var levels = [
         { dbz: 70, color: '#ff00ff' },
         { dbz: 65, color: '#9955c9' },
@@ -900,15 +912,16 @@
         { dbz: 10, color: '#00aeff' },
         { dbz: 2, color: '#a5a5a5' }
       ];
-      div.innerHTML = '<div class="dbz-legend-title">Z: MAX (dBZ)</div>';
+      dbzLegendContentEl.innerHTML = '<div class="dbz-legend-title">Z: MAX (dBZ)</div>';
       for (var i = 0; i < levels.length; i++) {
         var row = document.createElement('div');
         row.className = 'dbz-legend-row';
         row.innerHTML =
           '<span class="dbz-legend-swatch" style="background:' + levels[i].color + ';"></span>' +
           '<span>' + levels[i].dbz + ' dBZ</span>';
-        div.appendChild(row);
+        dbzLegendContentEl.appendChild(row);
       }
+      div.appendChild(dbzLegendContentEl);
       L.DomEvent.disableClickPropagation(div);
       L.DomEvent.disableScrollPropagation(div);
       return div;
@@ -1120,26 +1133,17 @@
       legendToggleButtonEl.classList.toggle('is-on', isDbzLegendVisible);
     }
 
-    var legendToggleControl = L.control({ position: 'topright' });
-    legendToggleControl.onAdd = function() {
-      var div = L.DomUtil.create('div', 'legend-toggle-control');
-      legendToggleButtonEl = L.DomUtil.create('button', 'legend-toggle-button', div);
-      legendToggleButtonEl.type = 'button';
-      legendToggleButtonEl.title = 'Legenda';
-      legendToggleButtonEl.setAttribute('aria-label', 'Legenda');
-      updateLegendToggleButtonState();
+    updateLegendToggleButtonState();
+    if (legendToggleButtonEl) {
       legendToggleButtonEl.addEventListener('click', function(e) {
         e.preventDefault();
         isDbzLegendVisible = !isDbzLegendVisible;
         updateLegendToggleButtonState();
-        if (dbzLegendElement) {
-          dbzLegendElement.style.display = isDbzLegendVisible ? 'block' : 'none';
+        if (dbzLegendContentEl) {
+          dbzLegendContentEl.style.display = isDbzLegendVisible ? 'block' : 'none';
         }
       });
-      L.DomEvent.disableClickPropagation(div);
-      return div;
-    };
-    legendToggleControl.addTo(map);
+    }
 
 </script>
 </body>
