@@ -424,7 +424,7 @@
   text-align: center;
   color: white;
   background: rgba(0, 0, 0, 0.55);
-  padding: 2px 4px;
+  padding: 2px 6px;
   border-radius: 999px;
   line-height: 1.1;
   margin: 0;
@@ -490,6 +490,14 @@
 .dbz-reflectivity-legend {
   padding-top: 36px;
   position: relative;
+}
+
+.dbz-reflectivity-legend.is-collapsed {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  padding: 0;
+  min-width: 44px;
 }
 
 .dbz-reflectivity-legend {
@@ -983,11 +991,13 @@
 
     // DHMZ reflectivity legend (Z in dBZ) on left side
     var dbzLegendControl = L.control({ position: 'topleft' });
+    var dbzLegendRootEl = null;
     var dbzLegendContentEl = null;
     var isDbzLegendVisible = true;
     var legendToggleButtonEl = null;
     dbzLegendControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'dbz-legend dbz-reflectivity-legend');
+      dbzLegendRootEl = div;
       var toggleWrap = document.createElement('div');
       toggleWrap.className = 'legend-toggle-control';
       legendToggleButtonEl = document.createElement('button');
@@ -1296,6 +1306,9 @@
     function updateLegendToggleButtonState() {
       if (!legendToggleButtonEl) return;
       legendToggleButtonEl.classList.toggle('is-on', isDbzLegendVisible);
+      if (dbzLegendRootEl) {
+        dbzLegendRootEl.classList.toggle('is-collapsed', !isDbzLegendVisible);
+      }
     }
 
     updateLegendToggleButtonState();
