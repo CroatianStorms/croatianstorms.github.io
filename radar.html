@@ -1305,6 +1305,93 @@
     var isGpsControlEnabled = false;
     var gpsToggleButtonEl = null;
     var gpsControl = L.control({ position: 'topright' });
+    var gpsWatchId = null;
+    var gpsLocationMarker = null;
+    var gpsAccuracyCircle = null;
+    var hasCenteredOnGps = false;
+
+    function stopGpsTracking() {
+      if (gpsWatchId !== null && navigator.geolocation) {
+        navigator.geolocation.clearWatch(gpsWatchId);
+        gpsWatchId = null;
+      }
+      if (gpsLocationMarker) {
+        map.removeLayer(gpsLocationMarker);
+        gpsLocationMarker = null;
+      }
+      if (gpsAccuracyCircle) {
+        map.removeLayer(gpsAccuracyCircle);
+        gpsAccuracyCircle = null;
+      }
+      hasCenteredOnGps = false;
+    }
+
+    function handleGpsPosition(position) {
+      var lat = position.coords.latitude;
+      var lng = position.coords.longitude;
+      var accuracyMeters = position.coords.accuracy || 0;
+      var latLng = [lat, lng];
+
+      if (!gpsLocationMarker) {
+        gpsLocationMarker = L.circleMarker(latLng, {
+          radius: 7,
+          color: '#ffffff',
+          weight: 2,
+          fillColor: '#0ea5e9',
+          fillOpacity: 0.95
+        }).addTo(map);
+      } else {
+        gpsLocationMarker.setLatLng(latLng);
+      }
+
+      if (!gpsAccuracyCircle) {
+        gpsAccuracyCircle = L.circle(latLng, {
+          radius: accuracyMeters,
+          color: '#0ea5e9',
+          weight: 1,
+          fillColor: '#0ea5e9',
+          fillOpacity: 0.15
+        }).addTo(map);
+      } else {
+        gpsAccuracyCircle.setLatLng(latLng);
+        gpsAccuracyCircle.setRadius(accuracyMeters);
+      }
+
+      if (!hasCenteredOnGps) {
+        map.setView(latLng, Math.max(map.getZoom(), 11));
+        hasCenteredOnGps = true;
+      }
+    }
+
+    function handleGpsError(error) {
+      stopGpsTracking();
+      isGpsControlEnabled = false;
+      updateGpsToggleButtonState();
+
+      if (error && error.code === error.PERMISSION_DENIED) {
+        alert('Location access is blocked. Please allow location access in your browser to use GPS.');
+        return;
+      }
+      alert('Unable to get your location right now. Please try again.');
+    }
+
+    function startGpsTracking() {
+      if (!navigator.geolocation) {
+        alert('Geolocation is not supported by this browser.');
+        isGpsControlEnabled = false;
+        updateGpsToggleButtonState();
+        return;
+      }
+      gpsWatchId = navigator.geolocation.watchPosition(
+        handleGpsPosition,
+        handleGpsError,
+        {
+          enableHighAccuracy: true,
+          maximumAge: 5000,
+          timeout: 15000
+        }
+      );
+    }
 
     function updateGpsToggleButtonState() {
       if (!gpsToggleButtonEl) return;
@@ -1322,6 +1409,11 @@
       gpsToggleButtonEl.addEventListener('click', function(e) {
         e.preventDefault();
         isGpsControlEnabled = !isGpsControlEnabled;
+        if (isGpsControlEnabled) {
+          startGpsTracking();
+        } else {
+          stopGpsTracking();
+        }
         updateGpsToggleButtonState();
       });
 
