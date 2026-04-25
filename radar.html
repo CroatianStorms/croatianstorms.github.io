@@ -1197,7 +1197,10 @@
       isRadarAnimationPlaying = false;
       updateRadarAnimationButtonStates();
       for (var i = 0; i < radarLayers.length; i++) {
-        refreshRadarLayerSource(radarLayers[i]);
+        // Stop animation everywhere by swapping each radar to its static image.
+        // Avoid cache-busting here so browser can switch faster without re-triggering GIF playback.
+        radarLayers[i].overlay.setUrl(radarLayers[i].imageUrl);
+        radarLayers[i].overlay.setBounds(radarLayers[i].bounds);
       }
       syncRadarTimestampFromOverlay();
     }
