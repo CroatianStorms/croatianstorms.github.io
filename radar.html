@@ -1075,7 +1075,7 @@
     radarTimeControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'dbz-legend radar-time-control');
       div.innerHTML =
-        '<div class="radar-time-label">Radarska slika (vrijeme):</div>' +
+        '<div class="radar-time-label">Radarska slika (<a href="https://meteo.hr/" target="_blank" rel="noopener noreferrer">©DHMZ</a>):</div>' +
         '<div class="radar-time-value"><img class="radar-time-image" alt="Radar timestamp strip" /></div>';
       radarTimeImageEl = div.querySelector('.radar-time-image');
       L.DomEvent.disableClickPropagation(div);
