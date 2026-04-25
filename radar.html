@@ -326,6 +326,109 @@
   background: #1e3a8a;
 }
 
+.leaflet-control-layers {
+  background: rgba(20, 20, 20, 0.88);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.leaflet-control-layers-toggle {
+  background-color: rgba(20, 20, 20, 0.88);
+  border-radius: 8px;
+}
+
+.leaflet-control-layers-expanded {
+  padding: 8px 10px;
+}
+
+.leaflet-control-layers-expanded label,
+.leaflet-control-layers-expanded label span {
+  color: #ffffff;
+}
+
+.leaflet-control-layers-separator {
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.gps-button-control {
+  position: fixed;
+  top: 132px;
+  right: 5px;
+  z-index: 1000;
+}
+
+.gps-toggle-button {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+  background: #0ea5e9;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.2s ease;
+}
+
+.gps-toggle-button:hover {
+  background: #008000;
+}
+
+.gps-toggle-button.is-on {
+  background: #008000;
+}
+
+.gps-toggle-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.gps-live-marker-wrap {
+  background: transparent;
+  border: none;
+}
+
+.gps-live-marker {
+  position: relative;
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #0ea5e9;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.gps-live-marker::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(14, 165, 233, 0.5);
+  transform: translate(-50%, -50%) scale(1);
+  animation: gps-live-pulse 1.8s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes gps-live-pulse {
+  0% {
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(3.2);
+  }
+}
+
 .legend-toggle-control {
   position: absolute;
   top: 8px;
@@ -369,8 +472,8 @@
 
 .opacity-control {
   position: fixed;
-  top: 146px;
-  right: 9px;
+  top: 172px;
+  right: 5px;
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -423,6 +526,10 @@
   min-width: 34px;
   text-align: right;
   color: white;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 2px 6px;
+  border-radius: 999px;
+  line-height: 1.1;
   margin: 0;
 }
 
@@ -486,6 +593,14 @@
 .dbz-reflectivity-legend {
   padding-top: 36px;
   position: relative;
+}
+
+.dbz-reflectivity-legend.is-collapsed {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  padding: 0;
+  min-width: 44px;
 }
 
 .dbz-reflectivity-legend {
@@ -788,10 +903,26 @@
   attributionControl: true
   }).setView([45.1, 16.0], 7);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 19
-    }).addTo(map);
+    var mapTilerApiKey = 'YOUR_MAPTILER_API_KEY';
+    var baseLayers = {
+      'OSM Standard': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+      }),
+      'OpenTopoMap': L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap (CC-BY-SA)',
+        maxZoom: 17
+      }),
+      'MapTiler Streets': L.tileLayer('https://api.maptiler.com/maps/streets-v4/{z}/{x}/{y}.png?key=' + mapTilerApiKey, {
+        attribution: '&copy; MapTiler &copy; OpenStreetMap contributors',
+        tileSize: 512,
+        zoomOffset: -1,
+        maxZoom: 22
+      })
+    };
+
+    baseLayers['OSM Standard'].addTo(map);
+    L.control.layers(baseLayers, null, { position: 'bottomright', collapsed: true }).addTo(map);
 
     // Approximate radar coverage (in km) used to build image bounds/rings
     var radarRangeKm = 240;
@@ -979,11 +1110,13 @@
 
     // DHMZ reflectivity legend (Z in dBZ) on left side
     var dbzLegendControl = L.control({ position: 'topleft' });
+    var dbzLegendRootEl = null;
     var dbzLegendContentEl = null;
     var isDbzLegendVisible = true;
     var legendToggleButtonEl = null;
     dbzLegendControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'dbz-legend dbz-reflectivity-legend');
+      dbzLegendRootEl = div;
       var toggleWrap = document.createElement('div');
       toggleWrap.className = 'legend-toggle-control';
       legendToggleButtonEl = document.createElement('button');
@@ -1061,7 +1194,7 @@
     radarTimeControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'dbz-legend radar-time-control');
       div.innerHTML =
-        '<div class="radar-time-label">Radarska slika (vrijeme):</div>' +
+        '<div class="radar-time-label">Radarska slika (<a href="https://meteo.hr/" target="_blank" rel="noopener noreferrer">©DHMZ</a>):</div>' +
         '<div class="radar-time-value"><img class="radar-time-image" alt="Radar timestamp strip" /></div>';
       radarTimeImageEl = div.querySelector('.radar-time-image');
       L.DomEvent.disableClickPropagation(div);
@@ -1106,7 +1239,10 @@
       isRadarAnimationPlaying = false;
       updateRadarAnimationButtonStates();
       for (var i = 0; i < radarLayers.length; i++) {
-        refreshRadarLayerSource(radarLayers[i]);
+        // Stop animation everywhere by swapping each radar to its static image.
+        // Avoid cache-busting here so browser can switch faster without re-triggering GIF playback.
+        radarLayers[i].overlay.setUrl(radarLayers[i].imageUrl);
+        radarLayers[i].overlay.setBounds(radarLayers[i].bounds);
       }
       syncRadarTimestampFromOverlay();
     }
@@ -1252,6 +1388,130 @@
     
     zoomControl.addTo(map);
 
+    var isGpsControlEnabled = false;
+    var gpsToggleButtonEl = null;
+    var gpsControl = L.control({ position: 'topright' });
+    var gpsWatchId = null;
+    var gpsLocationMarker = null;
+    var gpsAccuracyCircle = null;
+    var hasCenteredOnGps = false;
+
+    function stopGpsTracking() {
+      if (gpsWatchId !== null && navigator.geolocation) {
+        navigator.geolocation.clearWatch(gpsWatchId);
+        gpsWatchId = null;
+      }
+      if (gpsLocationMarker) {
+        map.removeLayer(gpsLocationMarker);
+        gpsLocationMarker = null;
+      }
+      if (gpsAccuracyCircle) {
+        map.removeLayer(gpsAccuracyCircle);
+        gpsAccuracyCircle = null;
+      }
+      hasCenteredOnGps = false;
+    }
+
+    function handleGpsPosition(position) {
+      var lat = position.coords.latitude;
+      var lng = position.coords.longitude;
+      var accuracyMeters = position.coords.accuracy || 0;
+      var latLng = [lat, lng];
+
+      if (!gpsLocationMarker) {
+        gpsLocationMarker = L.marker(latLng, {
+          icon: L.divIcon({
+            className: 'gps-live-marker-wrap',
+            html: '<span class="gps-live-marker"></span>',
+            iconSize: [14, 14],
+            iconAnchor: [7, 7]
+          }),
+          interactive: false,
+          keyboard: false
+        }).addTo(map);
+      } else {
+        gpsLocationMarker.setLatLng(latLng);
+      }
+
+      if (!gpsAccuracyCircle) {
+        gpsAccuracyCircle = L.circle(latLng, {
+          radius: accuracyMeters,
+          color: '#0ea5e9',
+          weight: 1,
+          fillColor: '#0ea5e9',
+          fillOpacity: 0.15
+        }).addTo(map);
+      } else {
+        gpsAccuracyCircle.setLatLng(latLng);
+        gpsAccuracyCircle.setRadius(accuracyMeters);
+      }
+
+      if (!hasCenteredOnGps) {
+        map.setView(latLng, 9);
+        hasCenteredOnGps = true;
+      }
+    }
+
+    function handleGpsError(error) {
+      stopGpsTracking();
+      isGpsControlEnabled = false;
+      updateGpsToggleButtonState();
+
+      if (error && error.code === error.PERMISSION_DENIED) {
+        alert('Location access is blocked. Please allow location access in your browser to use GPS.');
+        return;
+      }
+      alert('Unable to get your location right now. Please try again.');
+    }
+
+    function startGpsTracking() {
+      if (!navigator.geolocation) {
+        alert('Geolocation is not supported by this browser.');
+        isGpsControlEnabled = false;
+        updateGpsToggleButtonState();
+        return;
+      }
+      gpsWatchId = navigator.geolocation.watchPosition(
+        handleGpsPosition,
+        handleGpsError,
+        {
+          enableHighAccuracy: true,
+          maximumAge: 5000,
+          timeout: 15000
+        }
+      );
+    }
+
+    function updateGpsToggleButtonState() {
+      if (!gpsToggleButtonEl) return;
+      gpsToggleButtonEl.classList.toggle('is-on', isGpsControlEnabled);
+    }
+
+    gpsControl.onAdd = function() {
+      var div = L.DomUtil.create('div', 'gps-button-control');
+      gpsToggleButtonEl = L.DomUtil.create('button', 'gps-toggle-button', div);
+      gpsToggleButtonEl.type = 'button';
+      gpsToggleButtonEl.title = 'GPS';
+      gpsToggleButtonEl.setAttribute('aria-label', 'GPS');
+      gpsToggleButtonEl.innerHTML = '<img src="images/gps.png" class="gps-toggle-icon" alt="GPS" />';
+
+      gpsToggleButtonEl.addEventListener('click', function(e) {
+        e.preventDefault();
+        isGpsControlEnabled = !isGpsControlEnabled;
+        if (isGpsControlEnabled) {
+          startGpsTracking();
+        } else {
+          stopGpsTracking();
+        }
+        updateGpsToggleButtonState();
+      });
+
+      updateGpsToggleButtonState();
+      L.DomEvent.disableClickPropagation(div);
+      return div;
+    };
+    gpsControl.addTo(map);
+
     var opacityControl = L.control({ position: 'topright' });
     opacityControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'opacity-control');
@@ -1292,6 +1552,9 @@
     function updateLegendToggleButtonState() {
       if (!legendToggleButtonEl) return;
       legendToggleButtonEl.classList.toggle('is-on', isDbzLegendVisible);
+      if (dbzLegendRootEl) {
+        dbzLegendRootEl.classList.toggle('is-collapsed', !isDbzLegendVisible);
+      }
     }
 
     updateLegendToggleButtonState();
