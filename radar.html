@@ -407,7 +407,7 @@
 }
 
 .extra-toggle-button:hover {
-  background: #008000;
+  background: #0284c7;
 }
 
 .extra-toggle-button.is-on {
@@ -1423,8 +1423,10 @@
 
     var isGpsControlEnabled = false;
     var gpsToggleButtonEl = null;
-    var isExtraControlEnabled = false;
+    var isEstofexControlEnabled = false;
     var extraToggleButtonEl = null;
+    var estofexLayerGroup = L.layerGroup();
+    var isEstofexDataLoading = false;
     var gpsControl = L.control({ position: 'topright' });
     var gpsWatchId = null;
     var gpsLocationMarker = null;
@@ -1524,7 +1526,132 @@
 
     function updateExtraToggleButtonState() {
       if (!extraToggleButtonEl) return;
-      extraToggleButtonEl.classList.toggle('is-on', isExtraControlEnabled);
+      extraToggleButtonEl.classList.toggle('is-on', isEstofexControlEnabled);
+    }
+
+    function getEstofexStyleByRiskType(riskType) {
+      var normalizedRiskType = (riskType || '').toLowerCase().replace(/\s+/g, '');
+      if (normalizedRiskType === '15thunder') {
+        return { color: '#ffff00', weight: 1.5, opacity: 1 };
+      }
+      if (normalizedRiskType === '50thunder') {
+        return { color: '#ffff00', weight: 3, opacity: 1 };
+      }
+      if (normalizedRiskType === 'level1') {
+        return { color: '#ff8c00', weight: 3, opacity: 1 };
+      }
+      if (normalizedRiskType === 'level2') {
+        return { color: '#ff0000', weight: 3, opacity: 1 };
+      }
+      if (normalizedRiskType === 'level3') {
+        return { color: '#ff66cc', weight: 3, opacity: 1 };
+      }
+      return { color: '#ffffff', weight: 2, opacity: 0.9 };
+    }
+
+    function parseEstofexLatLngsFromRiskElement(riskElement) {
+      var latLngs = [];
+      var pointElements = riskElement.querySelectorAll('point');
+
+      for (var i = 0; i < pointElements.length; i++) {
+        var pointEl = pointElements[i];
+        var lat = parseFloat(
+          pointEl.getAttribute('lat') ||
+          pointEl.getAttribute('latitude') ||
+          pointEl.getAttribute('y') ||
+          ''
+        );
+        var lng = parseFloat(
+          pointEl.getAttribute('lon') ||
+          pointEl.getAttribute('lng') ||
+          pointEl.getAttribute('longitude') ||
+          pointEl.getAttribute('x') ||
+          ''
+        );
+        if (isFinite(lat) && isFinite(lng)) {
+          latLngs.push([lat, lng]);
+        }
+      }
+
+      if (latLngs.length >= 2) return latLngs;
+
+      var coordsAttr = riskElement.getAttribute('points') || riskElement.getAttribute('coords') || '';
+      if (coordsAttr) {
+        var coordsTokens = coordsAttr.trim().split(/\s+/);
+        for (var c = 0; c < coordsTokens.length; c++) {
+          var pair = coordsTokens[c].split(',');
+          if (pair.length !== 2) continue;
+          var pairLat = parseFloat(pair[0]);
+          var pairLng = parseFloat(pair[1]);
+          if (isFinite(pairLat) && isFinite(pairLng)) {
+            latLngs.push([pairLat, pairLng]);
+          }
+        }
+      }
+
+      return latLngs;
+    }
+
+    function drawEstofexForecastFromXml(xmlText) {
+      var parser = new DOMParser();
+      var xmlDoc = parser.parseFromString(xmlText, 'application/xml');
+      if (xmlDoc.querySelector('parsererror')) {
+        throw new Error('Invalid XML response.');
+      }
+
+      var riskElements = xmlDoc.querySelectorAll('[risktype]');
+      if (!riskElements.length) {
+        throw new Error('No forecast risk polygons found in XML.');
+      }
+
+      estofexLayerGroup.clearLayers();
+      var drawnCount = 0;
+
+      for (var i = 0; i < riskElements.length; i++) {
+        var riskElement = riskElements[i];
+        var riskType = riskElement.getAttribute('risktype') || '';
+        var latLngs = parseEstofexLatLngsFromRiskElement(riskElement);
+        if (latLngs.length < 2) continue;
+
+        var style = getEstofexStyleByRiskType(riskType);
+        var line = L.polyline(latLngs, style).addTo(estofexLayerGroup);
+        line.bindTooltip(riskType, {
+          sticky: true,
+          className: 'custom-tooltip'
+        });
+        drawnCount += 1;
+      }
+
+      if (!drawnCount) {
+        throw new Error('Forecast data was found, but no valid coordinates were parsed.');
+      }
+    }
+
+    function loadLatestEstofexForecast() {
+      if (isEstofexDataLoading) return Promise.resolve();
+      isEstofexDataLoading = true;
+
+      return fetch('https://www.estofex.org/cgi-bin/polygon/showforecast.cgi?xml=yes', {
+        cache: 'no-store'
+      })
+        .then(function(response) {
+          if (!response.ok) {
+            throw new Error('Unable to load ESTOFEX data (' + response.status + ').');
+          }
+          return response.text();
+        })
+        .then(function(xmlText) {
+          drawEstofexForecastFromXml(xmlText);
+          if (isEstofexControlEnabled && !map.hasLayer(estofexLayerGroup)) {
+            estofexLayerGroup.addTo(map);
+          }
+          estofexLayerGroup.eachLayer(function(layer) {
+            if (layer.bringToFront) layer.bringToFront();
+          });
+        })
+        .finally(function() {
+          isEstofexDataLoading = false;
+        });
     }
 
     gpsControl.onAdd = function() {
@@ -1537,9 +1664,9 @@
 
       extraToggleButtonEl = L.DomUtil.create('button', 'extra-toggle-button', div);
       extraToggleButtonEl.type = 'button';
-      extraToggleButtonEl.title = 'Extra toggle';
-      extraToggleButtonEl.setAttribute('aria-label', 'Extra toggle');
-      extraToggleButtonEl.innerHTML = '<img src="images/extra-toggle.png" class="extra-toggle-icon" alt="Extra toggle" />';
+      extraToggleButtonEl.title = 'ESTOFEX prognoza';
+      extraToggleButtonEl.setAttribute('aria-label', 'ESTOFEX prognoza');
+      extraToggleButtonEl.innerHTML = '<img src="images/estofex.png" class="extra-toggle-icon" alt="ESTOFEX prognoza" />';
 
       gpsToggleButtonEl.addEventListener('click', function(e) {
         e.preventDefault();
@@ -1554,7 +1681,18 @@
 
       extraToggleButtonEl.addEventListener('click', function(e) {
         e.preventDefault();
-        isExtraControlEnabled = !isExtraControlEnabled;
+        isEstofexControlEnabled = !isEstofexControlEnabled;
+        if (isEstofexControlEnabled) {
+          estofexLayerGroup.addTo(map);
+          loadLatestEstofexForecast().catch(function(error) {
+            isEstofexControlEnabled = false;
+            estofexLayerGroup.remove();
+            updateExtraToggleButtonState();
+            alert('Unable to load ESTOFEX forecast right now. ' + error.message);
+          });
+        } else {
+          estofexLayerGroup.remove();
+        }
         updateExtraToggleButtonState();
       });
 
