@@ -358,6 +358,9 @@
   top: 138px;
   right: 6px;
   z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }  
     
 .gps-toggle-button {
@@ -383,6 +386,35 @@
 }
 
 .gps-toggle-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.extra-toggle-button {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+  background: #0ea5e9;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.2s ease;
+}
+
+.extra-toggle-button:hover {
+  background: #008000;
+}
+
+.extra-toggle-button.is-on {
+  background: #008000;
+}
+
+.extra-toggle-icon {
   width: 18px;
   height: 18px;
   object-fit: contain;
@@ -1391,6 +1423,8 @@
 
     var isGpsControlEnabled = false;
     var gpsToggleButtonEl = null;
+    var isExtraControlEnabled = false;
+    var extraToggleButtonEl = null;
     var gpsControl = L.control({ position: 'topright' });
     var gpsWatchId = null;
     var gpsLocationMarker = null;
@@ -1488,6 +1522,11 @@
       gpsToggleButtonEl.classList.toggle('is-on', isGpsControlEnabled);
     }
 
+    function updateExtraToggleButtonState() {
+      if (!extraToggleButtonEl) return;
+      extraToggleButtonEl.classList.toggle('is-on', isExtraControlEnabled);
+    }
+
     gpsControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'gps-button-control');
       gpsToggleButtonEl = L.DomUtil.create('button', 'gps-toggle-button', div);
@@ -1495,6 +1534,12 @@
       gpsToggleButtonEl.title = 'GPS';
       gpsToggleButtonEl.setAttribute('aria-label', 'GPS');
       gpsToggleButtonEl.innerHTML = '<img src="images/gps.png" class="gps-toggle-icon" alt="GPS" />';
+
+      extraToggleButtonEl = L.DomUtil.create('button', 'extra-toggle-button', div);
+      extraToggleButtonEl.type = 'button';
+      extraToggleButtonEl.title = 'Extra toggle';
+      extraToggleButtonEl.setAttribute('aria-label', 'Extra toggle');
+      extraToggleButtonEl.innerHTML = '<img src="images/extra-toggle.png" class="extra-toggle-icon" alt="Extra toggle" />';
 
       gpsToggleButtonEl.addEventListener('click', function(e) {
         e.preventDefault();
@@ -1507,7 +1552,14 @@
         updateGpsToggleButtonState();
       });
 
+      extraToggleButtonEl.addEventListener('click', function(e) {
+        e.preventDefault();
+        isExtraControlEnabled = !isExtraControlEnabled;
+        updateExtraToggleButtonState();
+      });
+
       updateGpsToggleButtonState();
+      updateExtraToggleButtonState();
       L.DomEvent.disableClickPropagation(div);
       return div;
     };
