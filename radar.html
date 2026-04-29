@@ -427,8 +427,9 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 1001;
-  width: min(640px, calc(100vw - 56px));
-  max-height: calc(100vh - 170px);
+  width: auto;
+  max-width: calc(100vw - 56px);
+  max-height: calc(100vh - 56px);
   background: rgba(20, 20, 20, 0.9);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.35);
@@ -462,12 +463,13 @@
 .estofex-panel-body {
   padding: 10px;
   overflow: hidden;
-  max-height: calc(100vh - 230px);
+  max-height: calc(100vh - 120px);
 }
 
 .estofex-panel-image {
   display: block;
-  width: 100%;
+  width: auto;
+  max-width: none;
   height: auto;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
@@ -1609,9 +1611,24 @@
 
       var closeButtonEl = estofexPanelEl.querySelector('.estofex-panel-close');
       var headerEl = estofexPanelEl.querySelector('.estofex-panel-header');
+      var imageEl = estofexPanelEl.querySelector('.estofex-panel-image');
       closeButtonEl.addEventListener('click', function(e) {
         e.preventDefault();
         removeEstofexPanel();
+      });
+
+      imageEl.addEventListener('load', function() {
+        var panelHorizontalExtras = 22; // body left+right padding + borders
+        var panelVerticalExtras = 66;   // header + body vertical padding + borders
+        var maxPanelWidth = Math.max(320, window.innerWidth - 56);
+        var maxPanelHeight = Math.max(260, window.innerHeight - 56);
+        var targetPanelWidth = Math.min(maxPanelWidth, imageEl.naturalWidth + panelHorizontalExtras);
+        var targetPanelHeight = Math.min(maxPanelHeight, imageEl.naturalHeight + panelVerticalExtras);
+        estofexPanelEl.style.width = targetPanelWidth + 'px';
+        estofexPanelEl.style.height = targetPanelHeight + 'px';
+
+        var availableImageHeight = Math.max(120, targetPanelHeight - panelVerticalExtras);
+        imageEl.style.maxHeight = availableImageHeight + 'px';
       });
 
       (function enableDrag(panelEl, dragHandleEl) {
