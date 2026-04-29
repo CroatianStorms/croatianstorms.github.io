@@ -1676,9 +1676,13 @@
     }
 
     function fetchEstofexXml() {
+      var estofexXmlUrl = 'https://www.estofex.org/cgi-bin/polygon/showforecast.cgi?xml=yes';
       var sourceUrls = [
-        'https://www.estofex.org/cgi-bin/polygon/showforecast.cgi?xml=yes',
-        'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://www.estofex.org/cgi-bin/polygon/showforecast.cgi?xml=yes')
+        estofexXmlUrl,
+        'https://corsproxy.io/?' + encodeURIComponent(estofexXmlUrl),
+        'https://cors.isomorphic-git.org/' + estofexXmlUrl,
+        'https://api.allorigins.win/raw?url=' + encodeURIComponent(estofexXmlUrl),
+        'https://r.jina.ai/http://www.estofex.org/cgi-bin/polygon/showforecast.cgi?xml=yes'
       ];
       var lastError = null;
 
@@ -1692,6 +1696,12 @@
               throw new Error('Source ' + (index + 1) + ' returned status ' + response.status + '.');
             }
             return response.text();
+          })
+          .then(function(bodyText) {
+            if (!bodyText || bodyText.trim().length < 80) {
+              throw new Error('Source ' + (index + 1) + ' returned too little data.');
+            }
+            return bodyText;
           })
           .catch(function(error) {
             lastError = error;
