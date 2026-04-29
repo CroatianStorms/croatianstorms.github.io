@@ -466,6 +466,27 @@
   max-height: calc(100vh - 120px);
 }
 
+.astorp-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 0 10px 10px;
+}
+
+.astorp-tab-button {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 6px 9px;
+  cursor: pointer;
+}
+
+.astorp-tab-button.is-active {
+  background: #1e3a8a;
+}
+
 .estofex-panel-image {
   display: block;
   width: auto;
@@ -1697,7 +1718,11 @@
     }
 
     function showAstorpPanel() {
-      var astorpImageUrl = 'https://rawinsonde.com/ASTORP/Results/SPC_DAY_1.jpg';
+      var astorpTabs = [
+        { id: 'spc', label: 'SPC', imageUrl: 'https://rawinsonde.com/ASTORP/Results/SPC_DAY_1.jpg' },
+        { id: 'spc-haz', label: 'SPC opasnosti', imageUrl: 'https://rawinsonde.com/ASTORP/Results/SPC_hazard_DAY_1.jpg' },
+        { id: 'estofex', label: 'ESTOFEX', imageUrl: 'https://rawinsonde.com/ASTORP/Results/ESTOFEX_DAY_1.jpg' }
+      ];
       if (astorpPanelEl) {
         removeAstorpPanel();
         return;
@@ -1713,18 +1738,43 @@
           '<span>ASTORP automatska prognoza</span>' +
           '<button class="estofex-panel-close" type="button" aria-label="Close ASTORP panel">×</button>' +
         '</div>' +
+        '<div class="astorp-tabs">' +
+          '<button class="astorp-tab-button is-active" data-tab-id="spc" type="button">SPC</button>' +
+          '<button class="astorp-tab-button" data-tab-id="spc-haz" type="button">SPC opasnosti</button>' +
+          '<button class="astorp-tab-button" data-tab-id="estofex" type="button">ESTOFEX</button>' +
+        '</div>' +
         '<div class="estofex-panel-body">' +
-          '<img class="estofex-panel-image" src="' + astorpImageUrl + '?t=' + Date.now() + '" alt="Latest ASTORP forecast image">' +
+          '<img class="estofex-panel-image" src="' + astorpTabs[0].imageUrl + '?t=' + Date.now() + '" alt="Latest ASTORP forecast image">' +
         '</div>';
       document.body.appendChild(astorpPanelEl);
 
       var closeButtonEl = astorpPanelEl.querySelector('.estofex-panel-close');
       var headerEl = astorpPanelEl.querySelector('.estofex-panel-header');
       var imageEl = astorpPanelEl.querySelector('.estofex-panel-image');
+      var tabButtonEls = astorpPanelEl.querySelectorAll('.astorp-tab-button');
       closeButtonEl.addEventListener('click', function(e) {
         e.preventDefault();
         removeAstorpPanel();
       });
+
+      function selectAstorpTab(tabId) {
+        for (var i = 0; i < tabButtonEls.length; i++) {
+          tabButtonEls[i].classList.toggle('is-active', tabButtonEls[i].getAttribute('data-tab-id') === tabId);
+        }
+        for (var t = 0; t < astorpTabs.length; t++) {
+          if (astorpTabs[t].id === tabId) {
+            imageEl.src = astorpTabs[t].imageUrl + '?t=' + Date.now();
+            break;
+          }
+        }
+      }
+
+      for (var b = 0; b < tabButtonEls.length; b++) {
+        tabButtonEls[b].addEventListener('click', function(e) {
+          e.preventDefault();
+          selectAstorpTab(this.getAttribute('data-tab-id'));
+        });
+      }
 
       imageEl.addEventListener('load', function() {
         var panelHorizontalExtras = 22;
