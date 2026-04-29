@@ -1620,8 +1620,12 @@
     }
 
     function drawEstofexForecastFromXml(xmlText) {
+      function sanitizeXmlText(inputText) {
+        return (inputText || '').replace(/&(?!(amp|lt|gt|quot|apos|#\d+|#x[0-9a-fA-F]+);)/g, '&amp;');
+      }
+
       var parser = new DOMParser();
-      var xmlDoc = parser.parseFromString(xmlText, 'application/xml');
+      var xmlDoc = parser.parseFromString(sanitizeXmlText(xmlText), 'application/xml');
       if (xmlDoc.querySelector('parsererror')) {
         var recoveredXmlText = '';
         var htmlDoc = parser.parseFromString(xmlText, 'text/html');
@@ -1640,7 +1644,7 @@
         }
 
         if (recoveredXmlText) {
-          xmlDoc = parser.parseFromString(recoveredXmlText, 'application/xml');
+          xmlDoc = parser.parseFromString(sanitizeXmlText(recoveredXmlText), 'application/xml');
         }
       }
       if (xmlDoc.querySelector('parsererror')) {
