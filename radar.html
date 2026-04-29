@@ -1592,6 +1592,33 @@
       return latLngs;
     }
 
+    function getEstofexRiskType(riskElement) {
+      var riskTypeAttr = riskElement.getAttribute('risktype');
+      if (riskTypeAttr) return riskTypeAttr;
+
+      var riskTypeEl = riskElement.querySelector('risktype, risk_type, risk');
+      if (riskTypeEl && riskTypeEl.textContent) {
+        return riskTypeEl.textContent.trim();
+      }
+      return '';
+    }
+
+    function getEstofexRiskElements(xmlDoc) {
+      var attrNodes = Array.prototype.slice.call(xmlDoc.querySelectorAll('[risktype]'));
+      if (attrNodes.length) return attrNodes;
+
+      var polygonNodes = Array.prototype.slice.call(xmlDoc.querySelectorAll('polygon, area, outlook, zone'));
+      var matchedNodes = [];
+      for (var i = 0; i < polygonNodes.length; i++) {
+        var node = polygonNodes[i];
+        var riskType = getEstofexRiskType(node);
+        if (riskType) {
+          matchedNodes.push(node);
+        }
+      }
+      return matchedNodes;
+    }
+
     function drawEstofexForecastFromXml(xmlText) {
       var parser = new DOMParser();
       var xmlDoc = parser.parseFromString(xmlText, 'application/xml');
@@ -1599,7 +1626,7 @@
         throw new Error('Invalid XML response.');
       }
 
-      var riskElements = xmlDoc.querySelectorAll('[risktype]');
+      var riskElements = getEstofexRiskElements(xmlDoc);
       if (!riskElements.length) {
         throw new Error('No forecast risk polygons found in XML.');
       }
@@ -1609,7 +1636,7 @@
 
       for (var i = 0; i < riskElements.length; i++) {
         var riskElement = riskElements[i];
-        var riskType = riskElement.getAttribute('risktype') || '';
+        var riskType = getEstofexRiskType(riskElement);
         var latLngs = parseEstofexLatLngsFromRiskElement(riskElement);
         if (latLngs.length < 2) continue;
 
@@ -1627,19 +1654,38 @@
       }
     }
 
+    function fetchEstofexXml() {
+      var sourceUrls = [
+        'https://www.estofex.org/cgi-bin/polygon/showforecast.cgi?xml=yes',
+        'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://www.estofex.org/cgi-bin/polygon/showforecast.cgi?xml=yes')
+      ];
+      var lastError = null;
+
+      function tryAt(index) {
+        if (index >= sourceUrls.length) {
+          throw lastError || new Error('Failed to fetch ESTOFEX XML.');
+        }
+        return fetch(sourceUrls[index], { cache: 'no-store' })
+          .then(function(response) {
+            if (!response.ok) {
+              throw new Error('Source ' + (index + 1) + ' returned status ' + response.status + '.');
+            }
+            return response.text();
+          })
+          .catch(function(error) {
+            lastError = error;
+            return tryAt(index + 1);
+          });
+      }
+
+      return tryAt(0);
+    }
+
     function loadLatestEstofexForecast() {
       if (isEstofexDataLoading) return Promise.resolve();
       isEstofexDataLoading = true;
 
-      return fetch('https://www.estofex.org/cgi-bin/polygon/showforecast.cgi?xml=yes', {
-        cache: 'no-store'
-      })
-        .then(function(response) {
-          if (!response.ok) {
-            throw new Error('Unable to load ESTOFEX data (' + response.status + ').');
-          }
-          return response.text();
-        })
+      return fetchEstofexXml()
         .then(function(xmlText) {
           drawEstofexForecastFromXml(xmlText);
           if (isEstofexControlEnabled && !map.hasLayer(estofexLayerGroup)) {
