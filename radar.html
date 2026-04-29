@@ -358,6 +358,9 @@
   top: 138px;
   right: 6px;
   z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }  
     
 .gps-toggle-button {
@@ -387,6 +390,83 @@
   height: 18px;
   object-fit: contain;
   pointer-events: none;
+}
+
+.extra-toggle-button {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+  background: #0ea5e9;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.2s ease;
+}
+
+.extra-toggle-button:hover {
+  background: #0284c7;
+}
+
+.extra-toggle-button.is-on {
+  background: #008000;
+}
+
+.extra-toggle-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.estofex-panel {
+  position: fixed;
+  top: 140px;
+  right: 44px;
+  z-index: 1001;
+  width: min(640px, calc(100vw - 56px));
+  max-height: calc(100vh - 170px);
+  background: rgba(20, 20, 20, 0.9);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.estofex-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.estofex-panel-close {
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+.estofex-panel-body {
+  padding: 10px;
+  overflow: auto;
+  max-height: calc(100vh - 220px);
+}
+
+.estofex-panel-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .gps-live-marker-wrap {
@@ -1391,6 +1471,9 @@
 
     var isGpsControlEnabled = false;
     var gpsToggleButtonEl = null;
+    var isEstofexControlEnabled = false;
+    var extraToggleButtonEl = null;
+    var estofexPanelEl = null;
     var gpsControl = L.control({ position: 'topright' });
     var gpsWatchId = null;
     var gpsLocationMarker = null;
@@ -1488,6 +1571,49 @@
       gpsToggleButtonEl.classList.toggle('is-on', isGpsControlEnabled);
     }
 
+    function updateExtraToggleButtonState() {
+      if (!extraToggleButtonEl) return;
+      extraToggleButtonEl.classList.toggle('is-on', isEstofexControlEnabled);
+    }
+
+    function removeEstofexPanel() {
+      if (estofexPanelEl && estofexPanelEl.parentNode) {
+        estofexPanelEl.parentNode.removeChild(estofexPanelEl);
+      }
+      estofexPanelEl = null;
+      isEstofexControlEnabled = false;
+      updateExtraToggleButtonState();
+    }
+
+    function showEstofexPanel() {
+      var estofexImageUrl = 'https://www.estofex.org/forecasts/tempmap/.png';
+      if (estofexPanelEl) {
+        removeEstofexPanel();
+        return;
+      }
+
+      estofexPanelEl = document.createElement('div');
+      estofexPanelEl.className = 'estofex-panel';
+      estofexPanelEl.innerHTML =
+        '<div class="estofex-panel-header">' +
+          '<span>ESTOFEX prognoza</span>' +
+          '<button class="estofex-panel-close" type="button" aria-label="Close ESTOFEX panel">×</button>' +
+        '</div>' +
+        '<div class="estofex-panel-body">' +
+          '<img class="estofex-panel-image" src="' + estofexImageUrl + '?t=' + Date.now() + '" alt="Latest ESTOFEX forecast image">' +
+        '</div>';
+      document.body.appendChild(estofexPanelEl);
+
+      var closeButtonEl = estofexPanelEl.querySelector('.estofex-panel-close');
+      closeButtonEl.addEventListener('click', function(e) {
+        e.preventDefault();
+        removeEstofexPanel();
+      });
+
+      isEstofexControlEnabled = true;
+      updateExtraToggleButtonState();
+    }
+
     gpsControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'gps-button-control');
       gpsToggleButtonEl = L.DomUtil.create('button', 'gps-toggle-button', div);
@@ -1495,6 +1621,12 @@
       gpsToggleButtonEl.title = 'GPS';
       gpsToggleButtonEl.setAttribute('aria-label', 'GPS');
       gpsToggleButtonEl.innerHTML = '<img src="images/gps.png" class="gps-toggle-icon" alt="GPS" />';
+
+      extraToggleButtonEl = L.DomUtil.create('button', 'extra-toggle-button', div);
+      extraToggleButtonEl.type = 'button';
+      extraToggleButtonEl.title = 'ESTOFEX prognoza';
+      extraToggleButtonEl.setAttribute('aria-label', 'ESTOFEX prognoza');
+      extraToggleButtonEl.innerHTML = '<img src="images/estofex.png" class="extra-toggle-icon" alt="ESTOFEX prognoza" />';
 
       gpsToggleButtonEl.addEventListener('click', function(e) {
         e.preventDefault();
@@ -1507,7 +1639,13 @@
         updateGpsToggleButtonState();
       });
 
+      extraToggleButtonEl.addEventListener('click', function(e) {
+        e.preventDefault();
+        showEstofexPanel();
+      });
+
       updateGpsToggleButtonState();
+      updateExtraToggleButtonState();
       L.DomEvent.disableClickPropagation(div);
       return div;
     };
