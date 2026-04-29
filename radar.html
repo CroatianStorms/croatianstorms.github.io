@@ -1623,6 +1623,27 @@
       var parser = new DOMParser();
       var xmlDoc = parser.parseFromString(xmlText, 'application/xml');
       if (xmlDoc.querySelector('parsererror')) {
+        var recoveredXmlText = '';
+        var htmlDoc = parser.parseFromString(xmlText, 'text/html');
+        if (htmlDoc) {
+          var preEl = htmlDoc.querySelector('pre');
+          if (preEl && preEl.textContent) {
+            recoveredXmlText = preEl.textContent.trim();
+          } else {
+            var bodyText = (htmlDoc.body && htmlDoc.body.textContent ? htmlDoc.body.textContent : '').trim();
+            var xmlStart = bodyText.indexOf('<');
+            var xmlEnd = bodyText.lastIndexOf('>');
+            if (xmlStart !== -1 && xmlEnd !== -1 && xmlEnd > xmlStart) {
+              recoveredXmlText = bodyText.slice(xmlStart, xmlEnd + 1);
+            }
+          }
+        }
+
+        if (recoveredXmlText) {
+          xmlDoc = parser.parseFromString(recoveredXmlText, 'application/xml');
+        }
+      }
+      if (xmlDoc.querySelector('parsererror')) {
         throw new Error('Invalid XML response.');
       }
 
