@@ -1479,6 +1479,9 @@
     var isEstofexControlEnabled = false;
     var extraToggleButtonEl = null;
     var estofexPanelEl = null;
+    var isAstorpControlEnabled = false;
+    var astorpToggleButtonEl = null;
+    var astorpPanelEl = null;
     var gpsControl = L.control({ position: 'topright' });
     var gpsWatchId = null;
     var gpsLocationMarker = null;
@@ -1581,6 +1584,11 @@
       extraToggleButtonEl.classList.toggle('is-on', isEstofexControlEnabled);
     }
 
+    function updateAstorpToggleButtonState() {
+      if (!astorpToggleButtonEl) return;
+      astorpToggleButtonEl.classList.toggle('is-on', isAstorpControlEnabled);
+    }
+
     function removeEstofexPanel() {
       if (estofexPanelEl && estofexPanelEl.parentNode) {
         estofexPanelEl.parentNode.removeChild(estofexPanelEl);
@@ -1595,6 +1603,9 @@
       if (estofexPanelEl) {
         removeEstofexPanel();
         return;
+      }
+      if (astorpPanelEl) {
+        removeAstorpPanel();
       }
 
       estofexPanelEl = document.createElement('div');
@@ -1676,6 +1687,97 @@
       updateExtraToggleButtonState();
     }
 
+    function removeAstorpPanel() {
+      if (astorpPanelEl && astorpPanelEl.parentNode) {
+        astorpPanelEl.parentNode.removeChild(astorpPanelEl);
+      }
+      astorpPanelEl = null;
+      isAstorpControlEnabled = false;
+      updateAstorpToggleButtonState();
+    }
+
+    function showAstorpPanel() {
+      var astorpImageUrl = 'https://rawinsonde.com/ASTORP/Results/SPC_DAY_1.jpg';
+      if (astorpPanelEl) {
+        removeAstorpPanel();
+        return;
+      }
+      if (estofexPanelEl) {
+        removeEstofexPanel();
+      }
+
+      astorpPanelEl = document.createElement('div');
+      astorpPanelEl.className = 'estofex-panel';
+      astorpPanelEl.innerHTML =
+        '<div class="estofex-panel-header">' +
+          '<span>ASTORP automatska prognoza</span>' +
+          '<button class="estofex-panel-close" type="button" aria-label="Close ASTORP panel">×</button>' +
+        '</div>' +
+        '<div class="estofex-panel-body">' +
+          '<img class="estofex-panel-image" src="' + astorpImageUrl + '?t=' + Date.now() + '" alt="Latest ASTORP forecast image">' +
+        '</div>';
+      document.body.appendChild(astorpPanelEl);
+
+      var closeButtonEl = astorpPanelEl.querySelector('.estofex-panel-close');
+      var headerEl = astorpPanelEl.querySelector('.estofex-panel-header');
+      var imageEl = astorpPanelEl.querySelector('.estofex-panel-image');
+      closeButtonEl.addEventListener('click', function(e) {
+        e.preventDefault();
+        removeAstorpPanel();
+      });
+
+      imageEl.addEventListener('load', function() {
+        var panelHorizontalExtras = 22;
+        var panelVerticalExtras = 66;
+        var maxPanelWidth = Math.max(320, window.innerWidth - 56);
+        var maxPanelHeight = Math.max(260, window.innerHeight - 56);
+        var targetPanelWidth = Math.min(maxPanelWidth, imageEl.naturalWidth + panelHorizontalExtras);
+        var targetPanelHeight = Math.min(maxPanelHeight, imageEl.naturalHeight + panelVerticalExtras);
+        astorpPanelEl.style.width = targetPanelWidth + 'px';
+        astorpPanelEl.style.height = targetPanelHeight + 'px';
+        var availableImageHeight = Math.max(120, targetPanelHeight - panelVerticalExtras);
+        imageEl.style.maxHeight = availableImageHeight + 'px';
+      });
+
+      (function enableDrag(panelEl, dragHandleEl) {
+        var isDragging = false;
+        var startMouseX = 0;
+        var startMouseY = 0;
+        var startPanelLeft = 0;
+        var startPanelTop = 0;
+        function onMouseMove(e) {
+          if (!isDragging) return;
+          panelEl.style.left = startPanelLeft + (e.clientX - startMouseX) + 'px';
+          panelEl.style.top = startPanelTop + (e.clientY - startMouseY) + 'px';
+          panelEl.style.transform = 'none';
+        }
+        function onMouseUp() {
+          isDragging = false;
+          document.removeEventListener('mousemove', onMouseMove);
+          document.removeEventListener('mouseup', onMouseUp);
+        }
+        dragHandleEl.addEventListener('mousedown', function(e) {
+          if (e.button !== 0) return;
+          if (e.target && e.target.closest('.estofex-panel-close')) return;
+          isDragging = true;
+          startMouseX = e.clientX;
+          startMouseY = e.clientY;
+          var rect = panelEl.getBoundingClientRect();
+          startPanelLeft = rect.left;
+          startPanelTop = rect.top;
+          panelEl.style.left = startPanelLeft + 'px';
+          panelEl.style.top = startPanelTop + 'px';
+          panelEl.style.transform = 'none';
+          document.addEventListener('mousemove', onMouseMove);
+          document.addEventListener('mouseup', onMouseUp);
+          e.preventDefault();
+        });
+      })(astorpPanelEl, headerEl);
+
+      isAstorpControlEnabled = true;
+      updateAstorpToggleButtonState();
+    }
+
     gpsControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'gps-button-control');
       gpsToggleButtonEl = L.DomUtil.create('button', 'gps-toggle-button', div);
@@ -1689,6 +1791,12 @@
       extraToggleButtonEl.title = 'ESTOFEX prognoza';
       extraToggleButtonEl.setAttribute('aria-label', 'ESTOFEX prognoza');
       extraToggleButtonEl.innerHTML = '<img src="images/estofex.png" class="extra-toggle-icon" alt="ESTOFEX prognoza" />';
+
+      astorpToggleButtonEl = L.DomUtil.create('button', 'extra-toggle-button', div);
+      astorpToggleButtonEl.type = 'button';
+      astorpToggleButtonEl.title = 'ASTORP prognoza';
+      astorpToggleButtonEl.setAttribute('aria-label', 'ASTORP prognoza');
+      astorpToggleButtonEl.innerHTML = '<img src="images/ASTORP.png" class="extra-toggle-icon" alt="ASTORP prognoza" />';
 
       gpsToggleButtonEl.addEventListener('click', function(e) {
         e.preventDefault();
@@ -1705,9 +1813,14 @@
         e.preventDefault();
         showEstofexPanel();
       });
+      astorpToggleButtonEl.addEventListener('click', function(e) {
+        e.preventDefault();
+        showAstorpPanel();
+      });
 
       updateGpsToggleButtonState();
       updateExtraToggleButtonState();
+      updateAstorpToggleButtonState();
       L.DomEvent.disableClickPropagation(div);
       return div;
     };
