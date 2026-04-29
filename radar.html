@@ -358,6 +358,9 @@
   top: 138px;
   right: 6px;
   z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }  
     
 .gps-toggle-button {
@@ -387,6 +390,109 @@
   height: 18px;
   object-fit: contain;
   pointer-events: none;
+}
+
+.extra-toggle-button {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 4px;
+  background: #0ea5e9;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.2s ease;
+}
+
+.extra-toggle-button:hover {
+  background: #0284c7;
+}
+
+.extra-toggle-button.is-on {
+  background: #008000;
+}
+
+.extra-toggle-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.estofex-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1001;
+  width: auto;
+  max-width: calc(100vw - 56px);
+  max-height: calc(100vh - 56px);
+  background: rgba(20, 20, 20, 0.9);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.estofex-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  cursor: move;
+  user-select: none;
+}
+
+.estofex-panel-close {
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+.estofex-panel-body {
+  padding: 10px;
+  overflow: hidden;
+  max-height: calc(100vh - 120px);
+}
+
+.astorp-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 0 10px 10px;
+}
+
+.astorp-tab-button {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 6px 9px;
+  cursor: pointer;
+}
+
+.astorp-tab-button.is-active {
+  background: #1e3a8a;
+}
+
+.estofex-panel-image {
+  display: block;
+  width: auto;
+  max-width: none;
+  height: auto;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .gps-live-marker-wrap {
@@ -473,7 +579,7 @@
 /* -----------------------------------------------CUSTOM OPACITY CONTROLS STYLE -----------------------------------*/
 .opacity-control {
   position: fixed;
-  top: 172px;
+  top: 206px;
   right: 9px;
   z-index: 1000;
   display: flex;
@@ -1391,6 +1497,12 @@
 
     var isGpsControlEnabled = false;
     var gpsToggleButtonEl = null;
+    var isEstofexControlEnabled = false;
+    var extraToggleButtonEl = null;
+    var estofexPanelEl = null;
+    var isAstorpControlEnabled = false;
+    var astorpToggleButtonEl = null;
+    var astorpPanelEl = null;
     var gpsControl = L.control({ position: 'topright' });
     var gpsWatchId = null;
     var gpsLocationMarker = null;
@@ -1488,6 +1600,234 @@
       gpsToggleButtonEl.classList.toggle('is-on', isGpsControlEnabled);
     }
 
+    function updateExtraToggleButtonState() {
+      if (!extraToggleButtonEl) return;
+      extraToggleButtonEl.classList.toggle('is-on', isEstofexControlEnabled);
+    }
+
+    function updateAstorpToggleButtonState() {
+      if (!astorpToggleButtonEl) return;
+      astorpToggleButtonEl.classList.toggle('is-on', isAstorpControlEnabled);
+    }
+
+    function removeEstofexPanel() {
+      if (estofexPanelEl && estofexPanelEl.parentNode) {
+        estofexPanelEl.parentNode.removeChild(estofexPanelEl);
+      }
+      estofexPanelEl = null;
+      isEstofexControlEnabled = false;
+      updateExtraToggleButtonState();
+    }
+
+    function showEstofexPanel() {
+      var estofexImageUrl = 'https://www.estofex.org/forecasts/tempmap/.png';
+      if (estofexPanelEl) {
+        removeEstofexPanel();
+        return;
+      }
+      if (astorpPanelEl) {
+        removeAstorpPanel();
+      }
+
+      estofexPanelEl = document.createElement('div');
+      estofexPanelEl.className = 'estofex-panel';
+      estofexPanelEl.innerHTML =
+        '<div class="estofex-panel-header">' +
+          '<span>ESTOFEX prognoza</span>' +
+          '<button class="estofex-panel-close" type="button" aria-label="Close ESTOFEX panel">×</button>' +
+        '</div>' +
+        '<div class="estofex-panel-body">' +
+          '<img class="estofex-panel-image" src="' + estofexImageUrl + '?t=' + Date.now() + '" alt="Latest ESTOFEX forecast image">' +
+        '</div>';
+      document.body.appendChild(estofexPanelEl);
+
+      var closeButtonEl = estofexPanelEl.querySelector('.estofex-panel-close');
+      var headerEl = estofexPanelEl.querySelector('.estofex-panel-header');
+      var imageEl = estofexPanelEl.querySelector('.estofex-panel-image');
+      closeButtonEl.addEventListener('click', function(e) {
+        e.preventDefault();
+        removeEstofexPanel();
+      });
+
+      imageEl.addEventListener('load', function() {
+        var panelHorizontalExtras = 22; // body left+right padding + borders
+        var panelVerticalExtras = 66;   // header + body vertical padding + borders
+        var maxPanelWidth = Math.max(320, window.innerWidth - 56);
+        var maxPanelHeight = Math.max(260, window.innerHeight - 56);
+        var targetPanelWidth = Math.min(maxPanelWidth, imageEl.naturalWidth + panelHorizontalExtras);
+        var targetPanelHeight = Math.min(maxPanelHeight, imageEl.naturalHeight + panelVerticalExtras);
+        estofexPanelEl.style.width = targetPanelWidth + 'px';
+        estofexPanelEl.style.height = targetPanelHeight + 'px';
+
+        var availableImageHeight = Math.max(120, targetPanelHeight - panelVerticalExtras);
+        imageEl.style.maxHeight = availableImageHeight + 'px';
+      });
+
+      (function enableDrag(panelEl, dragHandleEl) {
+        var isDragging = false;
+        var startMouseX = 0;
+        var startMouseY = 0;
+        var startPanelLeft = 0;
+        var startPanelTop = 0;
+
+        function onMouseMove(e) {
+          if (!isDragging) return;
+          var nextLeft = startPanelLeft + (e.clientX - startMouseX);
+          var nextTop = startPanelTop + (e.clientY - startMouseY);
+          panelEl.style.left = nextLeft + 'px';
+          panelEl.style.top = nextTop + 'px';
+          panelEl.style.transform = 'none';
+        }
+
+        function onMouseUp() {
+          if (!isDragging) return;
+          isDragging = false;
+          document.removeEventListener('mousemove', onMouseMove);
+          document.removeEventListener('mouseup', onMouseUp);
+        }
+
+        dragHandleEl.addEventListener('mousedown', function(e) {
+          if (e.button !== 0) return;
+          if (e.target && e.target.closest('.estofex-panel-close')) return;
+          isDragging = true;
+          startMouseX = e.clientX;
+          startMouseY = e.clientY;
+          var rect = panelEl.getBoundingClientRect();
+          startPanelLeft = rect.left;
+          startPanelTop = rect.top;
+          panelEl.style.left = startPanelLeft + 'px';
+          panelEl.style.top = startPanelTop + 'px';
+          panelEl.style.transform = 'none';
+          document.addEventListener('mousemove', onMouseMove);
+          document.addEventListener('mouseup', onMouseUp);
+          e.preventDefault();
+        });
+      })(estofexPanelEl, headerEl);
+
+      isEstofexControlEnabled = true;
+      updateExtraToggleButtonState();
+    }
+
+    function removeAstorpPanel() {
+      if (astorpPanelEl && astorpPanelEl.parentNode) {
+        astorpPanelEl.parentNode.removeChild(astorpPanelEl);
+      }
+      astorpPanelEl = null;
+      isAstorpControlEnabled = false;
+      updateAstorpToggleButtonState();
+    }
+
+    function showAstorpPanel() {
+      var astorpTabs = [
+        { id: 'spc', label: 'SPC', imageUrl: 'https://rawinsonde.com/ASTORP/Results/SPC_DAY_1.jpg' },
+        { id: 'spc-haz', label: 'SPC opasnosti', imageUrl: 'https://rawinsonde.com/ASTORP/Results/SPC_hazard_DAY_1.jpg' },
+        { id: 'estofex', label: 'ESTOFEX', imageUrl: 'https://rawinsonde.com/ASTORP/Results/ESTOFEX_DAY_1.jpg' }
+      ];
+      if (astorpPanelEl) {
+        removeAstorpPanel();
+        return;
+      }
+      if (estofexPanelEl) {
+        removeEstofexPanel();
+      }
+
+      astorpPanelEl = document.createElement('div');
+      astorpPanelEl.className = 'estofex-panel';
+      astorpPanelEl.innerHTML =
+        '<div class="estofex-panel-header">' +
+          '<span>ASTORP automatska prognoza</span>' +
+          '<button class="estofex-panel-close" type="button" aria-label="Close ASTORP panel">×</button>' +
+        '</div>' +
+        '<div class="astorp-tabs">' +
+          '<button class="astorp-tab-button is-active" data-tab-id="spc" type="button">SPC</button>' +
+          '<button class="astorp-tab-button" data-tab-id="spc-haz" type="button">SPC opasnosti</button>' +
+          '<button class="astorp-tab-button" data-tab-id="estofex" type="button">ESTOFEX</button>' +
+        '</div>' +
+        '<div class="estofex-panel-body">' +
+          '<img class="estofex-panel-image" src="' + astorpTabs[0].imageUrl + '?t=' + Date.now() + '" alt="Latest ASTORP forecast image">' +
+        '</div>';
+      document.body.appendChild(astorpPanelEl);
+
+      var closeButtonEl = astorpPanelEl.querySelector('.estofex-panel-close');
+      var headerEl = astorpPanelEl.querySelector('.estofex-panel-header');
+      var imageEl = astorpPanelEl.querySelector('.estofex-panel-image');
+      var tabButtonEls = astorpPanelEl.querySelectorAll('.astorp-tab-button');
+      closeButtonEl.addEventListener('click', function(e) {
+        e.preventDefault();
+        removeAstorpPanel();
+      });
+
+      function selectAstorpTab(tabId) {
+        for (var i = 0; i < tabButtonEls.length; i++) {
+          tabButtonEls[i].classList.toggle('is-active', tabButtonEls[i].getAttribute('data-tab-id') === tabId);
+        }
+        for (var t = 0; t < astorpTabs.length; t++) {
+          if (astorpTabs[t].id === tabId) {
+            imageEl.src = astorpTabs[t].imageUrl + '?t=' + Date.now();
+            break;
+          }
+        }
+      }
+
+      for (var b = 0; b < tabButtonEls.length; b++) {
+        tabButtonEls[b].addEventListener('click', function(e) {
+          e.preventDefault();
+          selectAstorpTab(this.getAttribute('data-tab-id'));
+        });
+      }
+
+      imageEl.addEventListener('load', function() {
+        var panelHorizontalExtras = 22;
+        var panelVerticalExtras = 66;
+        var maxPanelWidth = Math.max(320, window.innerWidth - 56);
+        var maxPanelHeight = Math.max(260, window.innerHeight - 56);
+        var targetPanelWidth = Math.min(maxPanelWidth, imageEl.naturalWidth + panelHorizontalExtras);
+        var targetPanelHeight = Math.min(maxPanelHeight, imageEl.naturalHeight + panelVerticalExtras);
+        astorpPanelEl.style.width = targetPanelWidth + 'px';
+        astorpPanelEl.style.height = targetPanelHeight + 'px';
+        var availableImageHeight = Math.max(120, targetPanelHeight - panelVerticalExtras);
+        imageEl.style.maxHeight = availableImageHeight + 'px';
+      });
+
+      (function enableDrag(panelEl, dragHandleEl) {
+        var isDragging = false;
+        var startMouseX = 0;
+        var startMouseY = 0;
+        var startPanelLeft = 0;
+        var startPanelTop = 0;
+        function onMouseMove(e) {
+          if (!isDragging) return;
+          panelEl.style.left = startPanelLeft + (e.clientX - startMouseX) + 'px';
+          panelEl.style.top = startPanelTop + (e.clientY - startMouseY) + 'px';
+          panelEl.style.transform = 'none';
+        }
+        function onMouseUp() {
+          isDragging = false;
+          document.removeEventListener('mousemove', onMouseMove);
+          document.removeEventListener('mouseup', onMouseUp);
+        }
+        dragHandleEl.addEventListener('mousedown', function(e) {
+          if (e.button !== 0) return;
+          if (e.target && e.target.closest('.estofex-panel-close')) return;
+          isDragging = true;
+          startMouseX = e.clientX;
+          startMouseY = e.clientY;
+          var rect = panelEl.getBoundingClientRect();
+          startPanelLeft = rect.left;
+          startPanelTop = rect.top;
+          panelEl.style.left = startPanelLeft + 'px';
+          panelEl.style.top = startPanelTop + 'px';
+          panelEl.style.transform = 'none';
+          document.addEventListener('mousemove', onMouseMove);
+          document.addEventListener('mouseup', onMouseUp);
+          e.preventDefault();
+        });
+      })(astorpPanelEl, headerEl);
+
+      isAstorpControlEnabled = true;
+      updateAstorpToggleButtonState();
+    }
+
     gpsControl.onAdd = function() {
       var div = L.DomUtil.create('div', 'gps-button-control');
       gpsToggleButtonEl = L.DomUtil.create('button', 'gps-toggle-button', div);
@@ -1495,6 +1835,18 @@
       gpsToggleButtonEl.title = 'GPS';
       gpsToggleButtonEl.setAttribute('aria-label', 'GPS');
       gpsToggleButtonEl.innerHTML = '<img src="images/gps.png" class="gps-toggle-icon" alt="GPS" />';
+
+      extraToggleButtonEl = L.DomUtil.create('button', 'extra-toggle-button', div);
+      extraToggleButtonEl.type = 'button';
+      extraToggleButtonEl.title = 'ESTOFEX prognoza';
+      extraToggleButtonEl.setAttribute('aria-label', 'ESTOFEX prognoza');
+      extraToggleButtonEl.innerHTML = '<img src="images/estofex.png" class="extra-toggle-icon" alt="ESTOFEX prognoza" />';
+
+      astorpToggleButtonEl = L.DomUtil.create('button', 'extra-toggle-button', div);
+      astorpToggleButtonEl.type = 'button';
+      astorpToggleButtonEl.title = 'ASTORP prognoza';
+      astorpToggleButtonEl.setAttribute('aria-label', 'ASTORP prognoza');
+      astorpToggleButtonEl.innerHTML = '<img src="images/ASTORP.png" class="extra-toggle-icon" alt="ASTORP prognoza" />';
 
       gpsToggleButtonEl.addEventListener('click', function(e) {
         e.preventDefault();
@@ -1507,7 +1859,18 @@
         updateGpsToggleButtonState();
       });
 
+      extraToggleButtonEl.addEventListener('click', function(e) {
+        e.preventDefault();
+        showEstofexPanel();
+      });
+      astorpToggleButtonEl.addEventListener('click', function(e) {
+        e.preventDefault();
+        showAstorpPanel();
+      });
+
       updateGpsToggleButtonState();
+      updateExtraToggleButtonState();
+      updateAstorpToggleButtonState();
       L.DomEvent.disableClickPropagation(div);
       return div;
     };
