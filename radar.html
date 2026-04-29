@@ -423,8 +423,9 @@
 
 .estofex-panel {
   position: fixed;
-  top: 140px;
-  right: 44px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 1001;
   width: min(640px, calc(100vw - 56px));
   max-height: calc(100vh - 170px);
@@ -444,6 +445,8 @@
   font-size: 13px;
   font-weight: 700;
   border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  cursor: move;
+  user-select: none;
 }
 
 .estofex-panel-close {
@@ -458,8 +461,8 @@
 
 .estofex-panel-body {
   padding: 10px;
-  overflow: auto;
-  max-height: calc(100vh - 220px);
+  overflow: hidden;
+  max-height: calc(100vh - 230px);
 }
 
 .estofex-panel-image {
@@ -1605,10 +1608,52 @@
       document.body.appendChild(estofexPanelEl);
 
       var closeButtonEl = estofexPanelEl.querySelector('.estofex-panel-close');
+      var headerEl = estofexPanelEl.querySelector('.estofex-panel-header');
       closeButtonEl.addEventListener('click', function(e) {
         e.preventDefault();
         removeEstofexPanel();
       });
+
+      (function enableDrag(panelEl, dragHandleEl) {
+        var isDragging = false;
+        var startMouseX = 0;
+        var startMouseY = 0;
+        var startPanelLeft = 0;
+        var startPanelTop = 0;
+
+        function onMouseMove(e) {
+          if (!isDragging) return;
+          var nextLeft = startPanelLeft + (e.clientX - startMouseX);
+          var nextTop = startPanelTop + (e.clientY - startMouseY);
+          panelEl.style.left = nextLeft + 'px';
+          panelEl.style.top = nextTop + 'px';
+          panelEl.style.transform = 'none';
+        }
+
+        function onMouseUp() {
+          if (!isDragging) return;
+          isDragging = false;
+          document.removeEventListener('mousemove', onMouseMove);
+          document.removeEventListener('mouseup', onMouseUp);
+        }
+
+        dragHandleEl.addEventListener('mousedown', function(e) {
+          if (e.button !== 0) return;
+          if (e.target && e.target.closest('.estofex-panel-close')) return;
+          isDragging = true;
+          startMouseX = e.clientX;
+          startMouseY = e.clientY;
+          var rect = panelEl.getBoundingClientRect();
+          startPanelLeft = rect.left;
+          startPanelTop = rect.top;
+          panelEl.style.left = startPanelLeft + 'px';
+          panelEl.style.top = startPanelTop + 'px';
+          panelEl.style.transform = 'none';
+          document.addEventListener('mousemove', onMouseMove);
+          document.addEventListener('mouseup', onMouseUp);
+          e.preventDefault();
+        });
+      })(estofexPanelEl, headerEl);
 
       isEstofexControlEnabled = true;
       updateExtraToggleButtonState();
