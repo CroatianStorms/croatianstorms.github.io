@@ -428,8 +428,8 @@
   transform: translate(-50%, -50%);
   z-index: 1001;
   width: auto;
-  max-width: calc(100vw - 56px);
-  max-height: calc(100vh - 56px);
+  max-width: 92vw;
+  max-height: 88vh;
   background: rgba(20, 20, 20, 0.9);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.35);
@@ -463,7 +463,7 @@
 .estofex-panel-body {
   padding: 10px;
   overflow: hidden;
-  max-height: calc(100vh - 120px);
+  max-height: calc(88vh - 64px);
 }
 
 .astorp-tabs {
@@ -1652,8 +1652,8 @@
       imageEl.addEventListener('load', function() {
         var panelHorizontalExtras = 22; // body left+right padding + borders
         var panelVerticalExtras = 66;   // header + body vertical padding + borders
-        var maxPanelWidth = Math.max(320, window.innerWidth - 56);
-        var maxPanelHeight = Math.max(260, window.innerHeight - 56);
+        var maxPanelWidth = Math.max(300, Math.floor(window.innerWidth * 0.92));
+        var maxPanelHeight = Math.max(240, Math.floor(window.innerHeight * 0.88));
         var targetPanelWidth = Math.min(maxPanelWidth, imageEl.naturalWidth + panelHorizontalExtras);
         var targetPanelHeight = Math.min(maxPanelHeight, imageEl.naturalHeight + panelVerticalExtras);
         estofexPanelEl.style.width = targetPanelWidth + 'px';
@@ -1779,8 +1779,8 @@
       imageEl.addEventListener('load', function() {
         var panelHorizontalExtras = 22;
         var panelVerticalExtras = 66;
-        var maxPanelWidth = Math.max(320, window.innerWidth - 56);
-        var maxPanelHeight = Math.max(260, window.innerHeight - 56);
+        var maxPanelWidth = Math.max(300, Math.floor(window.innerWidth * 0.92));
+        var maxPanelHeight = Math.max(240, Math.floor(window.innerHeight * 0.88));
         var targetPanelWidth = Math.min(maxPanelWidth, imageEl.naturalWidth + panelHorizontalExtras);
         var targetPanelHeight = Math.min(maxPanelHeight, imageEl.naturalHeight + panelVerticalExtras);
         astorpPanelEl.style.width = targetPanelWidth + 'px';
