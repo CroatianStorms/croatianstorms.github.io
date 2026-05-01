@@ -1661,6 +1661,13 @@
 
         var availableImageHeight = Math.max(120, targetPanelHeight - panelVerticalExtras);
         imageEl.style.maxHeight = availableImageHeight + 'px';
+
+        requestAnimationFrame(function() {
+          var renderedImageWidth = Math.ceil(imageEl.getBoundingClientRect().width);
+          var headerWidth = Math.ceil(estofexPanelEl.querySelector('.estofex-panel-header').getBoundingClientRect().width);
+          var fittedPanelWidth = Math.min(maxPanelWidth, Math.max(renderedImageWidth + panelHorizontalExtras, headerWidth));
+          estofexPanelEl.style.width = fittedPanelWidth + 'px';
+        });
       });
 
       (function enableDrag(panelEl, dragHandleEl) {
@@ -1787,6 +1794,14 @@
         astorpPanelEl.style.height = targetPanelHeight + 'px';
         var availableImageHeight = Math.max(120, targetPanelHeight - panelVerticalExtras);
         imageEl.style.maxHeight = availableImageHeight + 'px';
+
+        requestAnimationFrame(function() {
+          var renderedImageWidth = Math.ceil(imageEl.getBoundingClientRect().width);
+          var headerWidth = Math.ceil(astorpPanelEl.querySelector('.estofex-panel-header').getBoundingClientRect().width);
+          var tabsWidth = Math.ceil(astorpPanelEl.querySelector('.astorp-tabs').getBoundingClientRect().width);
+          var fittedPanelWidth = Math.min(maxPanelWidth, Math.max(renderedImageWidth + panelHorizontalExtras, headerWidth, tabsWidth));
+          astorpPanelEl.style.width = fittedPanelWidth + 'px';
+        });
       });
 
       (function enableDrag(panelEl, dragHandleEl) {
