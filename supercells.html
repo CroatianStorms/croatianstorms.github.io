@@ -384,8 +384,8 @@
   position: absolute;
   cursor: pointer;
   inset: 0;
-  background-color: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: #0ea5e9;
+  border: none;
   border-radius: 999px;
   transition: 0.2s ease;
 }
@@ -403,8 +403,7 @@
 }
 
 .toggle-switch input:checked + .toggle-slider {
-  background-color: #1e3a8a;
-  border-color: #5f88ff;
+  background: #008000;
 }
 
 .toggle-switch input:checked + .toggle-slider::before {
@@ -654,6 +653,23 @@
     };
     zoomControl.addTo(map);
     map.setView([45.1, 16.0], 6);
+    var toggleGodinaEl = document.getElementById('toggle-godina');
+    var toggleStrujanjeEl = document.getElementById('toggle-strujanje');
+
+    function enforceExclusiveToggles(changedToggle, otherToggle) {
+      if (changedToggle.checked) {
+        otherToggle.checked = false;
+      }
+    }
+
+    toggleGodinaEl.addEventListener('change', function() {
+      enforceExclusiveToggles(toggleGodinaEl, toggleStrujanjeEl);
+    });
+
+    toggleStrujanjeEl.addEventListener('change', function() {
+      enforceExclusiveToggles(toggleStrujanjeEl, toggleGodinaEl);
+    });
+
   </script>
 </body>
 </html>
