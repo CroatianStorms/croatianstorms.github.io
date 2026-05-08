@@ -119,6 +119,64 @@
   position: relative;
 }
 /* Mobile: hide horizontal, show hamburger */
+
+
+.year-panel {
+  position: fixed;
+  top: 176px;
+  left: 12px;
+  z-index: 1000;
+  width: 200px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: rgba(33, 33, 33, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  padding: 8px;
+  display: none;
+}
+
+.year-panel.is-visible {
+  display: block;
+}
+
+.year-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 4px 0;
+}
+
+.year-item:last-child {
+  border-bottom: none;
+}
+
+.year-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 4px 2px;
+}
+
+.year-button:hover {
+  color: #93c5fd;
+}
+
+.months-list {
+  display: none;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 2px 2px 6px 10px;
+}
+
+.months-list.is-open {
+  display: block;
+}
+
 @media (max-width: 768px) {
   .hamburger {
     display: block !important;
@@ -255,6 +313,64 @@
 .social-item:hover .icon {
   display: none;
 }
+
+
+.year-panel {
+  position: fixed;
+  top: 176px;
+  left: 12px;
+  z-index: 1000;
+  width: 200px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: rgba(33, 33, 33, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  padding: 8px;
+  display: none;
+}
+
+.year-panel.is-visible {
+  display: block;
+}
+
+.year-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 4px 0;
+}
+
+.year-item:last-child {
+  border-bottom: none;
+}
+
+.year-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 4px 2px;
+}
+
+.year-button:hover {
+  color: #93c5fd;
+}
+
+.months-list {
+  display: none;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 2px 2px 6px 10px;
+}
+
+.months-list.is-open {
+  display: block;
+}
+
 @media (max-width: 768px) {
   aside {
     display: none !important;
@@ -410,12 +526,77 @@
   transform: translateX(22px);
 }
 
+
+
+.year-panel {
+  position: fixed;
+  top: 176px;
+  left: 12px;
+  z-index: 1000;
+  width: 200px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: rgba(33, 33, 33, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  padding: 8px;
+  display: none;
+}
+
+.year-panel.is-visible {
+  display: block;
+}
+
+.year-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 4px 0;
+}
+
+.year-item:last-child {
+  border-bottom: none;
+}
+
+.year-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 4px 2px;
+}
+
+.year-button:hover {
+  color: #93c5fd;
+}
+
+.months-list {
+  display: none;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 2px 2px 6px 10px;
+}
+
+.months-list.is-open {
+  display: block;
+}
+
 @media (max-width: 768px) {
   .synoptic-panel {
     left: 8px;
     right: 8px;
     top: 70px;
     min-width: auto;
+  }
+
+  .year-panel {
+    left: 8px;
+    right: 8px;
+    width: auto;
+    top: 168px;
   }
 }
 
@@ -615,6 +796,11 @@
     </div>
   </div>
 
+
+  <div class="year-panel" id="year-panel" aria-label="Popis godina">
+    <div id="year-list"></div>
+  </div>
+
   <div id="map"></div>
 
   <script>
@@ -664,11 +850,51 @@
 
     toggleGodinaEl.addEventListener('change', function() {
       enforceExclusiveToggles(toggleGodinaEl, toggleStrujanjeEl);
+      updateYearPanelVisibility();
     });
 
     toggleStrujanjeEl.addEventListener('change', function() {
       enforceExclusiveToggles(toggleStrujanjeEl, toggleGodinaEl);
+      updateYearPanelVisibility();
     });
+
+
+    var yearPanelEl = document.getElementById('year-panel');
+    var yearListEl = document.getElementById('year-list');
+
+    function createYearList() {
+      var html = '';
+      for (var year = 2026; year >= 1981; year--) {
+        html +=
+          '<div class="year-item">' +
+            '<button type="button" class="year-button" data-year="' + year + '">' + year + '.</button>' +
+            '<div class="months-list" id="months-' + year + '">Mjeseci za ' + year + '. bit će dodani uskoro.</div>' +
+          '</div>';
+      }
+      yearListEl.innerHTML = html;
+
+      var yearButtons = yearListEl.querySelectorAll('.year-button');
+      for (var i = 0; i < yearButtons.length; i++) {
+        yearButtons[i].addEventListener('click', function() {
+          var selectedYear = this.getAttribute('data-year');
+          var monthsEl = document.getElementById('months-' + selectedYear);
+          monthsEl.classList.toggle('is-open');
+        });
+      }
+    }
+
+    function updateYearPanelVisibility() {
+      yearPanelEl.classList.toggle('is-visible', toggleGodinaEl.checked);
+      if (!toggleGodinaEl.checked) {
+        var openMonths = yearPanelEl.querySelectorAll('.months-list.is-open');
+        for (var i = 0; i < openMonths.length; i++) {
+          openMonths[i].classList.remove('is-open');
+        }
+      }
+    }
+
+    createYearList();
+    updateYearPanelVisibility();
 
   </script>
 </body>
