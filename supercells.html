@@ -119,6 +119,92 @@
   position: relative;
 }
 /* Mobile: hide horizontal, show hamburger */
+
+
+.year-panel {
+  position: fixed;
+  top: 192px;
+  left: 12px;
+  z-index: 1000;
+  width: 204px;
+  max-height: calc(100vh - 208px);
+  overflow-y: auto;
+  background: rgba(33, 33, 33, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  padding: 8px;
+  display: none;
+}
+
+.year-panel.is-visible {
+  display: block;
+}
+
+.year-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 4px 0;
+}
+
+.year-item:last-child {
+  border-bottom: none;
+}
+
+.year-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 4px 2px;
+}
+
+.year-button:hover {
+  color: #93c5fd;
+}
+
+.months-list {
+  display: none;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 2px 2px 6px 28px;
+}
+
+.months-list.is-open {
+  display: block;
+}
+
+
+.months-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.92);
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 3px 2px 3px 8px;
+}
+
+.months-button:hover {
+  color: #bfdbfe;
+}
+
+.dates-list {
+  display: none;
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.82);
+  padding: 2px 2px 4px 30px;
+}
+
+.dates-list.is-open {
+  display: block;
+}
+
 @media (max-width: 768px) {
   .hamburger {
     display: block !important;
@@ -255,6 +341,92 @@
 .social-item:hover .icon {
   display: none;
 }
+
+
+.year-panel {
+  position: fixed;
+  top: 192px;
+  left: 12px;
+  z-index: 1000;
+  width: 204px;
+  max-height: calc(100vh - 208px);
+  overflow-y: auto;
+  background: rgba(33, 33, 33, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  padding: 8px;
+  display: none;
+}
+
+.year-panel.is-visible {
+  display: block;
+}
+
+.year-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 4px 0;
+}
+
+.year-item:last-child {
+  border-bottom: none;
+}
+
+.year-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 4px 2px;
+}
+
+.year-button:hover {
+  color: #93c5fd;
+}
+
+.months-list {
+  display: none;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 2px 2px 6px 28px;
+}
+
+.months-list.is-open {
+  display: block;
+}
+
+
+.months-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.92);
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 3px 2px 3px 8px;
+}
+
+.months-button:hover {
+  color: #bfdbfe;
+}
+
+.dates-list {
+  display: none;
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.82);
+  padding: 2px 2px 4px 30px;
+}
+
+.dates-list.is-open {
+  display: block;
+}
+
 @media (max-width: 768px) {
   aside {
     display: none !important;
@@ -324,6 +496,195 @@
 .custom-zoom a:hover {
   background: #1e3a8a;
 }
+
+
+/* -----------------------------------------------SINOPTIČKA PANEL STYLE -----------------------------------*/
+.synoptic-panel {
+  position: fixed;
+  top: 78px;
+  left: 12px;
+  z-index: 1000;
+  min-width: 200px;
+  background: rgba(33, 33, 33, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  padding: 12px 10px 8px;
+  color: #fff;
+}
+
+.synoptic-title {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.synoptic-toggles {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.toggle-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.toggle-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 48px;
+  height: 26px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: #0ea5e9;
+  border: none;
+  border-radius: 999px;
+  transition: 0.2s ease;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  top: 3px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  transition: 0.2s ease;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background: #008000;
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(22px);
+}
+
+
+
+.year-panel {
+  position: fixed;
+  top: 192px;
+  left: 12px;
+  z-index: 1000;
+  width: 204px;
+  max-height: calc(100vh - 208px);
+  overflow-y: auto;
+  background: rgba(33, 33, 33, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  padding: 8px;
+  display: none;
+}
+
+.year-panel.is-visible {
+  display: block;
+}
+
+.year-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 4px 0;
+}
+
+.year-item:last-child {
+  border-bottom: none;
+}
+
+.year-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 4px 2px;
+}
+
+.year-button:hover {
+  color: #93c5fd;
+}
+
+.months-list {
+  display: none;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 2px 2px 6px 28px;
+}
+
+.months-list.is-open {
+  display: block;
+}
+
+
+.months-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.92);
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 3px 2px 3px 8px;
+}
+
+.months-button:hover {
+  color: #bfdbfe;
+}
+
+.dates-list {
+  display: none;
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.82);
+  padding: 2px 2px 4px 30px;
+}
+
+.dates-list.is-open {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .synoptic-panel {
+    left: 8px;
+    right: 8px;
+    top: 70px;
+    min-width: auto;
+  }
+
+  .year-panel {
+    left: 8px;
+    right: 8px;
+    width: auto;
+    max-height: calc(100vh - 198px);
+    top: 184px;
+  }
+}
+
 /* Completely hide Leaflet Routing Machine UI / white square */
 .leaflet-routing-container,
 .leaflet-control-container .leaflet-routing-container,
@@ -499,6 +860,32 @@
   </div>
 </header>
 <!-----------------------------------------------------------PAGE STARTS------------------------------------------------->  
+
+  <div class="synoptic-panel" aria-label="Sinoptička situacija panel">
+    <h3 class="synoptic-title">Sinoptička situacija</h3>
+    <div class="synoptic-toggles">
+      <div class="toggle-column">
+        <label class="toggle-switch" for="toggle-godina">
+          <input type="checkbox" id="toggle-godina">
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="toggle-label">Po godini</span>
+      </div>
+      <div class="toggle-column">
+        <label class="toggle-switch" for="toggle-strujanje">
+          <input type="checkbox" id="toggle-strujanje">
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="toggle-label">Po strujanju</span>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="year-panel" id="year-panel" aria-label="Popis godina">
+    <div id="year-list"></div>
+  </div>
+
   <div id="map"></div>
 
   <script>
@@ -537,6 +924,91 @@
     };
     zoomControl.addTo(map);
     map.setView([45.1, 16.0], 6);
+    var toggleGodinaEl = document.getElementById('toggle-godina');
+    var toggleStrujanjeEl = document.getElementById('toggle-strujanje');
+
+    function enforceExclusiveToggles(changedToggle, otherToggle) {
+      if (changedToggle.checked) {
+        otherToggle.checked = false;
+      }
+    }
+
+    toggleGodinaEl.addEventListener('change', function() {
+      enforceExclusiveToggles(toggleGodinaEl, toggleStrujanjeEl);
+      updateYearPanelVisibility();
+    });
+
+    toggleStrujanjeEl.addEventListener('change', function() {
+      enforceExclusiveToggles(toggleStrujanjeEl, toggleGodinaEl);
+      updateYearPanelVisibility();
+    });
+
+
+    var yearPanelEl = document.getElementById('year-panel');
+    var yearListEl = document.getElementById('year-list');
+
+    function createYearList() {
+      var html = '';
+      for (var year = 2026; year >= 1981; year--) {
+        html +=
+          '<div class="year-item">' +
+            '<button type="button" class="year-button" data-year="' + year + '">' + year + '.</button>' +
+            '<div class="months-list" id="months-' + year + '">' +
+              (year === 2006
+                ? '<div class="month-item">' +
+                    '<button type="button" class="months-button" data-month="svibanj-2006">Svibanj</button>' +
+                    '<div class="dates-list" id="dates-svibanj-2006">19.05.2006.</div>' +
+                  '</div>' +
+                  '<div class="month-item">' +
+                    '<button type="button" class="months-button" data-month="lipanj-2006">Lipanj</button>' +
+                    '<div class="dates-list" id="dates-lipanj-2006">29.06.2006.</div>' +
+                  '</div>' +
+                  '<div class="month-item">' +
+                    '<button type="button" class="months-button" data-month="kolovoz-2006">August</button>' +
+                    '<div class="dates-list" id="dates-kolovoz-2006">01.08.2006.<br>03.08.2006.</div>' +
+                  '</div>'
+                : 'Mjeseci za ' + year + '. bit će dodani uskoro.') +
+            '</div>' +
+          '</div>';
+      }
+      yearListEl.innerHTML = html;
+
+      var yearButtons = yearListEl.querySelectorAll('.year-button');
+      for (var i = 0; i < yearButtons.length; i++) {
+        yearButtons[i].addEventListener('click', function() {
+          var selectedYear = this.getAttribute('data-year');
+          var monthsEl = document.getElementById('months-' + selectedYear);
+          monthsEl.classList.toggle('is-open');
+        });
+      }
+
+      var monthButtons = yearListEl.querySelectorAll('.months-button');
+      for (var j = 0; j < monthButtons.length; j++) {
+        monthButtons[j].addEventListener('click', function() {
+          var selectedMonth = this.getAttribute('data-month');
+          var datesEl = document.getElementById('dates-' + selectedMonth);
+          datesEl.classList.toggle('is-open');
+        });
+      }
+    }
+
+    function updateYearPanelVisibility() {
+      yearPanelEl.classList.toggle('is-visible', toggleGodinaEl.checked);
+      if (!toggleGodinaEl.checked) {
+        var openMonths = yearPanelEl.querySelectorAll('.months-list.is-open');
+        for (var i = 0; i < openMonths.length; i++) {
+          openMonths[i].classList.remove('is-open');
+        }
+        var openDates = yearPanelEl.querySelectorAll('.dates-list.is-open');
+        for (var j = 0; j < openDates.length; j++) {
+          openDates[j].classList.remove('is-open');
+        }
+      }
+    }
+
+    createYearList();
+    updateYearPanelVisibility();
+
   </script>
 </body>
 </html>
