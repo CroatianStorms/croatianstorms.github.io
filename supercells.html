@@ -177,6 +177,34 @@
   display: block;
 }
 
+
+.months-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.92);
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 3px 2px;
+}
+
+.months-button:hover {
+  color: #bfdbfe;
+}
+
+.dates-list {
+  display: none;
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.82);
+  padding: 2px 2px 4px 12px;
+}
+
+.dates-list.is-open {
+  display: block;
+}
+
 @media (max-width: 768px) {
   .hamburger {
     display: block !important;
@@ -368,6 +396,34 @@
 }
 
 .months-list.is-open {
+  display: block;
+}
+
+
+.months-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.92);
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 3px 2px;
+}
+
+.months-button:hover {
+  color: #bfdbfe;
+}
+
+.dates-list {
+  display: none;
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.82);
+  padding: 2px 2px 4px 12px;
+}
+
+.dates-list.is-open {
   display: block;
 }
 
@@ -581,6 +637,34 @@
 }
 
 .months-list.is-open {
+  display: block;
+}
+
+
+.months-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.92);
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 3px 2px;
+}
+
+.months-button:hover {
+  color: #bfdbfe;
+}
+
+.dates-list {
+  display: none;
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.82);
+  padding: 2px 2px 4px 12px;
+}
+
+.dates-list.is-open {
   display: block;
 }
 
@@ -869,7 +953,22 @@
         html +=
           '<div class="year-item">' +
             '<button type="button" class="year-button" data-year="' + year + '">' + year + '.</button>' +
-            '<div class="months-list" id="months-' + year + '">Mjeseci za ' + year + '. bit će dodani uskoro.</div>' +
+            '<div class="months-list" id="months-' + year + '">' +
+              (year === 2006
+                ? '<div class="month-item">' +
+                    '<button type="button" class="months-button" data-month="svibanj-2006">Svibanj</button>' +
+                    '<div class="dates-list" id="dates-svibanj-2006">19.05.2006.</div>' +
+                  '</div>' +
+                  '<div class="month-item">' +
+                    '<button type="button" class="months-button" data-month="lipanj-2006">Lipanj</button>' +
+                    '<div class="dates-list" id="dates-lipanj-2006">29.06.2006.</div>' +
+                  '</div>' +
+                  '<div class="month-item">' +
+                    '<button type="button" class="months-button" data-month="kolovoz-2006">August</button>' +
+                    '<div class="dates-list" id="dates-kolovoz-2006">01.08.2006.<br>03.08.2006.</div>' +
+                  '</div>'
+                : 'Mjeseci za ' + year + '. bit će dodani uskoro.') +
+            '</div>' +
           '</div>';
       }
       yearListEl.innerHTML = html;
@@ -882,6 +981,15 @@
           monthsEl.classList.toggle('is-open');
         });
       }
+
+      var monthButtons = yearListEl.querySelectorAll('.months-button');
+      for (var j = 0; j < monthButtons.length; j++) {
+        monthButtons[j].addEventListener('click', function() {
+          var selectedMonth = this.getAttribute('data-month');
+          var datesEl = document.getElementById('dates-' + selectedMonth);
+          datesEl.classList.toggle('is-open');
+        });
+      }
     }
 
     function updateYearPanelVisibility() {
@@ -890,6 +998,10 @@
         var openMonths = yearPanelEl.querySelectorAll('.months-list.is-open');
         for (var i = 0; i < openMonths.length; i++) {
           openMonths[i].classList.remove('is-open');
+        }
+        var openDates = yearPanelEl.querySelectorAll('.dates-list.is-open');
+        for (var j = 0; j < openDates.length; j++) {
+          openDates[j].classList.remove('is-open');
         }
       }
     }
