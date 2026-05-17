@@ -1085,7 +1085,7 @@
     var synopticImageOverlay = null;
     // Adjustable bounds for synoptic overlays (SW lat/lng, NE lat/lng)
     // Made intentionally larger for manual alignment tuning.
-    var synopticImageBounds = [[25.2, -11.4], [53.7, 31.0]];
+    var synopticImageBounds = [[21.2, -11.4], [53.7, 31.0]];
     var selectedSynopticDate = null;
 
     function clearSynopticImageOverlay() {
@@ -1097,7 +1097,7 @@
 
     function loadSynopticImageOverlay(imagePath) {
       clearSynopticImageOverlay();
-      synopticImageOverlay = L.imageOverlay(imagePath, synopticImageBounds, { opacity: 0.75 });
+      synopticImageOverlay = L.imageOverlay(imagePath, synopticImageBounds, { opacity: 0.65 });
       synopticImageOverlay.addTo(map);
     }
 
