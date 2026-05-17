@@ -225,7 +225,7 @@
 .synoptic-params-panel {
   position: fixed;
   top: 78px;
-  left: 224px;
+  left: 232px;
   z-index: 1000;
   display: none;
   gap: 8px;
@@ -494,7 +494,7 @@
 .synoptic-params-panel {
   position: fixed;
   top: 78px;
-  left: 224px;
+  left: 232px;
   z-index: 1000;
   display: none;
   gap: 8px;
@@ -782,7 +782,7 @@
 .synoptic-params-panel {
   position: fixed;
   top: 78px;
-  left: 224px;
+  left: 232px;
   z-index: 1000;
   display: none;
   gap: 8px;
@@ -1105,6 +1105,14 @@
     var yearListEl = document.getElementById('year-list');
     var synopticParamsPanelEl = document.getElementById('synoptic-params-panel');
 
+    function hideSynopticParamsPanel() {
+      synopticParamsPanelEl.classList.remove('is-visible');
+      var activeParamButtons = synopticParamsPanelEl.querySelectorAll('.synoptic-param-button.is-active');
+      for (var a = 0; a < activeParamButtons.length; a++) {
+        activeParamButtons[a].classList.remove('is-active');
+      }
+    }
+
     function createYearList() {
       var html = '';
       for (var year = 2026; year >= 1981; year--) {
@@ -1137,6 +1145,7 @@
           var selectedYear = this.getAttribute('data-year');
           var monthsEl = document.getElementById('months-' + selectedYear);
           monthsEl.classList.toggle('is-open');
+          hideSynopticParamsPanel();
         });
       }
 
@@ -1146,13 +1155,17 @@
           var selectedMonth = this.getAttribute('data-month');
           var datesEl = document.getElementById('dates-' + selectedMonth);
           datesEl.classList.toggle('is-open');
+          hideSynopticParamsPanel();
         });
       }
 
       var dateButtons = yearListEl.querySelectorAll('.date-button');
       for (var k = 0; k < dateButtons.length; k++) {
         dateButtons[k].addEventListener('click', function() {
-          synopticParamsPanelEl.classList.add('is-visible');
+          synopticParamsPanelEl.classList.toggle('is-visible');
+          if (!synopticParamsPanelEl.classList.contains('is-visible')) {
+            hideSynopticParamsPanel();
+          }
         });
       }
     }
@@ -1168,7 +1181,7 @@
         for (var j = 0; j < openDates.length; j++) {
           openDates[j].classList.remove('is-open');
         }
-        synopticParamsPanelEl.classList.remove('is-visible');
+        hideSynopticParamsPanel();
       }
     }
 
