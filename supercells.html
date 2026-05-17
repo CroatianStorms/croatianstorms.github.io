@@ -1087,6 +1087,7 @@
     var synopticImageOverlay = null;
     var synopticCornerMarkers = [];
     var synopticCenterMarker = null;
+    var synopticCenterOffset = { lat: 0, lng: 0 };
 
     // Adjustable rectangular control points for manual alignment tuning.
     var synopticImageCorners = {
@@ -1098,10 +1099,11 @@
     var selectedSynopticDate = null;
 
     function getSynopticBounds() {
-      return [
-        [Math.min(synopticImageCorners.sw.lat, synopticImageCorners.se.lat), Math.min(synopticImageCorners.nw.lng, synopticImageCorners.sw.lng)],
-        [Math.max(synopticImageCorners.nw.lat, synopticImageCorners.ne.lat), Math.max(synopticImageCorners.ne.lng, synopticImageCorners.se.lng)]
-      ];
+      var south = Math.min(synopticImageCorners.sw.lat, synopticImageCorners.se.lat) + synopticCenterOffset.lat;
+      var west = Math.min(synopticImageCorners.nw.lng, synopticImageCorners.sw.lng) + synopticCenterOffset.lng;
+      var north = Math.max(synopticImageCorners.nw.lat, synopticImageCorners.ne.lat) + synopticCenterOffset.lat;
+      var east = Math.max(synopticImageCorners.ne.lng, synopticImageCorners.se.lng) + synopticCenterOffset.lng;
+      return [[south, west], [north, east]];
     }
 
     function clearSynopticControlMarkers() {
@@ -1144,6 +1146,7 @@
             var k = defs[j].key;
             synopticCornerMarkers[j].setLatLng(synopticImageCorners[k]);
           }
+          synopticCenterOffset = { lat: 0, lng: 0 };
           updateCenterMarker();
           renderSynopticImageOverlay(imagePath);
         });
@@ -1163,20 +1166,15 @@
 
     function addCenterMarker(imagePath) {
       synopticCenterMarker = L.marker(getCenterLatLng(), { draggable: true, title: 'CENTER' }).addTo(map);
-      synopticCenterMarker.on('dragstart', function() { synopticCenterMarker._start = getCenterLatLng(); });
+      synopticCenterMarker.on('dragstart', function() { synopticCenterMarker._start = synopticCenterMarker.getLatLng(); });
       synopticCenterMarker.on('drag', function(e) {
         var cur = e.target.getLatLng();
-        var st = synopticCenterMarker._start || getCenterLatLng();
-        var dLat = cur.lat - st.lat;
-        var dLng = cur.lng - st.lng;
-        ['nw','ne','sw','se'].forEach(function(k){
-          synopticImageCorners[k] = L.latLng(synopticImageCorners[k].lat + dLat, synopticImageCorners[k].lng + dLng);
-        });
+        var st = synopticCenterMarker._start || cur;
+        synopticCenterOffset = {
+          lat: synopticCenterOffset.lat + (cur.lat - st.lat),
+          lng: synopticCenterOffset.lng + (cur.lng - st.lng)
+        };
         synopticCenterMarker._start = cur;
-        for (var j = 0; j < synopticCornerMarkers.length; j++) {
-          var key = ['nw','ne','sw','se'][j];
-          synopticCornerMarkers[j].setLatLng(synopticImageCorners[key]);
-        }
         renderSynopticImageOverlay(imagePath);
       });
     }
