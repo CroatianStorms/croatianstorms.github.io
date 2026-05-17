@@ -14,6 +14,8 @@
   <!-- Leaflet Routing Machine (added) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
   <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-distortableimage@0.21.9/dist/leaflet.distortableimage.css" />
+  <script src="https://unpkg.com/leaflet-distortableimage@0.21.9/dist/leaflet.distortableimage.js"></script>
   
   <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; margin: 0 auto;}
@@ -1083,9 +1085,13 @@
     map.setView([45.1, 16.0], 6);
 
     var synopticImageOverlay = null;
-    // Adjustable bounds for synoptic overlays (SW lat/lng, NE lat/lng)
-    // Made intentionally larger for manual alignment tuning.
-    var synopticImageBounds = [[23.2, -11.4], [53.0, 31.0]];
+    // Adjustable 4-corner control points (NW, NE, SW, SE) for practical warp tuning.
+    var synopticImageCorners = [
+      L.latLng(50.5, 7.0),
+      L.latLng(50.5, 24.5),
+      L.latLng(39.5, 7.0),
+      L.latLng(39.5, 24.5)
+    ];
     var selectedSynopticDate = null;
 
     function clearSynopticImageOverlay() {
@@ -1097,8 +1103,28 @@
 
     function loadSynopticImageOverlay(imagePath) {
       clearSynopticImageOverlay();
-      synopticImageOverlay = L.imageOverlay(imagePath, synopticImageBounds, { opacity: 0.65 });
-      synopticImageOverlay.addTo(map);
+
+      if (L.distortableImageOverlay) {
+        synopticImageOverlay = L.distortableImageOverlay(imagePath, {
+          corners: synopticImageCorners,
+          mode: 'distort',
+          selected: true,
+          editable: true,
+          suppressToolbar: false,
+          opacity: 0.75
+        }).addTo(map);
+
+        // Keep tuned corners for next load while you iteratively align image.
+        synopticImageOverlay.on('update', function() {
+          if (synopticImageOverlay && synopticImageOverlay.getCorners) {
+            synopticImageCorners = synopticImageOverlay.getCorners();
+          }
+        });
+      } else {
+        // Fallback to rectangular overlay if plugin fails to load.
+        synopticImageOverlay = L.imageOverlay(imagePath, [[39.5, 7.0], [50.5, 24.5]], { opacity: 0.75 });
+        synopticImageOverlay.addTo(map);
+      }
     }
 
     var toggleGodinaEl = document.getElementById('toggle-godina');
