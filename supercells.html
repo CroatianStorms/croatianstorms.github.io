@@ -14,6 +14,8 @@
   <!-- Leaflet Routing Machine (added) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
   <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-distortableimage@0.21.9/dist/leaflet.distortableimage.css" />
+  <script src="https://unpkg.com/leaflet-distortableimage@0.21.9/dist/leaflet.distortableimage.js"></script>
   
   <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; margin: 0 auto;}
@@ -119,6 +121,139 @@
   position: relative;
 }
 /* Mobile: hide horizontal, show hamburger */
+
+
+.year-panel {
+  position: fixed;
+  top: 192px;
+  left: 12px;
+  z-index: 1000;
+  width: 204px;
+  max-height: calc(100vh - 208px);
+  overflow-y: auto;
+  background: rgba(33, 33, 33, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  padding: 8px;
+  display: none;
+}
+
+.year-panel.is-visible {
+  display: block;
+}
+
+.year-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 4px 0;
+}
+
+.year-item:last-child {
+  border-bottom: none;
+}
+
+.year-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 4px 2px;
+}
+
+.year-button:hover {
+  color: #93c5fd;
+}
+
+.months-list {
+  display: none;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 2px 2px 6px 28px;
+}
+
+.months-list.is-open {
+  display: block;
+}
+
+
+.months-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.92);
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 3px 2px 3px 8px;
+}
+
+.months-button:hover {
+  color: #bfdbfe;
+}
+
+.dates-list {
+  display: none;
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.82);
+  padding: 2px 2px 4px 30px;
+}
+
+.dates-list.is-open {
+  display: block;
+}
+
+
+.date-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 2px 2px 2px 8px;
+}
+
+.date-button:hover {
+  color: #bfdbfe;
+}
+
+.synoptic-params-panel {
+  position: fixed;
+  top: 78px;
+  left: 242px;
+  z-index: 1000;
+  display: none;
+  gap: 8px;
+}
+
+.synoptic-params-panel.is-visible {
+  display: flex;
+}
+
+.synoptic-param-button {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: #0ea5e9;
+  color: #ffffff;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.synoptic-param-button:hover,
+.synoptic-param-button.is-active {
+  background: #008000;
+}
+
 @media (max-width: 768px) {
   .hamburger {
     display: block !important;
@@ -255,6 +390,139 @@
 .social-item:hover .icon {
   display: none;
 }
+
+
+.year-panel {
+  position: fixed;
+  top: 192px;
+  left: 12px;
+  z-index: 1000;
+  width: 204px;
+  max-height: calc(100vh - 208px);
+  overflow-y: auto;
+  background: rgba(33, 33, 33, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  padding: 8px;
+  display: none;
+}
+
+.year-panel.is-visible {
+  display: block;
+}
+
+.year-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 4px 0;
+}
+
+.year-item:last-child {
+  border-bottom: none;
+}
+
+.year-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 4px 2px;
+}
+
+.year-button:hover {
+  color: #93c5fd;
+}
+
+.months-list {
+  display: none;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 2px 2px 6px 28px;
+}
+
+.months-list.is-open {
+  display: block;
+}
+
+
+.months-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.92);
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 3px 2px 3px 8px;
+}
+
+.months-button:hover {
+  color: #bfdbfe;
+}
+
+.dates-list {
+  display: none;
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.82);
+  padding: 2px 2px 4px 30px;
+}
+
+.dates-list.is-open {
+  display: block;
+}
+
+
+.date-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 2px 2px 2px 8px;
+}
+
+.date-button:hover {
+  color: #bfdbfe;
+}
+
+.synoptic-params-panel {
+  position: fixed;
+  top: 78px;
+  left: 242px;
+  z-index: 1000;
+  display: none;
+  gap: 8px;
+}
+
+.synoptic-params-panel.is-visible {
+  display: flex;
+}
+
+.synoptic-param-button {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: #0ea5e9;
+  color: #ffffff;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.synoptic-param-button:hover,
+.synoptic-param-button.is-active {
+  background: #008000;
+}
+
 @media (max-width: 768px) {
   aside {
     display: none !important;
@@ -324,6 +592,249 @@
 .custom-zoom a:hover {
   background: #1e3a8a;
 }
+
+
+/* -----------------------------------------------SINOPTIČKA PANEL STYLE -----------------------------------*/
+.synoptic-panel {
+  position: fixed;
+  top: 78px;
+  left: 12px;
+  z-index: 1000;
+  min-width: 200px;
+  background: rgba(33, 33, 33, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  padding: 12px 10px 8px;
+  color: #fff;
+}
+
+.synoptic-title {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.synoptic-toggles {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.toggle-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.toggle-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.toggle-switch {
+  position: relative;
+  width: 48px;
+  height: 26px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: #0ea5e9;
+  border: none;
+  border-radius: 999px;
+  transition: 0.2s ease;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  top: 3px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  transition: 0.2s ease;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background: #008000;
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(22px);
+}
+
+
+
+.year-panel {
+  position: fixed;
+  top: 192px;
+  left: 12px;
+  z-index: 1000;
+  width: 204px;
+  max-height: calc(100vh - 208px);
+  overflow-y: auto;
+  background: rgba(33, 33, 33, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  padding: 8px;
+  display: none;
+}
+
+.year-panel.is-visible {
+  display: block;
+}
+
+.year-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 4px 0;
+}
+
+.year-item:last-child {
+  border-bottom: none;
+}
+
+.year-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 4px 2px;
+}
+
+.year-button:hover {
+  color: #93c5fd;
+}
+
+.months-list {
+  display: none;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.8);
+  padding: 2px 2px 6px 28px;
+}
+
+.months-list.is-open {
+  display: block;
+}
+
+
+.months-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.92);
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 3px 2px 3px 8px;
+}
+
+.months-button:hover {
+  color: #bfdbfe;
+}
+
+.dates-list {
+  display: none;
+  font-size: 0.76rem;
+  color: rgba(255, 255, 255, 0.82);
+  padding: 2px 2px 4px 30px;
+}
+
+.dates-list.is-open {
+  display: block;
+}
+
+
+.date-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 2px 2px 2px 8px;
+}
+
+.date-button:hover {
+  color: #bfdbfe;
+}
+
+.synoptic-params-panel {
+  position: fixed;
+  top: 78px;
+  left: 242px;
+  z-index: 1000;
+  display: none;
+  gap: 8px;
+}
+
+.synoptic-params-panel.is-visible {
+  display: flex;
+}
+
+.synoptic-param-button {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: #0ea5e9;
+  color: #ffffff;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.synoptic-param-button:hover,
+.synoptic-param-button.is-active {
+  background: #008000;
+}
+
+@media (max-width: 768px) {
+  .synoptic-panel {
+    left: 8px;
+    right: 8px;
+    top: 70px;
+    min-width: auto;
+  }
+
+  .year-panel {
+    left: 8px;
+    right: 8px;
+    width: auto;
+    max-height: calc(100vh - 198px);
+    top: 184px;
+  }
+
+  .synoptic-params-panel {
+    left: 8px;
+    right: 8px;
+    top: 132px;
+    flex-wrap: wrap;
+  }
+}
+
 /* Completely hide Leaflet Routing Machine UI / white square */
 .leaflet-routing-container,
 .leaflet-control-container .leaflet-routing-container,
@@ -499,6 +1010,41 @@
   </div>
 </header>
 <!-----------------------------------------------------------PAGE STARTS------------------------------------------------->  
+
+  <div class="synoptic-panel" aria-label="Sinoptička situacija panel">
+    <h3 class="synoptic-title">Sinoptička situacija</h3>
+    <div class="synoptic-toggles">
+      <div class="toggle-column">
+        <label class="toggle-switch" for="toggle-godina">
+          <input type="checkbox" id="toggle-godina">
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="toggle-label">Po godini</span>
+      </div>
+      <div class="toggle-column">
+        <label class="toggle-switch" for="toggle-strujanje">
+          <input type="checkbox" id="toggle-strujanje">
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="toggle-label">Po strujanju</span>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="synoptic-params-panel" id="synoptic-params-panel" aria-label="Synoptic parametri">
+    <button type="button" class="synoptic-param-button" data-param="500">500 hPa</button>
+    <button type="button" class="synoptic-param-button" data-param="cape">CAPE</button>
+    <button type="button" class="synoptic-param-button" data-param="temp">Temp</button>
+    <button type="button" class="synoptic-param-button" data-param="tros">Tros</button>
+    <button type="button" class="synoptic-param-button" data-param="wind10m">Vjetar 10m</button>
+  </div>
+
+  <div class="year-panel" id="year-panel" aria-label="Popis godina">
+    <div id="year-list"></div>
+  </div>
+
   <div id="map"></div>
 
   <script>
@@ -537,6 +1083,201 @@
     };
     zoomControl.addTo(map);
     map.setView([45.1, 16.0], 6);
+
+    var synopticImageOverlay = null;
+    // Adjustable 4-corner control points (NW, NE, SW, SE) for practical warp tuning.
+    var synopticImageCorners = [
+      L.latLng(50.5, 7.0),
+      L.latLng(50.5, 24.5),
+      L.latLng(39.5, 7.0),
+      L.latLng(39.5, 24.5)
+    ];
+    var selectedSynopticDate = null;
+
+    function clearSynopticImageOverlay() {
+      if (synopticImageOverlay) {
+        map.removeLayer(synopticImageOverlay);
+        synopticImageOverlay = null;
+      }
+    }
+
+    function loadSynopticImageOverlay(imagePath) {
+      clearSynopticImageOverlay();
+
+      if (L.distortableImageOverlay) {
+        synopticImageOverlay = L.distortableImageOverlay(imagePath, {
+          corners: synopticImageCorners,
+          mode: 'distort',
+          selected: true,
+          editable: true,
+          suppressToolbar: false,
+          opacity: 0.75
+        }).addTo(map);
+
+        // Keep tuned corners for next load while you iteratively align image.
+        synopticImageOverlay.on('update', function() {
+          if (synopticImageOverlay && synopticImageOverlay.getCorners) {
+            synopticImageCorners = synopticImageOverlay.getCorners();
+          }
+        });
+      } else {
+        // Fallback to rectangular overlay if plugin fails to load.
+        synopticImageOverlay = L.imageOverlay(imagePath, [[39.5, 7.0], [50.5, 24.5]], { opacity: 0.75 });
+        synopticImageOverlay.addTo(map);
+      }
+    }
+
+    var toggleGodinaEl = document.getElementById('toggle-godina');
+    var toggleStrujanjeEl = document.getElementById('toggle-strujanje');
+
+    function enforceExclusiveToggles(changedToggle, otherToggle) {
+      if (changedToggle.checked) {
+        otherToggle.checked = false;
+      }
+    }
+
+    toggleGodinaEl.addEventListener('change', function() {
+      enforceExclusiveToggles(toggleGodinaEl, toggleStrujanjeEl);
+      updateYearPanelVisibility();
+    });
+
+    toggleStrujanjeEl.addEventListener('change', function() {
+      enforceExclusiveToggles(toggleStrujanjeEl, toggleGodinaEl);
+      updateYearPanelVisibility();
+    });
+
+
+    var yearPanelEl = document.getElementById('year-panel');
+    var yearListEl = document.getElementById('year-list');
+    var synopticParamsPanelEl = document.getElementById('synoptic-params-panel');
+
+    function hideSynopticParamsPanel() {
+      synopticParamsPanelEl.classList.remove('is-visible');
+      clearSynopticImageOverlay();
+      selectedSynopticDate = null;
+      var activeParamButtons = synopticParamsPanelEl.querySelectorAll('.synoptic-param-button.is-active');
+      for (var a = 0; a < activeParamButtons.length; a++) {
+        activeParamButtons[a].classList.remove('is-active');
+      }
+    }
+
+    function createYearList() {
+      var html = '';
+      for (var year = 2026; year >= 1981; year--) {
+        html +=
+          '<div class="year-item">' +
+            '<button type="button" class="year-button" data-year="' + year + '">' + year + '.</button>' +
+            '<div class="months-list" id="months-' + year + '">' +
+              (year === 2006
+                ? '<div class="month-item">' +
+                    '<button type="button" class="months-button" data-month="svibanj-2006">Svibanj</button>' +
+                    '<div class="dates-list" id="dates-svibanj-2006"><button type="button" class="date-button" data-date="2006-05-19">19.05.2006.</button></div>' +
+                  '</div>' +
+                  '<div class="month-item">' +
+                    '<button type="button" class="months-button" data-month="lipanj-2006">Lipanj</button>' +
+                    '<div class="dates-list" id="dates-lipanj-2006"><button type="button" class="date-button" data-date="2006-06-29">29.06.2006.</button></div>' +
+                  '</div>' +
+                  '<div class="month-item">' +
+                    '<button type="button" class="months-button" data-month="kolovoz-2006">August</button>' +
+                    '<div class="dates-list" id="dates-kolovoz-2006"><button type="button" class="date-button" data-date="2006-08-01">01.08.2006.</button><button type="button" class="date-button" data-date="2006-08-03">03.08.2006.</button></div>' +
+                  '</div>'
+                : 'Mjeseci za ' + year + '. bit će dodani uskoro.') +
+            '</div>' +
+          '</div>';
+      }
+      yearListEl.innerHTML = html;
+
+      var yearButtons = yearListEl.querySelectorAll('.year-button');
+      for (var i = 0; i < yearButtons.length; i++) {
+        yearButtons[i].addEventListener('click', function() {
+          var selectedYear = this.getAttribute('data-year');
+          var monthsEl = document.getElementById('months-' + selectedYear);
+          monthsEl.classList.toggle('is-open');
+          hideSynopticParamsPanel();
+        });
+      }
+
+      var monthButtons = yearListEl.querySelectorAll('.months-button');
+      for (var j = 0; j < monthButtons.length; j++) {
+        monthButtons[j].addEventListener('click', function() {
+          var selectedMonth = this.getAttribute('data-month');
+          var datesEl = document.getElementById('dates-' + selectedMonth);
+          datesEl.classList.toggle('is-open');
+          hideSynopticParamsPanel();
+        });
+      }
+
+      var dateButtons = yearListEl.querySelectorAll('.date-button');
+      for (var k = 0; k < dateButtons.length; k++) {
+        dateButtons[k].addEventListener('click', function() {
+          var clickedDate = this.getAttribute('data-date');
+          selectedSynopticDate = clickedDate;
+          var wasVisible = synopticParamsPanelEl.classList.contains('is-visible');
+
+          if (wasVisible) {
+            hideSynopticParamsPanel();
+            clearSynopticImageOverlay();
+            return;
+          }
+
+          synopticParamsPanelEl.classList.add('is-visible');
+
+          if (clickedDate === '2006-05-19') {
+            var defaultParamButton = document.querySelector('.synoptic-param-button[data-param="500"]');
+            hideSynopticParamsPanel();
+            synopticParamsPanelEl.classList.add('is-visible');
+            selectedSynopticDate = clickedDate;
+            if (defaultParamButton) defaultParamButton.classList.add('is-active');
+            loadSynopticImageOverlay('images/supercells/20060519/wind500.png');
+          } else {
+            clearSynopticImageOverlay();
+          }
+        });
+      }
+    }
+
+    function updateYearPanelVisibility() {
+      yearPanelEl.classList.toggle('is-visible', toggleGodinaEl.checked);
+      if (!toggleGodinaEl.checked) {
+        var openMonths = yearPanelEl.querySelectorAll('.months-list.is-open');
+        for (var i = 0; i < openMonths.length; i++) {
+          openMonths[i].classList.remove('is-open');
+        }
+        var openDates = yearPanelEl.querySelectorAll('.dates-list.is-open');
+        for (var j = 0; j < openDates.length; j++) {
+          openDates[j].classList.remove('is-open');
+        }
+        hideSynopticParamsPanel();
+      }
+    }
+
+    createYearList();
+    updateYearPanelVisibility();
+
+    var synopticParamButtons = document.querySelectorAll('.synoptic-param-button');
+    for (var pIdx = 0; pIdx < synopticParamButtons.length; pIdx++) {
+      synopticParamButtons[pIdx].addEventListener('click', function() {
+        var isAlreadyActive = this.classList.contains('is-active');
+        for (var clearIdx = 0; clearIdx < synopticParamButtons.length; clearIdx++) {
+          synopticParamButtons[clearIdx].classList.remove('is-active');
+        }
+
+        if (isAlreadyActive) {
+          clearSynopticImageOverlay();
+          return;
+        }
+
+        this.classList.add('is-active');
+
+        var paramId = this.getAttribute('data-param');
+        if (paramId === '500' && selectedSynopticDate === '2006-05-19') {
+          loadSynopticImageOverlay('images/supercells/20060519/wind500.png');
+        } else {
+          clearSynopticImageOverlay();
+        }
+      });
+    }
+
   </script>
 </body>
 </html>
