@@ -205,6 +205,53 @@
   display: block;
 }
 
+
+.date-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 2px 2px 2px 8px;
+}
+
+.date-button:hover {
+  color: #bfdbfe;
+}
+
+.synoptic-params-panel {
+  position: fixed;
+  top: 78px;
+  left: 224px;
+  z-index: 1000;
+  display: none;
+  gap: 8px;
+}
+
+.synoptic-params-panel.is-visible {
+  display: flex;
+}
+
+.synoptic-param-button {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: #0ea5e9;
+  color: #ffffff;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.synoptic-param-button:hover,
+.synoptic-param-button.is-active {
+  background: #008000;
+}
+
 @media (max-width: 768px) {
   .hamburger {
     display: block !important;
@@ -425,6 +472,53 @@
 
 .dates-list.is-open {
   display: block;
+}
+
+
+.date-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 2px 2px 2px 8px;
+}
+
+.date-button:hover {
+  color: #bfdbfe;
+}
+
+.synoptic-params-panel {
+  position: fixed;
+  top: 78px;
+  left: 224px;
+  z-index: 1000;
+  display: none;
+  gap: 8px;
+}
+
+.synoptic-params-panel.is-visible {
+  display: flex;
+}
+
+.synoptic-param-button {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: #0ea5e9;
+  color: #ffffff;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.synoptic-param-button:hover,
+.synoptic-param-button.is-active {
+  background: #008000;
 }
 
 @media (max-width: 768px) {
@@ -668,6 +762,53 @@
   display: block;
 }
 
+
+.date-button {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.9);
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-weight: 600;
+  padding: 2px 2px 2px 8px;
+}
+
+.date-button:hover {
+  color: #bfdbfe;
+}
+
+.synoptic-params-panel {
+  position: fixed;
+  top: 78px;
+  left: 224px;
+  z-index: 1000;
+  display: none;
+  gap: 8px;
+}
+
+.synoptic-params-panel.is-visible {
+  display: flex;
+}
+
+.synoptic-param-button {
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: #0ea5e9;
+  color: #ffffff;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.synoptic-param-button:hover,
+.synoptic-param-button.is-active {
+  background: #008000;
+}
+
 @media (max-width: 768px) {
   .synoptic-panel {
     left: 8px;
@@ -682,6 +823,13 @@
     width: auto;
     max-height: calc(100vh - 198px);
     top: 184px;
+  }
+
+  .synoptic-params-panel {
+    left: 8px;
+    right: 8px;
+    top: 132px;
+    flex-wrap: wrap;
   }
 }
 
@@ -882,6 +1030,15 @@
   </div>
 
 
+
+  <div class="synoptic-params-panel" id="synoptic-params-panel" aria-label="Synoptic parametri">
+    <button type="button" class="synoptic-param-button">500 hPa</button>
+    <button type="button" class="synoptic-param-button">CAPE</button>
+    <button type="button" class="synoptic-param-button">Temp</button>
+    <button type="button" class="synoptic-param-button">Tros</button>
+    <button type="button" class="synoptic-param-button">Vjetar 10m</button>
+  </div>
+
   <div class="year-panel" id="year-panel" aria-label="Popis godina">
     <div id="year-list"></div>
   </div>
@@ -946,6 +1103,7 @@
 
     var yearPanelEl = document.getElementById('year-panel');
     var yearListEl = document.getElementById('year-list');
+    var synopticParamsPanelEl = document.getElementById('synoptic-params-panel');
 
     function createYearList() {
       var html = '';
@@ -957,15 +1115,15 @@
               (year === 2006
                 ? '<div class="month-item">' +
                     '<button type="button" class="months-button" data-month="svibanj-2006">Svibanj</button>' +
-                    '<div class="dates-list" id="dates-svibanj-2006">19.05.2006.</div>' +
+                    '<div class="dates-list" id="dates-svibanj-2006"><button type="button" class="date-button">19.05.2006.</button></div>' +
                   '</div>' +
                   '<div class="month-item">' +
                     '<button type="button" class="months-button" data-month="lipanj-2006">Lipanj</button>' +
-                    '<div class="dates-list" id="dates-lipanj-2006">29.06.2006.</div>' +
+                    '<div class="dates-list" id="dates-lipanj-2006"><button type="button" class="date-button">29.06.2006.</button></div>' +
                   '</div>' +
                   '<div class="month-item">' +
                     '<button type="button" class="months-button" data-month="kolovoz-2006">August</button>' +
-                    '<div class="dates-list" id="dates-kolovoz-2006">01.08.2006.<br>03.08.2006.</div>' +
+                    '<div class="dates-list" id="dates-kolovoz-2006"><button type="button" class="date-button">01.08.2006.</button><button type="button" class="date-button">03.08.2006.</button></div>' +
                   '</div>'
                 : 'Mjeseci za ' + year + '. bit će dodani uskoro.') +
             '</div>' +
@@ -990,6 +1148,13 @@
           datesEl.classList.toggle('is-open');
         });
       }
+
+      var dateButtons = yearListEl.querySelectorAll('.date-button');
+      for (var k = 0; k < dateButtons.length; k++) {
+        dateButtons[k].addEventListener('click', function() {
+          synopticParamsPanelEl.classList.add('is-visible');
+        });
+      }
     }
 
     function updateYearPanelVisibility() {
@@ -1003,11 +1168,19 @@
         for (var j = 0; j < openDates.length; j++) {
           openDates[j].classList.remove('is-open');
         }
+        synopticParamsPanelEl.classList.remove('is-visible');
       }
     }
 
     createYearList();
     updateYearPanelVisibility();
+
+    var synopticParamButtons = document.querySelectorAll('.synoptic-param-button');
+    for (var pIdx = 0; pIdx < synopticParamButtons.length; pIdx++) {
+      synopticParamButtons[pIdx].addEventListener('click', function() {
+        this.classList.toggle('is-active');
+      });
+    }
 
   </script>
 </body>
