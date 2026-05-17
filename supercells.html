@@ -1084,6 +1084,7 @@
 
     var synopticImageOverlay = null;
     var synopticImageBounds = [[42.0, 12.0], [47.8, 20.0]];
+    var selectedSynopticDate = null;
 
     function clearSynopticImageOverlay() {
       if (synopticImageOverlay) {
@@ -1125,6 +1126,7 @@
     function hideSynopticParamsPanel() {
       synopticParamsPanelEl.classList.remove('is-visible');
       clearSynopticImageOverlay();
+      selectedSynopticDate = null;
       var activeParamButtons = synopticParamsPanelEl.querySelectorAll('.synoptic-param-button.is-active');
       for (var a = 0; a < activeParamButtons.length; a++) {
         activeParamButtons[a].classList.remove('is-active');
@@ -1181,6 +1183,7 @@
       for (var k = 0; k < dateButtons.length; k++) {
         dateButtons[k].addEventListener('click', function() {
           var clickedDate = this.getAttribute('data-date');
+          selectedSynopticDate = clickedDate;
           var wasVisible = synopticParamsPanelEl.classList.contains('is-visible');
 
           if (wasVisible) {
@@ -1195,6 +1198,7 @@
             var defaultParamButton = document.querySelector('.synoptic-param-button[data-param="500"]');
             hideSynopticParamsPanel();
             synopticParamsPanelEl.classList.add('is-visible');
+            selectedSynopticDate = clickedDate;
             if (defaultParamButton) defaultParamButton.classList.add('is-active');
             loadSynopticImageOverlay('images/supercells/20060519/wind500.png');
           } else {
@@ -1225,7 +1229,24 @@
     var synopticParamButtons = document.querySelectorAll('.synoptic-param-button');
     for (var pIdx = 0; pIdx < synopticParamButtons.length; pIdx++) {
       synopticParamButtons[pIdx].addEventListener('click', function() {
-        this.classList.toggle('is-active');
+        var isAlreadyActive = this.classList.contains('is-active');
+        for (var clearIdx = 0; clearIdx < synopticParamButtons.length; clearIdx++) {
+          synopticParamButtons[clearIdx].classList.remove('is-active');
+        }
+
+        if (isAlreadyActive) {
+          clearSynopticImageOverlay();
+          return;
+        }
+
+        this.classList.add('is-active');
+
+        var paramId = this.getAttribute('data-param');
+        if (paramId === '500' && selectedSynopticDate === '2006-05-19') {
+          loadSynopticImageOverlay('images/supercells/20060519/wind500.png');
+        } else {
+          clearSynopticImageOverlay();
+        }
       });
     }
 
