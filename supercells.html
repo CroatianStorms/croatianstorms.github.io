@@ -1085,46 +1085,113 @@
     map.setView([45.1, 16.0], 6);
 
     var synopticImageOverlay = null;
-    // Adjustable 4-corner control points (NW, NE, SW, SE) for practical warp tuning.
-    var synopticImageCorners = [
-      L.latLng(50.5, 7.0),
-      L.latLng(50.5, 24.5),
-      L.latLng(39.5, 7.0),
-      L.latLng(39.5, 24.5)
-    ];
+    var synopticCornerMarkers = [];
+    var synopticCenterMarker = null;
+
+    // Adjustable rectangular control points for manual alignment tuning.
+    var synopticImageCorners = {
+      nw: L.latLng(50.5, 7.0),
+      ne: L.latLng(50.5, 24.5),
+      sw: L.latLng(39.5, 7.0),
+      se: L.latLng(39.5, 24.5)
+    };
     var selectedSynopticDate = null;
+
+    function getSynopticBounds() {
+      return [
+        [Math.min(synopticImageCorners.sw.lat, synopticImageCorners.se.lat), Math.min(synopticImageCorners.nw.lng, synopticImageCorners.sw.lng)],
+        [Math.max(synopticImageCorners.nw.lat, synopticImageCorners.ne.lat), Math.max(synopticImageCorners.ne.lng, synopticImageCorners.se.lng)]
+      ];
+    }
+
+    function clearSynopticControlMarkers() {
+      for (var i = 0; i < synopticCornerMarkers.length; i++) map.removeLayer(synopticCornerMarkers[i]);
+      synopticCornerMarkers = [];
+      if (synopticCenterMarker) {
+        map.removeLayer(synopticCenterMarker);
+        synopticCenterMarker = null;
+      }
+    }
+
+    function renderSynopticImageOverlay(imagePath) {
+      if (synopticImageOverlay) map.removeLayer(synopticImageOverlay);
+      synopticImageOverlay = L.imageOverlay(imagePath, getSynopticBounds(), { opacity: 0.75 });
+      synopticImageOverlay.addTo(map);
+    }
+
+    function syncOppositeCorners(key, latlng) {
+      synopticImageCorners[key] = latlng;
+      synopticImageCorners.nw = L.latLng(synopticImageCorners.nw.lat, synopticImageCorners.sw.lng);
+      synopticImageCorners.ne = L.latLng(synopticImageCorners.nw.lat, synopticImageCorners.se.lng);
+      synopticImageCorners.sw = L.latLng(synopticImageCorners.se.lat, synopticImageCorners.sw.lng);
+      synopticImageCorners.se = L.latLng(synopticImageCorners.sw.lat, synopticImageCorners.ne.lng);
+    }
+
+    function addSynopticControlMarkers(imagePath) {
+      clearSynopticControlMarkers();
+      var defs = [
+        { key: 'nw', label: 'NW' },
+        { key: 'ne', label: 'NE' },
+        { key: 'sw', label: 'SW' },
+        { key: 'se', label: 'SE' }
+      ];
+      defs.forEach(function(def) {
+        var m = L.marker(synopticImageCorners[def.key], { draggable: true, title: def.label }).addTo(map);
+        m.on('drag', function(e) {
+          syncOppositeCorners(def.key, e.target.getLatLng());
+          // keep markers snapped to the rectangular model
+          for (var j = 0; j < synopticCornerMarkers.length; j++) {
+            var k = defs[j].key;
+            synopticCornerMarkers[j].setLatLng(synopticImageCorners[k]);
+          }
+          updateCenterMarker();
+          renderSynopticImageOverlay(imagePath);
+        });
+        synopticCornerMarkers.push(m);
+      });
+      addCenterMarker(imagePath);
+    }
+
+    function getCenterLatLng() {
+      var b = getSynopticBounds();
+      return L.latLng((b[0][0] + b[1][0]) / 2, (b[0][1] + b[1][1]) / 2);
+    }
+
+    function updateCenterMarker() {
+      if (synopticCenterMarker) synopticCenterMarker.setLatLng(getCenterLatLng());
+    }
+
+    function addCenterMarker(imagePath) {
+      synopticCenterMarker = L.marker(getCenterLatLng(), { draggable: true, title: 'CENTER' }).addTo(map);
+      synopticCenterMarker.on('dragstart', function() { synopticCenterMarker._start = getCenterLatLng(); });
+      synopticCenterMarker.on('drag', function(e) {
+        var cur = e.target.getLatLng();
+        var st = synopticCenterMarker._start || getCenterLatLng();
+        var dLat = cur.lat - st.lat;
+        var dLng = cur.lng - st.lng;
+        ['nw','ne','sw','se'].forEach(function(k){
+          synopticImageCorners[k] = L.latLng(synopticImageCorners[k].lat + dLat, synopticImageCorners[k].lng + dLng);
+        });
+        synopticCenterMarker._start = cur;
+        for (var j = 0; j < synopticCornerMarkers.length; j++) {
+          var key = ['nw','ne','sw','se'][j];
+          synopticCornerMarkers[j].setLatLng(synopticImageCorners[key]);
+        }
+        renderSynopticImageOverlay(imagePath);
+      });
+    }
 
     function clearSynopticImageOverlay() {
       if (synopticImageOverlay) {
         map.removeLayer(synopticImageOverlay);
         synopticImageOverlay = null;
       }
+      clearSynopticControlMarkers();
     }
 
     function loadSynopticImageOverlay(imagePath) {
-      clearSynopticImageOverlay();
-
-      if (L.distortableImageOverlay) {
-        synopticImageOverlay = L.distortableImageOverlay(imagePath, {
-          corners: synopticImageCorners,
-          mode: 'distort',
-          selected: true,
-          editable: true,
-          suppressToolbar: false,
-          opacity: 0.75
-        }).addTo(map);
-
-        // Keep tuned corners for next load while you iteratively align image.
-        synopticImageOverlay.on('update', function() {
-          if (synopticImageOverlay && synopticImageOverlay.getCorners) {
-            synopticImageCorners = synopticImageOverlay.getCorners();
-          }
-        });
-      } else {
-        // Fallback to rectangular overlay if plugin fails to load.
-        synopticImageOverlay = L.imageOverlay(imagePath, [[39.5, 7.0], [50.5, 24.5]], { opacity: 0.75 });
-        synopticImageOverlay.addTo(map);
-      }
+      renderSynopticImageOverlay(imagePath);
+      addSynopticControlMarkers(imagePath);
     }
 
     var toggleGodinaEl = document.getElementById('toggle-godina');
