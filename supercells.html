@@ -225,7 +225,7 @@
 .synoptic-params-panel {
   position: fixed;
   top: 78px;
-  left: 232px;
+  left: 242px;
   z-index: 1000;
   display: none;
   gap: 8px;
@@ -494,7 +494,7 @@
 .synoptic-params-panel {
   position: fixed;
   top: 78px;
-  left: 232px;
+  left: 242px;
   z-index: 1000;
   display: none;
   gap: 8px;
@@ -782,7 +782,7 @@
 .synoptic-params-panel {
   position: fixed;
   top: 78px;
-  left: 232px;
+  left: 242px;
   z-index: 1000;
   display: none;
   gap: 8px;
@@ -1032,11 +1032,11 @@
 
 
   <div class="synoptic-params-panel" id="synoptic-params-panel" aria-label="Synoptic parametri">
-    <button type="button" class="synoptic-param-button">500 hPa</button>
-    <button type="button" class="synoptic-param-button">CAPE</button>
-    <button type="button" class="synoptic-param-button">Temp</button>
-    <button type="button" class="synoptic-param-button">Tros</button>
-    <button type="button" class="synoptic-param-button">Vjetar 10m</button>
+    <button type="button" class="synoptic-param-button" data-param="500">500 hPa</button>
+    <button type="button" class="synoptic-param-button" data-param="cape">CAPE</button>
+    <button type="button" class="synoptic-param-button" data-param="temp">Temp</button>
+    <button type="button" class="synoptic-param-button" data-param="tros">Tros</button>
+    <button type="button" class="synoptic-param-button" data-param="wind10m">Vjetar 10m</button>
   </div>
 
   <div class="year-panel" id="year-panel" aria-label="Popis godina">
@@ -1081,6 +1081,23 @@
     };
     zoomControl.addTo(map);
     map.setView([45.1, 16.0], 6);
+
+    var synopticImageOverlay = null;
+    var synopticImageBounds = [[42.0, 12.0], [47.8, 20.0]];
+
+    function clearSynopticImageOverlay() {
+      if (synopticImageOverlay) {
+        map.removeLayer(synopticImageOverlay);
+        synopticImageOverlay = null;
+      }
+    }
+
+    function loadSynopticImageOverlay(imagePath) {
+      clearSynopticImageOverlay();
+      synopticImageOverlay = L.imageOverlay(imagePath, synopticImageBounds, { opacity: 0.75 });
+      synopticImageOverlay.addTo(map);
+    }
+
     var toggleGodinaEl = document.getElementById('toggle-godina');
     var toggleStrujanjeEl = document.getElementById('toggle-strujanje');
 
@@ -1107,6 +1124,7 @@
 
     function hideSynopticParamsPanel() {
       synopticParamsPanelEl.classList.remove('is-visible');
+      clearSynopticImageOverlay();
       var activeParamButtons = synopticParamsPanelEl.querySelectorAll('.synoptic-param-button.is-active');
       for (var a = 0; a < activeParamButtons.length; a++) {
         activeParamButtons[a].classList.remove('is-active');
@@ -1123,15 +1141,15 @@
               (year === 2006
                 ? '<div class="month-item">' +
                     '<button type="button" class="months-button" data-month="svibanj-2006">Svibanj</button>' +
-                    '<div class="dates-list" id="dates-svibanj-2006"><button type="button" class="date-button">19.05.2006.</button></div>' +
+                    '<div class="dates-list" id="dates-svibanj-2006"><button type="button" class="date-button" data-date="2006-05-19">19.05.2006.</button></div>' +
                   '</div>' +
                   '<div class="month-item">' +
                     '<button type="button" class="months-button" data-month="lipanj-2006">Lipanj</button>' +
-                    '<div class="dates-list" id="dates-lipanj-2006"><button type="button" class="date-button">29.06.2006.</button></div>' +
+                    '<div class="dates-list" id="dates-lipanj-2006"><button type="button" class="date-button" data-date="2006-06-29">29.06.2006.</button></div>' +
                   '</div>' +
                   '<div class="month-item">' +
                     '<button type="button" class="months-button" data-month="kolovoz-2006">August</button>' +
-                    '<div class="dates-list" id="dates-kolovoz-2006"><button type="button" class="date-button">01.08.2006.</button><button type="button" class="date-button">03.08.2006.</button></div>' +
+                    '<div class="dates-list" id="dates-kolovoz-2006"><button type="button" class="date-button" data-date="2006-08-01">01.08.2006.</button><button type="button" class="date-button" data-date="2006-08-03">03.08.2006.</button></div>' +
                   '</div>'
                 : 'Mjeseci za ' + year + '. bit će dodani uskoro.') +
             '</div>' +
@@ -1162,9 +1180,25 @@
       var dateButtons = yearListEl.querySelectorAll('.date-button');
       for (var k = 0; k < dateButtons.length; k++) {
         dateButtons[k].addEventListener('click', function() {
-          synopticParamsPanelEl.classList.toggle('is-visible');
-          if (!synopticParamsPanelEl.classList.contains('is-visible')) {
+          var clickedDate = this.getAttribute('data-date');
+          var wasVisible = synopticParamsPanelEl.classList.contains('is-visible');
+
+          if (wasVisible) {
             hideSynopticParamsPanel();
+            clearSynopticImageOverlay();
+            return;
+          }
+
+          synopticParamsPanelEl.classList.add('is-visible');
+
+          if (clickedDate === '2006-05-19') {
+            var defaultParamButton = document.querySelector('.synoptic-param-button[data-param="500"]');
+            hideSynopticParamsPanel();
+            synopticParamsPanelEl.classList.add('is-visible');
+            if (defaultParamButton) defaultParamButton.classList.add('is-active');
+            loadSynopticImageOverlay('images/supercells/20060519/wind500.png');
+          } else {
+            clearSynopticImageOverlay();
           }
         });
       }
