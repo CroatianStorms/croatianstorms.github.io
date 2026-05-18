@@ -1109,7 +1109,7 @@
       synopticWarpCanvas.style.left = '0';
       synopticWarpCanvas.style.pointerEvents = 'none';
       synopticWarpCanvas.style.zIndex = '460';
-      map.getPanes().overlayPane.appendChild(synopticWarpCanvas);
+      map.getContainer().appendChild(synopticWarpCanvas);
       synopticWarpCtx = synopticWarpCanvas.getContext('2d');
     }
 
@@ -1206,8 +1206,8 @@
     }
 
     map.on('zoom move resize', function(){
-      if (synopticCurrentImagePath && synopticImageObj) renderSynopticImageOverlay();
       resizeWarpCanvas();
+      if (synopticCurrentImagePath && synopticImageObj) renderSynopticImageOverlay();
     });
 
     var toggleGodinaEl = document.getElementById('toggle-godina');
