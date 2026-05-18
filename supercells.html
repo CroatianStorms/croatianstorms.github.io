@@ -1099,6 +1099,12 @@
       sw: L.latLng(39.5, 7.0),
       se: L.latLng(39.5, 24.5)
     };
+    var synopticImageEdges = {
+      n: L.latLng(50.5, 15.75),
+      e: L.latLng(45.0, 24.5),
+      s: L.latLng(39.5, 15.75),
+      w: L.latLng(45.0, 7.0)
+    };
     var synopticCenterPoint = L.latLng(45.0, 15.75);
     var selectedSynopticDate = null;
 
@@ -1151,36 +1157,31 @@
       synopticWarpCtx.setTransform(1,0,0,1,0,0);
       synopticWarpCtx.clearRect(0,0,synopticWarpCanvas.width,synopticWarpCanvas.height);
 
-      var nw = map.latLngToContainerPoint(synopticImageCorners.nw);
-      var ne = map.latLngToContainerPoint(synopticImageCorners.ne);
-      var sw = map.latLngToContainerPoint(synopticImageCorners.sw);
-      var se = map.latLngToContainerPoint(synopticImageCorners.se);
+      var dPts = [
+        map.latLngToContainerPoint(synopticImageCorners.nw),
+        map.latLngToContainerPoint(synopticImageEdges.n),
+        map.latLngToContainerPoint(synopticImageCorners.ne),
+        map.latLngToContainerPoint(synopticImageEdges.e),
+        map.latLngToContainerPoint(synopticImageCorners.se),
+        map.latLngToContainerPoint(synopticImageEdges.s),
+        map.latLngToContainerPoint(synopticImageCorners.sw),
+        map.latLngToContainerPoint(synopticImageEdges.w)
+      ];
       var cc = map.latLngToContainerPoint(synopticCenterPoint);
 
       var w = synopticImageObj.naturalWidth || synopticImageObj.width;
       var h = synopticImageObj.naturalHeight || synopticImageObj.height;
-      var sNW={x:0,y:0}, sNE={x:w,y:0}, sSW={x:0,y:h}, sSE={x:w,y:h}, sC={x:w/2,y:h/2};
+      var sPts = [
+        {x:0,y:0}, {x:w/2,y:0}, {x:w,y:0}, {x:w,y:h/2},
+        {x:w,y:h}, {x:w/2,y:h}, {x:0,y:h}, {x:0,y:h/2}
+      ];
+      var sC = {x:w/2,y:h/2};
 
-      drawImageTriangle(synopticWarpCtx, synopticImageObj, sNW,sNE,sC, nw,ne,cc, 0.75);
-      drawImageTriangle(synopticWarpCtx, synopticImageObj, sNE,sSE,sC, ne,se,cc, 0.75);
-      drawImageTriangle(synopticWarpCtx, synopticImageObj, sSE,sSW,sC, se,sw,cc, 0.75);
-      drawImageTriangle(synopticWarpCtx, synopticImageObj, sSW,sNW,sC, sw,nw,cc, 0.75);
-    }
-
-    function getEdgeMidpoint(edgeKey) {
-      if (edgeKey === 'n') return L.latLng((synopticImageCorners.nw.lat + synopticImageCorners.ne.lat) / 2, (synopticImageCorners.nw.lng + synopticImageCorners.ne.lng) / 2);
-      if (edgeKey === 'e') return L.latLng((synopticImageCorners.ne.lat + synopticImageCorners.se.lat) / 2, (synopticImageCorners.ne.lng + synopticImageCorners.se.lng) / 2);
-      if (edgeKey === 's') return L.latLng((synopticImageCorners.sw.lat + synopticImageCorners.se.lat) / 2, (synopticImageCorners.sw.lng + synopticImageCorners.se.lng) / 2);
-      return L.latLng((synopticImageCorners.nw.lat + synopticImageCorners.sw.lat) / 2, (synopticImageCorners.nw.lng + synopticImageCorners.sw.lng) / 2);
-    }
-
-    function updateEdgeMarkerPositions() {
-      for (var i = 0; i < synopticEdgeMarkers.length; i++) {
-        var edgeKey = synopticEdgeMarkers[i]._edgeKey;
-        synopticEdgeMarkers[i].setLatLng(getEdgeMidpoint(edgeKey));
+      for (var t = 0; t < dPts.length; t++) {
+        var n = (t + 1) % dPts.length;
+        drawImageTriangle(synopticWarpCtx, synopticImageObj, sPts[t], sPts[n], sC, dPts[t], dPts[n], cc, 0.75);
       }
     }
-
     function clearSynopticControlMarkers() {
       for (var i = 0; i < synopticCornerMarkers.length; i++) map.removeLayer(synopticCornerMarkers[i]);
       synopticCornerMarkers = [];
@@ -1193,7 +1194,7 @@
       clearSynopticControlMarkers();
       ['nw','ne','sw','se'].forEach(function(key){
         var m=L.marker(synopticImageCorners[key],{draggable:true,title:key.toUpperCase()}).addTo(map);
-        m.on('drag',function(e){ synopticImageCorners[key]=e.target.getLatLng(); updateEdgeMarkerPositions(); renderSynopticImageOverlay(); });
+        m.on('drag',function(e){ synopticImageCorners[key]=e.target.getLatLng(); renderSynopticImageOverlay(); });
         synopticCornerMarkers.push(m);
       });
       var edgeDefs = [
@@ -1203,38 +1204,10 @@
         { key: 'w', title: 'W-MID' }
       ];
       edgeDefs.forEach(function(def) {
-        var em = L.marker(getEdgeMidpoint(def.key), { draggable: true, title: def.title }).addTo(map);
+        var em = L.marker(synopticImageEdges[def.key], { draggable: true, title: def.title }).addTo(map);
         em._edgeKey = def.key;
-        em.on('dragstart', function(e) {
-          em._startLatLng = e.target.getLatLng();
-        });
         em.on('drag', function(e) {
-          var ll = e.target.getLatLng();
-          var st = em._startLatLng || ll;
-          var dLat = ll.lat - st.lat;
-          var dLng = ll.lng - st.lng;
-
-          if (def.key === 'n') {
-            synopticImageCorners.nw = L.latLng(synopticImageCorners.nw.lat + dLat, synopticImageCorners.nw.lng + dLng);
-            synopticImageCorners.ne = L.latLng(synopticImageCorners.ne.lat + dLat, synopticImageCorners.ne.lng + dLng);
-          } else if (def.key === 'e') {
-            synopticImageCorners.ne = L.latLng(synopticImageCorners.ne.lat + dLat, synopticImageCorners.ne.lng + dLng);
-            synopticImageCorners.se = L.latLng(synopticImageCorners.se.lat + dLat, synopticImageCorners.se.lng + dLng);
-          } else if (def.key === 's') {
-            synopticImageCorners.sw = L.latLng(synopticImageCorners.sw.lat + dLat, synopticImageCorners.sw.lng + dLng);
-            synopticImageCorners.se = L.latLng(synopticImageCorners.se.lat + dLat, synopticImageCorners.se.lng + dLng);
-          } else if (def.key === 'w') {
-            synopticImageCorners.nw = L.latLng(synopticImageCorners.nw.lat + dLat, synopticImageCorners.nw.lng + dLng);
-            synopticImageCorners.sw = L.latLng(synopticImageCorners.sw.lat + dLat, synopticImageCorners.sw.lng + dLng);
-          }
-
-          em._startLatLng = ll;
-
-          for (var cIdx = 0; cIdx < synopticCornerMarkers.length; cIdx++) {
-            var cKey = ['nw','ne','sw','se'][cIdx];
-            synopticCornerMarkers[cIdx].setLatLng(synopticImageCorners[cKey]);
-          }
-          updateEdgeMarkerPositions();
+          synopticImageEdges[def.key] = e.target.getLatLng();
           renderSynopticImageOverlay();
         });
         synopticEdgeMarkers.push(em);
