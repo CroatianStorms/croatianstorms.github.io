@@ -1388,8 +1388,14 @@
         this.classList.add('is-active');
 
         var paramId = this.getAttribute('data-param');
-        if (paramId === '500' && selectedSynopticDate === '2006-05-19') {
-          loadSynopticImageOverlay('images/supercells/20060519/wind500.png');
+        if (selectedSynopticDate === '2006-05-19') {
+          if (paramId === '500') {
+            loadSynopticImageOverlay('images/supercells/20060519/wind500.png');
+          } else if (paramId === 'cape') {
+            loadSynopticImageOverlay('images/supercells/20060519/cape.png');
+          } else {
+            clearSynopticImageOverlay();
+          }
         } else {
           clearSynopticImageOverlay();
         }
