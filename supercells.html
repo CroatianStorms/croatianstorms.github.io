@@ -1402,6 +1402,20 @@
           } else {
             clearSynopticImageOverlay();
           }
+        } else if (selectedSynopticDate === '2006-06-29') {
+          if (paramId === '500') {
+            loadSynopticImageOverlay('images/supercells/20060629/wind500.png');
+          } else if (paramId === 'cape') {
+            loadSynopticImageOverlay('images/supercells/20060629/cape.png');
+          } else if (paramId === 'temp') {
+            loadSynopticImageOverlay('images/supercells/20060629/temp.png');
+          } else if (paramId === 'tros') {
+            loadSynopticImageOverlay('images/supercells/20060629/dew.png');
+          } else if (paramId === 'wind10m') {
+            loadSynopticImageOverlay('images/supercells/20060629/wind10.png');
+          } else {
+            clearSynopticImageOverlay();
+          }
         } else {
           clearSynopticImageOverlay();
         }
