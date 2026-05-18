@@ -1340,13 +1340,17 @@
 
           synopticParamsPanelEl.classList.add('is-visible');
 
-          if (clickedDate === '2006-05-19') {
+          if (clickedDate === '2006-05-19' || clickedDate === '2006-06-29') {
             var defaultParamButton = document.querySelector('.synoptic-param-button[data-param="500"]');
             hideSynopticParamsPanel();
             synopticParamsPanelEl.classList.add('is-visible');
             selectedSynopticDate = clickedDate;
             if (defaultParamButton) defaultParamButton.classList.add('is-active');
-            loadSynopticImageOverlay('images/supercells/20060519/wind500.png');
+            if (clickedDate === '2006-05-19') {
+              loadSynopticImageOverlay('images/supercells/20060519/wind500.png');
+            } else {
+              loadSynopticImageOverlay('images/supercells/20060629/wind500.png');
+            }
           } else {
             clearSynopticImageOverlay();
           }
