@@ -1205,20 +1205,34 @@
       edgeDefs.forEach(function(def) {
         var em = L.marker(getEdgeMidpoint(def.key), { draggable: true, title: def.title }).addTo(map);
         em._edgeKey = def.key;
+        em.on('dragstart', function(e) {
+          em._startLatLng = e.target.getLatLng();
+        });
         em.on('drag', function(e) {
           var ll = e.target.getLatLng();
+          var st = em._startLatLng || ll;
+          var dLat = ll.lat - st.lat;
+          var dLng = ll.lng - st.lng;
+
           if (def.key === 'n') {
-            synopticImageCorners.nw = L.latLng(ll.lat, synopticImageCorners.nw.lng);
-            synopticImageCorners.ne = L.latLng(ll.lat, synopticImageCorners.ne.lng);
+            synopticImageCorners.nw = L.latLng(synopticImageCorners.nw.lat + dLat, synopticImageCorners.nw.lng + dLng);
+            synopticImageCorners.ne = L.latLng(synopticImageCorners.ne.lat + dLat, synopticImageCorners.ne.lng + dLng);
           } else if (def.key === 'e') {
-            synopticImageCorners.ne = L.latLng(synopticImageCorners.ne.lat, ll.lng);
-            synopticImageCorners.se = L.latLng(synopticImageCorners.se.lat, ll.lng);
+            synopticImageCorners.ne = L.latLng(synopticImageCorners.ne.lat + dLat, synopticImageCorners.ne.lng + dLng);
+            synopticImageCorners.se = L.latLng(synopticImageCorners.se.lat + dLat, synopticImageCorners.se.lng + dLng);
           } else if (def.key === 's') {
-            synopticImageCorners.sw = L.latLng(ll.lat, synopticImageCorners.sw.lng);
-            synopticImageCorners.se = L.latLng(ll.lat, synopticImageCorners.se.lng);
+            synopticImageCorners.sw = L.latLng(synopticImageCorners.sw.lat + dLat, synopticImageCorners.sw.lng + dLng);
+            synopticImageCorners.se = L.latLng(synopticImageCorners.se.lat + dLat, synopticImageCorners.se.lng + dLng);
           } else if (def.key === 'w') {
-            synopticImageCorners.nw = L.latLng(synopticImageCorners.nw.lat, ll.lng);
-            synopticImageCorners.sw = L.latLng(synopticImageCorners.sw.lat, ll.lng);
+            synopticImageCorners.nw = L.latLng(synopticImageCorners.nw.lat + dLat, synopticImageCorners.nw.lng + dLng);
+            synopticImageCorners.sw = L.latLng(synopticImageCorners.sw.lat + dLat, synopticImageCorners.sw.lng + dLng);
+          }
+
+          em._startLatLng = ll;
+
+          for (var cIdx = 0; cIdx < synopticCornerMarkers.length; cIdx++) {
+            var cKey = ['nw','ne','sw','se'][cIdx];
+            synopticCornerMarkers[cIdx].setLatLng(synopticImageCorners[cKey]);
           }
           updateEdgeMarkerPositions();
           renderSynopticImageOverlay();
