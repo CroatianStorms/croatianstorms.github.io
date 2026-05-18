@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>CroatianStorm's chase arhiva</title>
+  <title>CroatianStorm's supercells</title>
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="/images/favicon.png">
   
@@ -14,6 +14,8 @@
   <!-- Leaflet Routing Machine (added) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
   <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-distortableimage@0.21.9/dist/leaflet.distortableimage.css" />
+  <script src="https://unpkg.com/leaflet-distortableimage@0.21.9/dist/leaflet.distortableimage.js"></script>
   
   <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 0; margin: 0 auto;}
@@ -934,7 +936,7 @@
 </svg>
   <span class="text">RADAR</span>
 </a>
-  <a href="#" class="menu-item" title="Climatology">
+  <a href="supercells.html" class="menu-item" title="Climatology">
 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M18 6a4 4 0 0 0-8 0 4 4 0 0 0-9 0 6 6 0 0 0 6 8h12a4 4 0 0 0 4-4z"/>
     <path d="M13 13 L10 18 L14 19 L11 23"/>
@@ -990,7 +992,7 @@
   ">
     <a href="index.html" style="color: white; font-size: 1.1rem;">HOME</a>
     <a href="radar.html" style="color: white; font-size: 1.1rem;">RADAR</a>
-    <a href="#" style="color: white; font-size: 1.1rem;">SUPERCELLS</a>
+    <a href="supercells.html" style="color: white; font-size: 1.1rem;">SUPERCELLS</a>
     <a href="blog.html" style="color: white; font-size: 1.1rem;">BLOG</a>
     <a href="#" style="color: white; font-size: 1.1rem;">PHOTOGRAPHY</a>
     <a href="#" style="color: white; font-size: 1.1rem;">VIDEOS</a>
@@ -1049,7 +1051,7 @@
     var map = L.map('map', {
   zoomControl: false,        // disable default zoom
   attributionControl: true
-  }).setView([45.1, 16.0], 6);
+  }).setView([44.00, 10.77], 5);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -1080,7 +1082,7 @@
       return div;
     };
     zoomControl.addTo(map);
-    map.setView([45.1, 16.0], 6);
+    map.setView([44.00, 10.77], 5);
 
     var synopticImageOverlay = null;
     var synopticCornerMarkers = [];
@@ -1294,7 +1296,7 @@
                     '<div class="dates-list" id="dates-lipanj-2006"><button type="button" class="date-button" data-date="2006-06-29">29.06.2006.</button></div>' +
                   '</div>' +
                   '<div class="month-item">' +
-                    '<button type="button" class="months-button" data-month="kolovoz-2006">August</button>' +
+                    '<button type="button" class="months-button" data-month="kolovoz-2006">Kolovoz</button>' +
                     '<div class="dates-list" id="dates-kolovoz-2006"><button type="button" class="date-button" data-date="2006-08-01">01.08.2006.</button><button type="button" class="date-button" data-date="2006-08-03">03.08.2006.</button></div>' +
                   '</div>'
                 : 'Mjeseci za ' + year + '. bit će dodani uskoro.') +
