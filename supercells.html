@@ -1236,7 +1236,8 @@
       synopticImageObj = new Image();
       synopticImageObj.onload = function(){ renderSynopticImageOverlay(); };
       synopticImageObj.src = imagePath;
-      addSynopticControlMarkers();
+      // Marker controls hidden for now by request.
+      // addSynopticControlMarkers();
     }
 
     map.on('zoom move resize', function(){
