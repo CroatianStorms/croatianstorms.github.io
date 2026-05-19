@@ -1340,7 +1340,7 @@
 
           synopticParamsPanelEl.classList.add('is-visible');
 
-          if (clickedDate === '2006-05-19' || clickedDate === '2006-06-29') {
+          if (clickedDate === '2006-05-19' || clickedDate === '2006-06-29' || clickedDate === '2006-08-01' || clickedDate === '2006-08-03') {
             var defaultParamButton = document.querySelector('.synoptic-param-button[data-param="500"]');
             hideSynopticParamsPanel();
             synopticParamsPanelEl.classList.add('is-visible');
@@ -1348,8 +1348,12 @@
             if (defaultParamButton) defaultParamButton.classList.add('is-active');
             if (clickedDate === '2006-05-19') {
               loadSynopticImageOverlay('images/supercells/20060519/wind500.png');
-            } else {
+            } else if (clickedDate === '2006-06-29') {
               loadSynopticImageOverlay('images/supercells/20060629/wind500.png');
+            } else if (clickedDate === '2006-08-01') {
+              loadSynopticImageOverlay('images/supercells/20060801/wind500.png');
+            } else {
+              loadSynopticImageOverlay('images/supercells/20060803/wind500.png');
             }
           } else {
             clearSynopticImageOverlay();
@@ -1417,6 +1421,34 @@
             loadSynopticImageOverlay('images/supercells/20060629/dew.png');
           } else if (paramId === 'wind10m') {
             loadSynopticImageOverlay('images/supercells/20060629/wind10.png');
+          } else {
+            clearSynopticImageOverlay();
+          }
+        } else if (selectedSynopticDate === '2006-08-01') {
+          if (paramId === '500') {
+            loadSynopticImageOverlay('images/supercells/20060801/wind500.png');
+          } else if (paramId === 'cape') {
+            loadSynopticImageOverlay('images/supercells/20060801/cape.png');
+          } else if (paramId === 'temp') {
+            loadSynopticImageOverlay('images/supercells/20060801/temp.png');
+          } else if (paramId === 'tros') {
+            loadSynopticImageOverlay('images/supercells/20060801/dew.png');
+          } else if (paramId === 'wind10m') {
+            loadSynopticImageOverlay('images/supercells/20060801/wind10.png');
+          } else {
+            clearSynopticImageOverlay();
+          }
+        } else if (selectedSynopticDate === '2006-08-03') {
+          if (paramId === '500') {
+            loadSynopticImageOverlay('images/supercells/20060803/wind500.png');
+          } else if (paramId === 'cape') {
+            loadSynopticImageOverlay('images/supercells/20060803/cape.png');
+          } else if (paramId === 'temp') {
+            loadSynopticImageOverlay('images/supercells/20060803/temp.png');
+          } else if (paramId === 'tros') {
+            loadSynopticImageOverlay('images/supercells/20060803/dew.png');
+          } else if (paramId === 'wind10m') {
+            loadSynopticImageOverlay('images/supercells/20060803/wind10.png');
           } else {
             clearSynopticImageOverlay();
           }
